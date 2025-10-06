@@ -1,42 +1,60 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: rgba(255, 255, 255, 0.5);
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --nav-bg: rgba(255, 255, 255, 0.8);
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+/* Tema oscuro automático */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg-primary: #111827;
+    --bg-secondary: #1f2937;
+    --bg-tertiary: rgba(31, 41, 55, 0.5);
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --border-color: rgba(55, 65, 81, 0.2);
+    --nav-bg: rgba(17, 24, 39, 0.8);
   }
 }
 
-.card {
-  padding: 2em;
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
-.read-the-docs {
-  color: #888;
+.bg-auto-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-auto-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-auto-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.text-auto-primary {
+  color: var(--text-primary);
+}
+
+.text-auto-secondary {
+  color: var(--text-secondary);
+}
+
+.text-auto-tertiary {
+  color: var(--text-tertiary);
+}
+
+.border-auto {
+  border-color: var(--border-color);
 }
