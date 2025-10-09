@@ -40,7 +40,9 @@ CREATE TABLE Turno(
 -- Tabla Enfermero
 CREATE TABLE Enfermero(
     enfermeroId SERIAL PRIMARY KEY,
-    apellido VARCHAR(100) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,            
+    apellidoPaterno VARCHAR(100) NOT NULL,
+    apellidoMaterno VARCHAR(100) NOT NULL,
     numeroEmpleado VARCHAR(20) UNIQUE NOT NULL,
     especialidad VARCHAR(100),
     esCoordinador BOOLEAN DEFAULT FALSE,

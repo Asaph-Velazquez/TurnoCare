@@ -1,15 +1,17 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 
-import UserNav from './Components/UserNav';
+import AdminNav from './Components/AdminNav';
 import Login from './Components/Login';
+import AdminHome from './Components/AdminHome';
 
 function App() {
   return (
     <div>
-      <UserNav />
+      <AdminNav />
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/AdminHome" element={<AdminHome />} />
       </Routes>
     </div>
   );

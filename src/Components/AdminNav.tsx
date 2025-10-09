@@ -1,4 +1,4 @@
-function UserNav() {
+function AdminNav() {
   return (
     <div>
       <nav className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-auto" style={{backgroundColor: 'var(--nav-bg)'}}>
@@ -59,17 +59,6 @@ function UserNav() {
                 Contacto
               </a>
             </div>
-
-            {/* Botones */}
-            <div className="flex items-center space-x-4">
-              <a href="/login">
-                <button className="text-sky-600 hover:text-sky-700 font-medium transition-colors">
-                Mi Cuenta
-              </button></a>
-              <button className="bg-gradient-to-r from-sky-500 to-cyan-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-300">
-                Agendar Cita
-              </button>
-            </div>
           </div>
         </div>
       </nav>
@@ -77,4 +66,4 @@ function UserNav() {
   );
 }
 
-export default UserNav;
+export default AdminNav;
