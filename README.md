@@ -52,13 +52,13 @@ cd ..
 
 ### Base de Datos
 1. Instala **PostgreSQL** 
-2. Crea una base de datos llamada `turnocare`
+2. Crea una base de datos llamada `TurnoCare`
 3. Configura las variables de entorno en el backend
 
 ### Variables de Entorno (Backend)
 Crea un archivo `.env` en la carpeta `Backend/` con:
 ```env
-DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/turnocare"
+DATABASE_URL="postgresql://usuario:contraseña@localhost:5432/TurnoCare"
 PORT=5000
 ```
 
@@ -140,8 +140,12 @@ TurnoCare/
 
 ## 🔑 Datos de Prueba
 
-Para probar el sistema, puedes usar estos datos de ejemplo:
+Para probar el sistema, asegúrate de tener enfermeros registrados en tu base de datos `TurnoCare`. El login requiere:
 
+- Número de Empleado (único)
+- Nombre completo (nombre, apellido paterno, apellido materno)
+
+Ejemplo de datos necesarios:
 ```
 Número de Empleado: ENF014
 Nombre: Miguel
@@ -157,6 +161,7 @@ Apellido Materno: Santos
 
 ### Error de base de datos
 - Verifica la conexión a PostgreSQL
+- Asegúrate de que la base de datos `TurnoCare` existe
 - Ejecuta `npx prisma db push` en la carpeta Backend
 
 ### Errores de dependencias

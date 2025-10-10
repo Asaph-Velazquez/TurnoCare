@@ -1,3 +1,4 @@
+// Configuración del servidor
 const express = require("express");
 const cors = require("cors");
 const { PrismaClient } = require("@prisma/client");
@@ -8,20 +9,17 @@ const port = 5000;
 app.use(cors());
 app.use(express.json());
 
-// Inicializar Prisma Client
 const prisma = new PrismaClient();
 
-//peticion para recibir datos del usuario
+// ===== LOGIN =====
 app.post("/login", async (req, resp)=> {
     const {numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno} = req.body;
     
-    // Validar que se reciban los datos
     if (!numeroEmpleado || !nombre || !apellidoPaterno || !apellidoMaterno) {
-        return resp.status(400).json({error: "Todos los campos son requeridos: número de empleado, nombre, apellido paterno y apellido materno"});
+        return resp.status(400).json({error: "Todos los campos son requeridos"});
     }
     
     try{
-        // Buscar en la tabla Enfermero usando Prisma
         const enfermero = await prisma.enfermero.findFirst({
             where: {
                 numeroEmpleado,
@@ -30,8 +28,8 @@ app.post("/login", async (req, resp)=> {
                 apellidoMaterno
             },
             include: {
-                servicio: true,  // Incluir información del servicio
-                turno: true      // Incluir información del turno
+                servicio: true,
+                turno: true
             }
         });
         
@@ -56,21 +54,72 @@ app.post("/login", async (req, resp)=> {
         } else {
             resp.status(401).json({
                 success: false,
-                error: "Los datos ingresados no coinciden con ningún enfermero registrado"
+                error: "Datos incorrectos"
             });
         }
     }catch(err){
         console.error("Error en login:", err);
-        resp.status(500).json({error: "Error interno del servidor"});
+        resp.status(500).json({error: "Error del servidor"});
     }
 });
+
+// ===== ENFERMEROS =====
+// Aquí van los endpoints para manejar enfermeros
+// Ejemplo:
+// app.get("/api/enfermeros", async (req, resp) => {
+//     try {
+//         const enfermeros = await prisma.enfermero.findMany();
+//         resp.json(enfermeros);
+//     } catch(err) {
+//         resp.status(500).json({error: "Error"});
+//     }
+// });
+
+
+// ===== PACIENTES =====
+// Aquí van los endpoints para manejar pacientes
+// Ejemplo:
+// app.get("/api/pacientes", async (req, resp) => {
+//     try {
+//         const pacientes = await prisma.paciente.findMany();
+//         resp.json(pacientes);
+//     } catch(err) {
+//         resp.status(500).json({error: "Error"});
+//     }
+// });
+
+
+// ===== SERVICIOS =====
+// Aquí van los endpoints para manejar servicios del hospital
+// Ejemplo:
+// app.get("/api/servicios", async (req, resp) => {
+//     try {
+//         const servicios = await prisma.servicio.findMany();
+//         resp.json(servicios);
+//     } catch(err) {
+//         resp.status(500).json({error: "Error"});
+//     }
+// });
+
+
+// ===== TURNOS =====
+// Aquí van los endpoints para manejar turnos
+// Ejemplo:
+// app.get("/api/turnos", async (req, resp) => {
+//     try {
+//         const turnos = await prisma.turno.findMany();
+//         resp.json(turnos);
+//     } catch(err) {
+//         resp.status(500).json({error: "Error"});
+//     }
+// });
+
 
 // Iniciar servidor
 app.listen(port, () => {
     console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
 });
 
-// Manejar cierre graceful de Prisma
 process.on('SIGINT', async () => {
     console.log('🔌 Cerrando conexión a base de datos...');
     await prisma.$disconnect();
