@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 function AdminHome() {
+  const navigate = useNavigate();
   const userInfo = {
     nombre: localStorage.getItem("nombre") || "Usuario",
     apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
@@ -95,16 +98,15 @@ function AdminHome() {
     console.log(`Navegando a: ${optionId}`);
     switch (optionId) {
       case "enfermeros":
-        // navigate("AQUIIIIIIII SE AGREGA LA RUTA A LA QUE SE DIRIGIRA CUANDO SE DE CLICK");
-        alert("Ir a Gestionar Enfermeros");
+        navigate("/RegistrarEnfermero");
         break;
       case "hospital":
         // navigate("LO MISMO QUE EL ANTERIOR");
-        alert("Ir a Gestionar Hospital");
+        navigate("/RegistrarHospital");
         break;
       case "servicios":
         // navigate("X3 XD");
-        alert("Ir a Gestionar Servicios");
+        navigate("/RegistrarServicios");
         break;
       case "pacientes":
         // navigate("LO MISMO QUE EL ANTERIOR");

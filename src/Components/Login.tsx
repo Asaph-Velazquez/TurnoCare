@@ -38,7 +38,7 @@ function Login() {
     console.log("Enviando datos:", FormData);
 
     try{
-      const response = await axios.post("http://localhost:5000/login", FormData);
+      const response = await axios.post("http://localhost:5000/api/enfermeros/login", FormData);
       console.log("Respuesta del servidor:", response.data);
       return response.data;
     }catch(error: any){
