@@ -98,7 +98,7 @@ function AdminHome() {
     console.log(`Navegando a: ${optionId}`);
     switch (optionId) {
       case "enfermeros":
-        navigate("/RegistrarEnfermero");
+        navigate("/Enfermero");
         break;
       case "hospital":
         // navigate("LO MISMO QUE EL ANTERIOR");

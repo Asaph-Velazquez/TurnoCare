@@ -29,7 +29,7 @@ function AdminNav() {
             {/* Menu Desktop */}
             <div className="hidden md:flex items-center space-x-8">
               <a
-                href="/"
+                href="/AdminHome"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Inicio
