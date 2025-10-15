@@ -37,7 +37,7 @@ function Enfermero() {
   };
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen">
           {/* Header */}
           <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
@@ -57,11 +57,8 @@ function Enfermero() {
 
           {/* Main Content */}
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  {/*Opciones de enfermeros*/}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {EnfermeroOptions.map((option) => (
                       <div
                         key={option.id}
@@ -86,16 +83,13 @@ function Enfermero() {
                     ))}
                   </div>
                 </div>
-                {/* Agregar seccion de listado de enfermeros*/}
-              </div>
-            </div>
 
             {/* Sección de listado de enfermeros */}
             <div className="mt-8">
               <EnfermeroList 
                 onEnfermeroSelect={(enfermero) => {
                   console.log("Enfermero seleccionado:", enfermero);
-                  // Aquí puedes agregar lógica para ver detalles, editar, etc.
+                  // TODO: agregar detalles
                 }}
               />
             </div>
