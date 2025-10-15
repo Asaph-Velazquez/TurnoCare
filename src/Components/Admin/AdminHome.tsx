@@ -2,12 +2,42 @@ import { useNavigate } from "react-router-dom";
 
 function AdminHome() {
   const navigate = useNavigate();
-  const userInfo = {
-    nombre: localStorage.getItem("nombre") || "Usuario",
-    apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
-    numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-    especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+  // Intentar leer un objeto 'user' guardado como JSON. Si falla, usar keys individuales.
+  let userInfo = {
+    nombre: "Usuario",
+    apellidoPaterno: "",
+    numeroEmpleado: "",
+    especialidad: "Sin especialidad",
   };
+
+  try {
+    const raw = localStorage.getItem("user");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      userInfo = {
+        nombre: parsed.nombre || localStorage.getItem("nombre") || "Usuario",
+        apellidoPaterno: parsed.apellidoPaterno || localStorage.getItem("apellidoPaterno") || "",
+        numeroEmpleado: parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
+        especialidad: parsed.especialidad || localStorage.getItem("especialidad") || "Sin especialidad",
+      };
+    } else {
+      // Fallback si no existe 'user'
+      userInfo = {
+        nombre: localStorage.getItem("nombre") || "Usuario",
+        apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+        numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+        especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+      };
+    }
+  } catch (err) {
+    console.warn('Error parseando user desde localStorage, usando valores individuales', err);
+    userInfo = {
+      nombre: localStorage.getItem("nombre") || "Usuario",
+      apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+      numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+      especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+    };
+  }
 
   const adminOptions = [
     {

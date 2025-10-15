@@ -71,14 +71,17 @@ function Login() {
     if (userData && userData.success) {
       console.log("✅ Login exitoso", userData);
       setIsLoggedIn(true);
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("userID", userData.user.userid);
-      localStorage.setItem("numeroEmpleado", userData.user.numeroEmpleado);
-      localStorage.setItem("nombre", userData.user.nombre);
-      localStorage.setItem("apellidoPaterno", userData.user.apellidoPaterno);
-      localStorage.setItem("apellidoMaterno", userData.user.apellidoMaterno);
-      localStorage.setItem("especialidad", userData.user.especialidad);
-      localStorage.setItem("esCoordinador", userData.user.esCoordinador);
+      // Guardar el objeto user como JSON para evitar valores no-JSON en localStorage
+      try {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(userData.user));
+        // Guardar también campos individuales por compatibilidad si se usan en otras partes
+        localStorage.setItem("userID", String(userData.user.userid));
+        localStorage.setItem("numeroEmpleado", String(userData.user.numeroEmpleado || ""));
+        localStorage.setItem("nombre", String(userData.user.nombre || ""));
+      } catch (err) {
+        console.warn('No se pudo escribir en localStorage:', err);
+      }
       
       setAlert({
         type: "success",

@@ -1,7 +1,4 @@
 const { prisma } = require("../dbPostgres");
-
-
-
 // ===== LOGIN =====
 const login = async (req, resp) => {
     const {numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno} = req.body;
@@ -57,17 +54,52 @@ const login = async (req, resp) => {
 
 
 // ===== ENFERMEROS =====
-// Aquí van los endpoints para manejar enfermeros
-// Ejemplo:
-// app.get("/api/enfermeros", async (req, resp) => {
-//     try {
-//         const enfermeros = await prisma.enfermero.findMany();
-//         resp.json(enfermeros);
-//     } catch(err) {
-//         resp.status(500).json({error: "Error"});
-//     }
-// });
+// Listar todos los enfermeros
+const listEnfermeros = async (req, resp) => {
+    try {
+        const enfermeros = await prisma.enfermero.findMany({
+            include: { servicio: true, turno: true }
+        });
+        resp.json({ success: true, data: enfermeros });
+    } catch (err) {
+        console.error('Error listando enfermeros:', err);
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+// Crear un nuevo enfermero
+const createEnfermero = async (req, resp) => {
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador } = req.body;
+
+    if (!numeroEmpleado || !nombre || !apellidoPaterno || !apellidoMaterno) {
+        return resp.status(400).json({ success: false, error: 'Faltan campos requeridos' });
+    }
+
+    try {
+        const enfermero = await prisma.enfermero.create({
+            data: {
+                numeroEmpleado,
+                nombre,
+                apellidoPaterno,
+                apellidoMaterno,
+                especialidad: especialidad || null,
+                esCoordinador: esCoordinador === true || esCoordinador === 'true'
+            }
+        });
+
+        resp.status(201).json({ success: true, data: enfermero });
+    } catch (err) {
+        console.error('Error creando enfermero:', err);
+        // Manejar error de unique constraint (numeroEmpleado)
+        if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
+            return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
+        }
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
 
 module.exports = {
-    login
+    login,
+    listEnfermeros,
+    createEnfermero
 };
