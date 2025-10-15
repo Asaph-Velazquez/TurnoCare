@@ -321,11 +321,6 @@ function AdminHome() {
               </div>
             </div>
           </div>
-
-          {/* Formulario de registro del hospital más abajo */}
-          <div className="mt-16">
-            <RegistrarHospital />
-          </div>
         </div>
       </div>
     </div>

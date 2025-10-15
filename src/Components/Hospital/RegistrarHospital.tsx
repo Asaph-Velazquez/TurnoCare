@@ -16,7 +16,7 @@ const RegistrarHospital: React.FC = () => {
     e.preventDefault();
     setMensaje("");
     try {
-      const response = await fetch("http://localhost:3001/api/hospital", {
+      const response = await fetch("http://localhost:5000/api/hospital/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
