@@ -71,11 +71,9 @@ function Login() {
     if (userData && userData.success) {
       console.log("✅ Login exitoso", userData);
       setIsLoggedIn(true);
-      // Guardar el objeto user como JSON para evitar valores no-JSON en localStorage
       try {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(userData.user));
-        // Guardar también campos individuales por compatibilidad si se usan en otras partes
         localStorage.setItem("userID", String(userData.user.userid));
         localStorage.setItem("numeroEmpleado", String(userData.user.numeroEmpleado || ""));
         localStorage.setItem("nombre", String(userData.user.nombre || ""));
@@ -87,8 +85,6 @@ function Login() {
         type: "success",
         message: userData.message || "Login exitoso"
       });
-      
-      // Delay para mostrar el mensaje de éxito
       setTimeout(() => {
         navigate("/AdminHome");
       }, 1000);
@@ -100,7 +96,7 @@ function Login() {
   return (
     <div className="min-h-screen bg-auto-primary flex items-center justify-center p-4 pt-25">
       {/* Fondo decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 via-cyan-300/10 to-blue-500/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 via-cyan-300/10 to-blue-500/20 "></div>
       <div className="relative bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl max-w-md w-full p-8 mx-4">
         {/* Header con icono */}
         <div className="text-center mb-8">
