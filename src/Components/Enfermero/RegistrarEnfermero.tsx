@@ -1,9 +1,9 @@
 import { useState } from "react";
 import axios from "axios";
-import FormLayout from "../Form/FormLayout";
-import TextField from "../Form/TextField";
-import SelectField from "../Form/SelectField";
-import SubmitButton from "../Form/SubmitButton";
+import FormLayout from "../utilities/Form/FormLayout";
+import TextField from "../utilities/Form/TextField";
+import SelectField from "../utilities/Form/SelectField";
+import SubmitButton from "../utilities/Form/SubmitButton";
 
 function RegistrarEnfermero() {
   const [form, setForm] = useState({

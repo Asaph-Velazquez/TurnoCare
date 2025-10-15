@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import EnfermeroList from "./EnfermeroList";
+
 function Enfermero() {
   const navigate = useNavigate();
   const EnfermeroOptions = [
@@ -55,7 +57,7 @@ function Enfermero() {
 
           {/* Main Content */}
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
+            <div className="backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   {/*Opciones de enfermeros*/}
@@ -84,7 +86,18 @@ function Enfermero() {
                     ))}
                   </div>
                 </div>
+                {/* Agregar seccion de listado de enfermeros*/}
               </div>
+            </div>
+
+            {/* Sección de listado de enfermeros */}
+            <div className="mt-8">
+              <EnfermeroList 
+                onEnfermeroSelect={(enfermero) => {
+                  console.log("Enfermero seleccionado:", enfermero);
+                  // Aquí puedes agregar lógica para ver detalles, editar, etc.
+                }}
+              />
             </div>
           </main>
       </div>
