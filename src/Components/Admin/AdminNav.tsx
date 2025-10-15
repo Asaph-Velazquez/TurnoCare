@@ -35,28 +35,28 @@ function AdminNav() {
                 Inicio
               </a>
               <a
+                href="/Hospital"
+                className="text-auto-secondary hover:text-sky-600 transition-colors"
+              >
+                Hospital
+              </a>
+              <a
                 href="#servicios"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Servicios
               </a>
               <a
-                href="#doctores"
+                href="/Enfermero"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
-                Doctores
+                Enfermeros
               </a>
               <a
-                href="#ubicacion"
+                href="/Pacientes"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
-                Ubicación
-              </a>
-              <a
-                href="#contacto"
-                className="text-auto-secondary hover:text-sky-600 transition-colors"
-              >
-                Contacto
+                Pacientes
               </a>
             </div>
           </div>

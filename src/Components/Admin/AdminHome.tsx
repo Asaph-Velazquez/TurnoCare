@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 
 function AdminHome() {
   const navigate = useNavigate();
-  // Intentar leer un objeto 'user' guardado como JSON. Si falla, usar keys individuales.
   let userInfo = {
     nombre: "Usuario",
     apellidoPaterno: "",
