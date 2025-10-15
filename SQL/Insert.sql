@@ -3,21 +3,21 @@
 -- =====================================
 
 -- Insertar Hospitales
-INSERT INTO hospital ("hospitalId", nombre, direccion, telefono) VALUES
+INSERT INTO hospital (hospitalId, nombre, direccion, telefono) VALUES
 (1, 'Hospital General San José', 'Av. Principal 123, Ciudad de México', '+52-55-1234-5678'),
 (2, 'Clínica Santa María', 'Calle Reforma 456, Guadalajara', '+52-33-2345-6789'),
 (3, 'Hospital Universitario Central', 'Blvd. Universidad 789, Monterrey', '+52-81-3456-7890'),
 (4, 'Centro Médico Nacional', 'Zona Rosa 321, Ciudad de México', '+52-55-4567-8901');
 
 -- Insertar Turnos
-INSERT INTO turno ("turnoId", nombre, "horaInicio", "horaFin", fecha) VALUES
+INSERT INTO turno (turnoId, nombre, horaInicio, horaFin, fecha) VALUES
 (1, 'Matutino', '08:00:00', '19:00:00', '2025-10-08'),
 (2, 'Nocturno', '19:00:00', '08:00:00', '2025-10-08'),
 (3, 'Vespertino', '14:00:00', '22:00:00', '2025-10-08'),
 (4, 'Madrugada', '22:00:00', '06:00:00', '2025-10-08');
 
 -- Insertar Servicios (usando los hospitalId correctos)
-INSERT INTO servicio ("servicioId", nombre, descripcion, "capacidadMaxima", "personalAsignado", "hospitalId") VALUES
+INSERT INTO servicio (servicioId, nombre, descripcion, capacidadMaxima, personalAsignado, hospitalId) VALUES
 (1, 'Urgencias', 'Servicio de emergencias médicas 24/7', 50, 5, 1),
 (2, 'Pediatría', 'Atención médica especializada para niños', 30, 4, 1),
 (3, 'Cardiología', 'Tratamiento de enfermedades cardiovasculares', 25, 3, 1),
@@ -30,7 +30,7 @@ INSERT INTO servicio ("servicioId", nombre, descripcion, "capacidadMaxima", "per
 (10, 'Psiquiatría', 'Salud mental y trastornos psiquiátricos', 25, 3, 1);
 
 -- Insertar Enfermeros
-INSERT INTO enfermero (nombre, "apellidoPaterno", "apellidoMaterno", "numeroEmpleado", especialidad, "esCoordinador", "turnoAsignadoId", "servicioActualId") VALUES
+INSERT INTO enfermero (nombre, apellidoPaterno, apellidoMaterno, numeroEmpleado, especialidad, esCoordinador, turnoAsignadoId, servicioActualId) VALUES
 -- Coordinadores
 ('Ana', 'García', 'Martínez', 'ENF001', 'Coordinación General', TRUE, 1, 1),
 ('Carlos', 'López', 'Hernández', 'ENF002', 'Coordinación UCI', TRUE, 2, 8),
@@ -101,11 +101,11 @@ INSERT INTO enfermero (nombre, "apellidoPaterno", "apellidoMaterno", "numeroEmpl
 ('Silvia', 'Pacheco', 'Díaz', 'ENF045', 'Enfermería General', FALSE, 3, NULL);
 
 -- Insertar registros en Urgencias para servicios que lo requieren
-INSERT INTO urgencias ("nivelTriaje", "tiempoEsperaPromedio", "servicioId") VALUES
+INSERT INTO urgencias (nivelTriaje, tiempoEsperaPromedio, servicioId) VALUES
 ('Crítico', 5, 1); -- Solo Urgencias tiene TRIAJE
 
 -- Insertar Capacitaciones
-INSERT INTO capacitacion (titulo, descripcion, "fechaImparticion", duracion, instructor) VALUES
+INSERT INTO capacitacion (titulo, descripcion, fechaImparticion, duracion, instructor) VALUES
 ('RCP Básico', 'Reanimación cardiopulmonar básica para personal de enfermería', '2025-10-15 09:00:00', 240, 'Dr. Fernando Castillo'),
 ('Manejo de Urgencias Pediátricas', 'Protocolos de atención en emergencias infantiles', '2025-10-20 14:00:00', 360, 'Dra. Carmen Vega'),
 ('Administración Segura de Medicamentos', 'Prevención de errores en medicación', '2025-10-25 10:00:00', 180, 'Lic. Patricia Morales'),
@@ -113,7 +113,7 @@ INSERT INTO capacitacion (titulo, descripcion, "fechaImparticion", duracion, ins
 ('Protocolo de Bioseguridad', 'Medidas de seguridad y control de infecciones', '2025-11-05 16:00:00', 120, 'Lic. Ana Rodríguez');
 
 -- Asignar algunas capacitaciones a enfermeros
-INSERT INTO enfermero_capacitacion ("enfermeroId", "capacitacionId", asistio) VALUES
+INSERT INTO enfermero_capacitacion (enfermeroId, capacitacionId, asistio) VALUES
 (1, 1, TRUE), (1, 3, TRUE), (1, 5, FALSE),
 (2, 1, TRUE), (2, 4, TRUE),
 (3, 1, TRUE), (3, 2, TRUE), (3, 5, TRUE),
