@@ -78,6 +78,7 @@ model Enfermero {
   registrosMedicos RegistroMedico[]
   medicamentos     Medicamentos[]
   inventarios      InventarioMedicamentos[]
+  insumos          Insumo[]
   capacitaciones   EnfermeroCapacitacion[]
   
   @@map("enfermero")
@@ -145,6 +146,22 @@ model InventarioMedicamentos {
   responsable             Enfermero @relation(fields: [responsableId], references: [enfermeroId], onDelete: Restrict)
   
   @@map("inventariomedicamentos")
+}
+
+model Insumo {
+  insumoId            Int      @id @default(autoincrement())
+  nombre              String   @db.VarChar(100)
+  descripcion         String?  @db.VarChar(255)
+  categoria           String?  @db.VarChar(100)
+  cantidadDisponible  Int      @default(0)
+  unidadMedida        String?  @db.VarChar(50)
+  ubicacion           String?  @db.VarChar(120)
+  responsableId       Int?
+  actualizadoEn       DateTime @default(now())
+
+  responsable         Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
+
+  @@map("insumo")
 }
 
 model Capacitacion {

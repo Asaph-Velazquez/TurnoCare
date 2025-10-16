@@ -15,9 +15,16 @@ function AdminHome() {
       const parsed = JSON.parse(raw);
       userInfo = {
         nombre: parsed.nombre || localStorage.getItem("nombre") || "Usuario",
-        apellidoPaterno: parsed.apellidoPaterno || localStorage.getItem("apellidoPaterno") || "",
-        numeroEmpleado: parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
-        especialidad: parsed.especialidad || localStorage.getItem("especialidad") || "Sin especialidad",
+        apellidoPaterno:
+          parsed.apellidoPaterno ||
+          localStorage.getItem("apellidoPaterno") ||
+          "",
+        numeroEmpleado:
+          parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
+        especialidad:
+          parsed.especialidad ||
+          localStorage.getItem("especialidad") ||
+          "Sin especialidad",
       };
     } else {
       // Fallback si no existe 'user'
@@ -25,11 +32,15 @@ function AdminHome() {
         nombre: localStorage.getItem("nombre") || "Usuario",
         apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
         numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-        especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+        especialidad:
+          localStorage.getItem("especialidad") || "Sin especialidad",
       };
     }
   } catch (err) {
-    console.warn('Error parseando user desde localStorage, usando valores individuales', err);
+    console.warn(
+      "Error parseando user desde localStorage, usando valores individuales",
+      err
+    );
     userInfo = {
       nombre: localStorage.getItem("nombre") || "Usuario",
       apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
@@ -121,6 +132,27 @@ function AdminHome() {
         </svg>
       ),
     },
+    {
+      id: "inventario",
+      title: "Gestionar Inventario",
+      description: "Administrar el inventario de suministros médicos",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="m7.875 14.25 1.214 1.942a2.25 2.25 0 0 0 1.908 1.058h2.006c.776 0 1.497-.4 1.908-1.058l1.214-1.942M2.41 9h4.636a2.25 2.25 0 0 1 1.872 1.002l.164.246a2.25 2.25 0 0 0 1.872 1.002h2.092a2.25 2.25 0 0 0 1.872-1.002l.164-.246A2.25 2.25 0 0 1 16.954 9h4.636M2.41 9a2.25 2.25 0 0 0-.16.832V12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 12V9.832c0-.287-.055-.57-.16-.832M2.41 9a2.25 2.25 0 0 1 .382-.632l3.285-3.832a2.25 2.25 0 0 1 1.708-.786h8.43c.657 0 1.281.287 1.709.786l3.284 3.832c.163.19.291.404.382.632M4.5 20.25h15A2.25 2.25 0 0 0 21.75 18v-2.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125V18a2.25 2.25 0 0 0 2.25 2.25Z"
+          />
+        </svg>
+      ),
+    },
   ];
 
   const handleOptionClick = (optionId: string) => {
@@ -140,12 +172,14 @@ function AdminHome() {
       case "pacientes":
         // navigate("LO MISMO QUE EL ANTERIOR");
         alert("Ir a Gestionar Pacientes");
+      case "inventario":
+        navigate("/Inventario");
     }
   };
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
-    <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
       <div className="relative min-h-screen">
         {/* Header */}
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
