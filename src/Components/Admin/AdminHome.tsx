@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import RegistrarHospital from "../Hospital/RegistrarHospital";
 
 function AdminHome() {
   const navigate = useNavigate();
@@ -131,7 +132,7 @@ function AdminHome() {
         break;
       case "hospital":
         // navigate("LO MISMO QUE EL ANTERIOR");
-        navigate("/RegistrarHospital");
+        navigate("/Hospital");
         break;
       case "servicios":
         // navigate("X3 XD");
@@ -145,7 +146,7 @@ function AdminHome() {
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
-    <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
       <div className="relative min-h-screen">
         {/* Header */}
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
@@ -277,7 +278,7 @@ function AdminHome() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2-2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
                       />
                     </svg>
                   </div>
