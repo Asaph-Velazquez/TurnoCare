@@ -1,103 +1,72 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import axios from "axios";
+import FormLayout from "../utilities/Form/FormLayout";
+import TextField from "../utilities/Form/TextField";
+import SubmitButton from "../utilities/Form/SubmitButton";
 
-const RegistrarHospital: React.FC = () => {
+function RegistrarHospital() {
   const [form, setForm] = useState({
     nombre: "",
     direccion: "",
     telefono: "",
   });
-  const [mensaje, setMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [alert, setAlert] = useState<{ type: string; message: string } | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm((s) => ({ ...s, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMensaje("");
+    setAlert(null);
+    setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/hospital/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-      if (response.ok) {
-        setMensaje("¡Información registrada correctamente!");
-        setForm({ nombre: "", direccion: "", telefono: "" });
-      } else {
-        setMensaje("Error al registrar la información.");
+      const response = await axios.post("http://localhost:5000/api/hospital/", form);
+      console.log("✅ Hospital registrado:", response.data);
+      setAlert({ type: "success", message: "Hospital registrado exitosamente" });
+      setForm({ nombre: "", direccion: "", telefono: "" });
+    } catch (error: any) {
+      console.error("❌ Error al registrar hospital:", error);
+      let errorMessage = "Error al registrar hospital";
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.message) {
+        errorMessage = error.message;
       }
-    } catch (error) {
-      setMensaje("Error de conexión con el servidor.");
+      setAlert({ type: "danger", message: errorMessage });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto mt-32">
-      <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-8">
-        <h2 className="text-2xl font-bold text-auto-primary mb-6 text-center">
-          Registrar Información del Hospital
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <label className="block mb-2 font-medium text-auto-primary">
-              Nombre del hospital
-            </label>
-            <input
-              type="text"
-              name="nombre"
-              value={form.nombre}
-              onChange={handleChange}
-              required
-              className="w-full border border-auto rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-auto-secondary text-auto-primary"
-              placeholder="Ejemplo: Hospital Central"
-            />
-          </div>
-          <div className="mb-6">
-            <label className="block mb-2 font-medium text-auto-primary">
-              Dirección
-            </label>
-            <input
-              type="text"
-              name="direccion"
-              value={form.direccion}
-              onChange={handleChange}
-              required
-              className="w-full border border-auto rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-auto-secondary text-auto-primary"
-              placeholder="Ejemplo: Calle 123, Ciudad"
-            />
-          </div>
-          <div className="mb-8">
-            <label className="block mb-2 font-medium text-auto-primary">
-              Teléfono
-            </label>
-            <input
-              type="text"
-              name="telefono"
-              value={form.telefono}
-              onChange={handleChange}
-              required
-              className="w-full border border-auto rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-400 bg-auto-secondary text-auto-primary"
-              placeholder="Ejemplo: 555-1234567"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-gradient-to-r from-sky-500 to-cyan-500 text-white py-3 rounded-xl font-semibold text-lg shadow hover:scale-105 transition-transform"
-          >
-            Registrar Hospital
-          </button>
-        </form>
-        {mensaje && (
-          <div className="mt-4 text-center text-auto-primary font-semibold">
-            {mensaje}
-          </div>
-        )}
+    <div className="min-h-screen bg-auto-primary pt-20">
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute top-0 left-0"></div>
+      <div className="relative min-h-screen">
+        <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-10">
+          <FormLayout title="Registrar Hospital" onSubmit={handleSubmit} widthClass="max-w-3xl">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <TextField label="Nombre del hospital" name="nombre" value={form.nombre} onChange={handleChange as any} required />
+              <TextField label="Teléfono" name="telefono" value={form.telefono} onChange={handleChange as any} required />
+              <TextField label="Dirección" name="direccion" value={form.direccion} onChange={handleChange as any} required />
+            </div>
+
+            <div className="mt-6">
+              <SubmitButton label={loading ? "Registrando..." : "Registrar"} />
+            </div>
+
+            {alert && (
+              <div className={`mt-4 p-4 rounded-xl ${alert.type === "success" ? "bg-green-100 text-green-800 border border-green-300" : "bg-red-100 text-red-800 border border-red-300"}`}>
+                {alert.message}
+              </div>
+            )}
+          </FormLayout>
+        </main>
       </div>
     </div>
   );
-};
+}
 
 export default RegistrarHospital;

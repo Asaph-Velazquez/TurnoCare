@@ -133,7 +133,7 @@ function AdminHome() {
         break;
       case "hospital":
         // navigate("LO MISMO QUE EL ANTERIOR");
-        navigate("/RegistrarHospital");
+        navigate("/Hospital");
         break;
       case "servicios":
         // navigate("X3 XD");
