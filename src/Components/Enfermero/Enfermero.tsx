@@ -75,6 +75,12 @@ function Enfermero() {
       case "RegistrarEnfermero":
         navigate("/RegistrarEnfermero");
         break;
+      case "EliminarEnfermero":
+        navigate("/EliminarEnfermero");
+        break;
+      case "ActualizarEnfermero":
+        navigate("/ActualizarEnfermero");
+        break;
     }
   };
   return (

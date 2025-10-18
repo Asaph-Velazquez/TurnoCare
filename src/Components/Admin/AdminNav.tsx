@@ -7,6 +7,7 @@ function AdminNav() {
             {/* Logo */}
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl flex items-center justify-center">
+                <a href="/AdminHome">
                 <svg
                   className="w-7 h-7 text-white"
                   fill="none"
@@ -20,10 +21,13 @@ function AdminNav() {
                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                   />
                 </svg>
+                </a>
               </div>
+              <a href="/AdminHome">
               <span className="text-2xl font-bold bg-gradient-to-r from-sky-600 to-cyan-600 bg-clip-text text-transparent">
                 Turno Care
               </span>
+              </a>
             </div>
 
             {/* Menu Desktop */}

@@ -1,8 +1,50 @@
 import { useNavigate } from "react-router-dom";
-import RegistrarHospital from "../Hospital/RegistrarHospital";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function AdminHome() {
+  // Estados para los conteos
+  const [enfermerosCount, setEnfermerosCount] = useState<number | null>(null);
+  const [serviciosCount, setServiciosCount] = useState<number | null>(null);
+  const [turnosCount, setTurnosCount] = useState<number | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/enfermeros")
+      .then(res => {
+        if (res.data && Array.isArray(res.data.data)) {
+          setEnfermerosCount(res.data.data.length);
+        } else if (Array.isArray(res.data)) {
+          setEnfermerosCount(res.data.length);
+        } else {
+          setEnfermerosCount(0);
+        }
+      })
+      .catch(() => setEnfermerosCount(0));
+    axios.get("http://localhost:5000/api/servicios")
+      .then(res => {
+        if (res.data && Array.isArray(res.data.data)) {
+          setServiciosCount(res.data.data.length);
+        } else if (Array.isArray(res.data)) {
+          setServiciosCount(res.data.length);
+        } else {
+          setServiciosCount(0);
+        }
+      })
+      .catch(() => setServiciosCount(0));
+    axios.get("http://localhost:5000/api/turnos")
+      .then(res => {
+        if (res.data && Array.isArray(res.data.data)) {
+          setTurnosCount(res.data.data.length);
+        } else if (Array.isArray(res.data)) {
+          setTurnosCount(res.data.length);
+        } else {
+          setTurnosCount(0);
+        }
+      })
+      .catch(() => setTurnosCount(0));
+  }, []);
+
   let userInfo = {
     nombre: "Usuario",
     apellidoPaterno: "",
@@ -259,7 +301,9 @@ function AdminHome() {
                   <p className="text-sm font-medium text-auto-tertiary">
                     Total Enfermeros
                   </p>
-                  <p className="text-2xl font-semibold text-auto-primary">--</p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {enfermerosCount !== null ? enfermerosCount : "--"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -269,7 +313,7 @@ function AdminHome() {
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                     <svg
-                      className="w-5 h-5 text-white"
+                      className="w-6 h-6 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -278,7 +322,7 @@ function AdminHome() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                        d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
                       />
                     </svg>
                   </div>
@@ -287,7 +331,9 @@ function AdminHome() {
                   <p className="text-sm font-medium text-auto-tertiary">
                     Servicios Activos
                   </p>
-                  <p className="text-2xl font-semibold text-auto-primary">--</p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {serviciosCount !== null ? serviciosCount : "--"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -315,7 +361,9 @@ function AdminHome() {
                   <p className="text-sm font-medium text-auto-tertiary">
                     Turnos Hoy
                   </p>
-                  <p className="text-2xl font-semibold text-auto-primary">--</p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {turnosCount !== null ? turnosCount : "--"}
+                  </p>
                 </div>
               </div>
             </div>
