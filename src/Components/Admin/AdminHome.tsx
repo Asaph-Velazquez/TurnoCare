@@ -178,7 +178,7 @@ function AdminHome() {
         break;
       case "servicios":
         // navigate("X3 XD");
-        navigate("/RegistrarServicios");
+        navigate("/Servicios");
         break;
       case "pacientes":
         // navigate("LO MISMO QUE EL ANTERIOR");

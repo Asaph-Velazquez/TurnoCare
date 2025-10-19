@@ -11,6 +11,7 @@ import ActualizarEnfermero from './Components/Enfermero/ActualizarEnfermero';
 import Footer from './Components/Footer';
 import RegistrarHospital from './Components/Hospital/RegistrarHospital';
 import Hospital from './Components/Hospital/Hospital';
+import Service from './Components/Services/Service';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/ActualizarEnfermero" element={<ActualizarEnfermero />} />
         <Route path="/RegistrarHospital" element={<RegistrarHospital />} />
         <Route path="/Hospital" element={<Hospital />} />
+        <Route path="/Servicios" element={<Service />} />
       </Routes>
       <Footer />
     </div>
