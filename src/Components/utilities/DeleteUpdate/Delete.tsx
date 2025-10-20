@@ -60,7 +60,7 @@ function DeleteCard<T extends { [key: string]: any }>({
         ) : (
           items.map((item, idx) => (
             <div
-              key={item.id || item.enfermeroId || idx}
+              key={item.id || item.enfermeroId || item.hospitalId || idx}
               className="bg-auto-primary border-2 border-auto rounded-xl p-5 hover:border-sky-400 hover:scale-[1.02] transition-all duration-200 hover:shadow-xl group"
             >
               {renderInfo(item)}
