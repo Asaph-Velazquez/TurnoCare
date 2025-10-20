@@ -8,6 +8,8 @@ import RegistrarEnfermero from './Components/Enfermero/RegistrarEnfermero';
 import Enfermero from './Components/Enfermero/Enfermero';
 import Footer from './Components/Footer';
 import RegistrarHospital from './Components/Hospital/RegistrarHospital';
+import ActualizarHospital from './Components/Hospital/ActualizarHospital';
+import EliminarHospital from './Components/Hospital/EliminarHospital';
 import Hospital from './Components/Hospital/Hospital';
 
 function App() {
@@ -20,6 +22,8 @@ function App() {
         <Route path="/Enfermero" element={<Enfermero />} />
         <Route path="/RegistrarEnfermero" element={<RegistrarEnfermero />} />
         <Route path="/RegistrarHospital" element={<RegistrarHospital />} />
+        <Route path="/ActualizarHospital" element={<ActualizarHospital />} />
+        <Route path="/EliminarHospital" element={<EliminarHospital />} />
         <Route path="/Hospital" element={<Hospital />} />
       </Routes>
       <Footer />
