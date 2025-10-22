@@ -134,3 +134,9 @@ CREATE TABLE Enfermero_Capacitacion(
     CONSTRAINT fk_ec_capacitacion FOREIGN KEY (capacitacionId) 
         REFERENCES Capacitacion(capacitacionId) ON DELETE CASCADE
 );
+
+
+-- Modificaciones en el ritmo de desarrollo
+alter table paciente drop column apellido;
+alter table paciente add column apellidop varchar(50);
+alter table paciente add column apellidom varchar(100); 
