@@ -177,12 +177,11 @@ function AdminHome() {
         navigate("/Hospital");
         break;
       case "servicios":
-        // navigate("X3 XD");
         navigate("/RegistrarServicios");
         break;
       case "pacientes":
-        // navigate("LO MISMO QUE EL ANTERIOR");
-        alert("Ir a Gestionar Pacientes");
+        navigate("/pacientes");
+        break;
     }
   };
 

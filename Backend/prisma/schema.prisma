@@ -85,7 +85,8 @@ model Enfermero {
 
 model Paciente {
   pacienteId       Int      @id @default(autoincrement())
-  apellido         String   @db.VarChar(100)
+  apellidop         String   @db.VarChar(50)
+  apellidom         String   @db.VarChar(100)
   nombre           String   @db.VarChar(100)
   numeroExpediente String   @unique @db.VarChar(20)
   edad             Int?
