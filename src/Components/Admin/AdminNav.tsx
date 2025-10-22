@@ -53,7 +53,7 @@ function AdminNav() {
                 Enfermeros
               </a>
               <a
-                href="/Pacientes"
+                href="/pacientes"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Pacientes

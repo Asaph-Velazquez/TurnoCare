@@ -1,24 +1,20 @@
 const { Router } = require("express");
+const { listPacientes, createPaciente, deletePaciente } = require("../controllers/pacientes.controller");
 
 const router = Router();
 
+// Ruta de prueba
 router.get("/hola", (req, resp) => {
     resp.send("Pacientes API");
 });
 
+// Listar pacientes
+router.get("/", listPacientes);
 
+// Crear paciente
+router.post("/", createPaciente);
 
-
-// ===== PACIENTES =====
-// Aquí van los endpoints para manejar pacientes
-// Ejemplo:
-// app.get("/api/pacientes", async (req, resp) => {
-//     try {
-//         const pacientes = await prisma.paciente.findMany();
-//         resp.json(pacientes);
-//     } catch(err) {
-//         resp.status(500).json({error: "Error"});
-//     }
-// });
+// Eliminar paciente
+router.delete("/:id", deletePaciente);
 
 module.exports = router;
