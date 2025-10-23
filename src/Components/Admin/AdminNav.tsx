@@ -45,7 +45,7 @@ function AdminNav() {
                 Hospital
               </a>
               <a
-                href="#servicios"
+                href="/Servicios"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Servicios

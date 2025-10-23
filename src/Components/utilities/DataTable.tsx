@@ -34,14 +34,20 @@ function DataTable<T extends Record<string, any>>({
   };
 
   // Filtrado local si no se proporciona onSearch
+  const extractPrimitives = (value: any): string[] => {
+    if (value === null || value === undefined) return [];
+    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") return [String(value)];
+    if (Array.isArray(value)) return value.flatMap((v) => extractPrimitives(v));
+    if (typeof value === "object") return Object.values(value).flatMap((v) => extractPrimitives(v));
+    return [];
+  };
+
   const filteredData = onSearch
     ? data
-    : data.filter((item) =>
-        Object.values(item)
-          .join(" ")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase())
-      );
+    : data.filter((item) => {
+        const tokens = extractPrimitives(item).join(" ").toLowerCase();
+        return tokens.includes(searchTerm.toLowerCase());
+      });
 
   return (
     <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-lg">

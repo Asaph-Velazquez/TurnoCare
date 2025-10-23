@@ -1,4 +1,10 @@
 const { Router } = require("express");
+const {
+    registerService,
+    deleteService,
+    updateService,
+    listServices
+} = require("../controllers/servicios.controller");
 
 const router = Router();
 
@@ -6,19 +12,10 @@ router.get("/hola", (req, resp) => {
     resp.send("Servicios API");
 });
 
+router.post("/createService", registerService);
+router.delete("/deleteService/:id", deleteService);
+router.put("/updateService/:id", updateService);
+router.get("/listServices", listServices);
 
-
-
-// ===== SERVICIOS =====
-// Aquí van los endpoints para manejar servicios del hospital
-// Ejemplo:
-// app.get("/api/servicios", async (req, resp) => {
-//     try {
-//         const servicios = await prisma.servicio.findMany();
-//         resp.json(servicios);
-//     } catch(err) {
-//         resp.status(500).json({error: "Error"});
-//     }
-// });
 
 module.exports = router;
