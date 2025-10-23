@@ -12,7 +12,6 @@ function RegistrarMedicamento() {
     viaAdministracion: "Oral",
     frecuencia: "",
     fechaHoraAdministracion: "",
-    registroMedicoId: "",
     enfermeroResponsable: "",
   });
 
@@ -25,7 +24,10 @@ function RegistrarMedicamento() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setForm((s) => ({ ...s, [name]: value }));
+    setForm((s) => ({
+      ...s,
+      [name]: name === "enfermeroResponsable" ? value.toUpperCase() : value,
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,12 +38,20 @@ function RegistrarMedicamento() {
     try {
       const payload = {
         ...form,
-        registroMedicoId: Number(form.registroMedicoId),
-        enfermeroResponsable: Number(form.enfermeroResponsable),
+        enfermeroResponsable: form.enfermeroResponsable.trim() || null,
         fechaHoraAdministracion: form.fechaHoraAdministracion
           ? new Date(form.fechaHoraAdministracion).toISOString()
           : null,
       };
+
+      if (!payload.enfermeroResponsable) {
+        setAlert({
+          type: "danger",
+          message: "El ID del enfermero responsable es obligatorio",
+        });
+        setLoading(false);
+        return;
+      }
 
       const response = await axios.post(
         "http://localhost:5000/api/medicamentos/",
@@ -59,7 +69,6 @@ function RegistrarMedicamento() {
         viaAdministracion: "Oral",
         frecuencia: "",
         fechaHoraAdministracion: "",
-        registroMedicoId: "",
         enfermeroResponsable: "",
       });
     } catch (error: any) {
@@ -132,13 +141,6 @@ function RegistrarMedicamento() {
                     type="datetime-local"
                     value={form.fechaHoraAdministracion}
                     onChange={handleChange as any}
-                  />
-                  <TextField
-                    label="ID Registro Médico"
-                    name="registroMedicoId"
-                    value={form.registroMedicoId}
-                    onChange={handleChange as any}
-                    required
                   />
                   <TextField
                     label="ID Enfermero Responsable"

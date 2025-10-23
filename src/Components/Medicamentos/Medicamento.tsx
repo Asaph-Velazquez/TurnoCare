@@ -89,6 +89,12 @@ function Medicamento() {
       case "RegistrarMedicamento":
         navigate("/RegistrarMedicamento");
         break;
+      case "ActualizarMedicamento":
+        navigate("/ActualizarMedicamento");
+        break;
+      case "EliminarMedicamento":
+        navigate("/EliminarMedicamento");
+        break;
       default:
         console.log(`Acción pendiente: ${optionId}`);
         break;

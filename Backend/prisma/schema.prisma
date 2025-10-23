@@ -114,7 +114,6 @@ model RegistroMedico {
   // Relaciones
   paciente       Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
   enfermero      Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Restrict)
-  medicamentos   Medicamentos[]
   
   @@map("registromedico")
 }
@@ -126,11 +125,9 @@ model Medicamentos {
   viaAdministracion        String?  @db.VarChar(50)
   frecuencia               String?  @db.VarChar(50)
   fechaHoraAdministracion  DateTime?
-  registroMedicoId         Int
   enfermeroResponsable     Int
   
   // Relaciones
-  registroMedico           RegistroMedico @relation(fields: [registroMedicoId], references: [registroId], onDelete: Cascade)
   enfermero                Enfermero @relation(fields: [enfermeroResponsable], references: [enfermeroId], onDelete: Restrict)
   
   @@map("medicamentos")

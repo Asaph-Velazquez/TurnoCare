@@ -9,7 +9,6 @@ interface Medicamento {
   viaAdministracion: string | null;
   frecuencia: string | null;
   fechaHoraAdministracion: string | null; // ISO string
-  registroMedicoId: number;
   enfermeroResponsable: number;
 }
 
@@ -18,7 +17,10 @@ interface MedicamentoListProps {
   onMedicamentoSelect?: (med: Medicamento) => void;
 }
 
-function MedicamentoList({ refreshTrigger = 0, onMedicamentoSelect }: MedicamentoListProps) {
+function MedicamentoList({
+  refreshTrigger = 0,
+  onMedicamentoSelect,
+}: MedicamentoListProps) {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,9 @@ function MedicamentoList({ refreshTrigger = 0, onMedicamentoSelect }: Medicament
   const fetchMedicamentos = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/medicamentos/");
+      const response = await axios.get(
+        "http://localhost:5000/api/medicamentos/"
+      );
       if (response.data.success && response.data.data) {
         setMedicamentos(response.data.data);
       }
@@ -42,10 +46,29 @@ function MedicamentoList({ refreshTrigger = 0, onMedicamentoSelect }: Medicament
 
   const columns = [
     { key: "nombre", label: "Nombre" },
-    { key: "dosis", label: "Dosis", render: (m: Medicamento) => m.dosis || "-" },
-    { key: "viaAdministracion", label: "Vía", render: (m: Medicamento) => m.viaAdministracion || "-" },
-    { key: "frecuencia", label: "Frecuencia", render: (m: Medicamento) => m.frecuencia || "-" },
-    { key: "fechaHoraAdministracion", label: "Próxima administración", render: (m: Medicamento) => m.fechaHoraAdministracion ? new Date(m.fechaHoraAdministracion).toLocaleString() : "-" },
+    {
+      key: "dosis",
+      label: "Dosis",
+      render: (m: Medicamento) => m.dosis || "-",
+    },
+    {
+      key: "viaAdministracion",
+      label: "Vía",
+      render: (m: Medicamento) => m.viaAdministracion || "-",
+    },
+    {
+      key: "frecuencia",
+      label: "Frecuencia",
+      render: (m: Medicamento) => m.frecuencia || "-",
+    },
+    {
+      key: "fechaHoraAdministracion",
+      label: "Próxima administración",
+      render: (m: Medicamento) =>
+        m.fechaHoraAdministracion
+          ? new Date(m.fechaHoraAdministracion).toLocaleString()
+          : "-",
+    },
     {
       key: "actions",
       label: "Acciones",
@@ -63,7 +86,9 @@ function MedicamentoList({ refreshTrigger = 0, onMedicamentoSelect }: Medicament
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-auto-primary">Lista de Medicamentos</h3>
+        <h3 className="text-2xl font-bold text-auto-primary">
+          Lista de Medicamentos
+        </h3>
         <button
           onClick={fetchMedicamentos}
           disabled={loading}

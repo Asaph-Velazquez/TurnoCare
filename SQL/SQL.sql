@@ -93,10 +93,7 @@ CREATE TABLE Medicamentos (
     viaAdministracion VARCHAR(50),
     frecuencia VARCHAR(50),
     fechaHoraAdministracion TIMESTAMP,
-    registroMedicoId INTEGER NOT NULL,
     enfermeroResponsable INTEGER NOT NULL,
-    CONSTRAINT fk_medicamento_registro FOREIGN KEY (registroMedicoId) 
-        REFERENCES RegistroMedico(registroId) ON DELETE CASCADE,
     CONSTRAINT fk_medicamento_enfermero FOREIGN KEY (enfermeroResponsable) 
         REFERENCES Enfermero(enfermeroId) ON DELETE RESTRICT
 );

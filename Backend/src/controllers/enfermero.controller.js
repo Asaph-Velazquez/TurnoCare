@@ -98,8 +98,79 @@ const createEnfermero = async (req, resp) => {
     }
 };
 
+// Eliminar un enfermero por ID
+const deleteEnfermero = async (req, resp) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
+    }
+
+    try {
+        // Verificar que el enfermero existe
+        const enfermero = await prisma.enfermero.findUnique({
+            where: { enfermeroId: parseInt(id) }
+        });
+
+        if (!enfermero) {
+            return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
+        }
+
+        // Eliminar el enfermero
+        await prisma.enfermero.delete({
+            where: { enfermeroId: parseInt(id) }
+        });
+
+        resp.json({ success: true, message: 'Enfermero eliminado exitosamente' });
+    } catch (err) {
+        console.error('Error eliminando enfermero:', err);
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+// Actualizar un enfermero por ID
+const updateEnfermero = async (req, resp) => {
+    const { id } = req.params;
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador } = req.body;
+
+    if (!id) {
+        return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
+    }
+
+    try {
+        // Verificar que el enfermero existe
+        const existing = await prisma.enfermero.findUnique({ where: { enfermeroId: parseInt(id) } });
+        if (!existing) {
+            return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
+        }
+
+        const data = {};
+        if (numeroEmpleado !== undefined) data.numeroEmpleado = numeroEmpleado;
+        if (nombre !== undefined) data.nombre = nombre;
+        if (apellidoPaterno !== undefined) data.apellidoPaterno = apellidoPaterno;
+        if (apellidoMaterno !== undefined) data.apellidoMaterno = apellidoMaterno;
+        if (especialidad !== undefined) data.especialidad = especialidad;
+        if (esCoordinador !== undefined) data.esCoordinador = esCoordinador === true || esCoordinador === 'true';
+
+        const updated = await prisma.enfermero.update({
+            where: { enfermeroId: parseInt(id) },
+            data
+        });
+
+        resp.json({ success: true, data: updated });
+    } catch (err) {
+        console.error('Error actualizando enfermero:', err);
+        if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
+            return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
+        }
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
 module.exports = {
     login,
     listEnfermeros,
-    createEnfermero
+    createEnfermero,
+    deleteEnfermero,
+    updateEnfermero
 };

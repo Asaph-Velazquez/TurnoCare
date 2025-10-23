@@ -8,15 +8,43 @@ const createMedicamento = async (req, resp) => {
     viaAdministracion,
     frecuencia,
     fechaHoraAdministracion,
-    registroMedicoId,
     enfermeroResponsable,
   } = req.body;
 
-  const registroId = Number(registroMedicoId);
-  const enfermeroId = Number(enfermeroResponsable);
-
-  if (!nombre || !registroId || !enfermeroId) {
+  if (!nombre || !enfermeroResponsable) {
     return resp.status(400).json({ error: "Faltan campos obligatorios" });
+  }
+
+  let enfermeroId = null;
+
+  if (typeof enfermeroResponsable === "number") {
+    enfermeroId = enfermeroResponsable;
+  } else if (typeof enfermeroResponsable === "string") {
+    const raw = enfermeroResponsable.trim();
+    if (raw) {
+      const numericCandidate = Number(raw);
+      if (!Number.isNaN(numericCandidate)) {
+        enfermeroId = numericCandidate;
+      } else {
+        try {
+          const enfermero = await prisma.enfermero.findUnique({
+            where: { numeroEmpleado: raw.toUpperCase() },
+            select: { enfermeroId: true },
+          });
+          if (enfermero) {
+            enfermeroId = enfermero.enfermeroId;
+          }
+        } catch (lookupError) {
+          console.error("Error al buscar enfermero responsable:", lookupError);
+        }
+      }
+    }
+  }
+
+  if (!enfermeroId) {
+    return resp
+      .status(400)
+      .json({ error: "Enfermero responsable inválido o no encontrado" });
   }
   try {
     const medicamento = await prisma.medicamentos.create({
@@ -28,7 +56,6 @@ const createMedicamento = async (req, resp) => {
         fechaHoraAdministracion: fechaHoraAdministracion
           ? new Date(fechaHoraAdministracion)
           : null,
-        registroMedicoId: registroId,
         enfermeroResponsable: enfermeroId,
       },
     });
@@ -44,7 +71,6 @@ const getAllMedicamentos = async (req, resp) => {
   try {
     const medicamentos = await prisma.medicamentos.findMany({
       include: {
-        registroMedico: true,
         enfermero: true,
       },
     });
@@ -61,7 +87,6 @@ const getMedicamentoById = async (req, resp) => {
     const medicamento = await prisma.medicamentos.findUnique({
       where: { medicamentoId: parseInt(id) },
       include: {
-        registroMedico: true,
         enfermero: true,
       },
     });
