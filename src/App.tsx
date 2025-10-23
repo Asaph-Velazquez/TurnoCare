@@ -1,18 +1,27 @@
-import './App.css';
-import { Routes, Route } from 'react-router-dom';
+import "./App.css";
+import { Routes, Route } from "react-router-dom";
 
-import AdminNav from './Components/Admin/AdminNav';
-import Login from './Components/Login';
-import AdminHome from './Components/Admin/AdminHome';
-import RegistrarEnfermero from './Components/Enfermero/RegistrarEnfermero';
-import EliminarEnfermero from './Components/Enfermero/EliminarEnfermero';
-import Enfermero from './Components/Enfermero/Enfermero';
-import ActualizarEnfermero from './Components/Enfermero/ActualizarEnfermero';
-import Footer from './Components/Footer';
-import RegistrarHospital from './Components/Hospital/RegistrarHospital';
+import AdminNav from "./Components/Admin/AdminNav";
+import Login from "./Components/Login";
+import AdminHome from "./Components/Admin/AdminHome";
+import RegistrarEnfermero from "./Components/Enfermero/RegistrarEnfermero";
+import EliminarEnfermero from "./Components/Enfermero/EliminarEnfermero";
+import Enfermero from "./Components/Enfermero/Enfermero";
+import ActualizarEnfermero from "./Components/Enfermero/ActualizarEnfermero";
+import Footer from "./Components/Footer";
+import RegistrarHospital from "./Components/Hospital/RegistrarHospital";
 import ActualizarHospital from './Components/Hospital/ActualizarHospital';
 import EliminarHospital from './Components/Hospital/EliminarHospital';
-import Hospital from './Components/Hospital/Hospital';
+import Hospital from "./Components/Hospital/Hospital";
+import RegistrarMedicamento from "./Components/Medicamentos/RegistrarMedicamento";
+import Medicamento from "./Components/Medicamentos/Medicamento";
+import ActualizarMedicamento from "./Components/Medicamentos/ActualizarMedicamento";
+import EliminarMedicamento from "./Components/Medicamentos/EliminarMedicamento";
+import Inventario from "./Components/Inventario/Inventario";
+import Insumos from "./Components/Insumos/Insumos";
+import RegistrarInsumo from "./Components/Insumos/RegistrarInsumo";
+import ActualizarInsumo from "./Components/Insumos/ActualizarInsumo";
+import EliminarInsumo from "./Components/Insumos/EliminarInsumo";
 import Pacientes from './Components/Pacientes/Pacientes';
 import RegistrarPacientes from './Components/Pacientes/RegistrarPacientes';
 import Service from './Components/Services/Service';
@@ -43,6 +52,21 @@ function App() {
         <Route path="/ListarServicios" element={<ListarServicios />} />
         <Route path="/ActualizarServicio" element={<ActualizarServicio />} />
         <Route path="/EliminarServicio" element={<EliminarServicio />} />
+        <Route path="/Inventario" element={<Inventario />} />
+        <Route path="/Medicamento" element={<Medicamento />} />
+        <Route
+          path="/RegistrarMedicamento"
+          element={<RegistrarMedicamento />}
+        />
+        <Route
+          path="/ActualizarMedicamento"
+          element={<ActualizarMedicamento />}
+        />
+        <Route path="/EliminarMedicamento" element={<EliminarMedicamento />} />
+        <Route path="/Insumos" element={<Insumos />} />
+        <Route path="/RegistrarInsumo" element={<RegistrarInsumo />} />
+        <Route path="/ActualizarInsumo" element={<ActualizarInsumo />} />
+        <Route path="/EliminarInsumo" element={<EliminarInsumo />} />
       </Routes>
       <Footer />
     </div>

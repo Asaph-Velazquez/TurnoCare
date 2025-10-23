@@ -1,7 +1,10 @@
 function AdminNav() {
   return (
     <div>
-      <nav className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-auto" style={{backgroundColor: 'var(--nav-bg)'}}>
+      <nav
+        className="fixed top-0 w-full z-50 backdrop-blur-md border-b border-auto"
+        style={{ backgroundColor: "var(--nav-bg)" }}
+      >
         <div className="w-full max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -61,6 +64,12 @@ function AdminNav() {
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Pacientes
+              </a>
+              <a
+                href="/Inventario"
+                className="text-auto-secondary hover:text-sky-600 transition-colors"
+              >
+                Inventario
               </a>
             </div>
           </div>

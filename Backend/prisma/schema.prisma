@@ -78,6 +78,7 @@ model Enfermero {
   registrosMedicos RegistroMedico[]
   medicamentos     Medicamentos[]
   inventarios      InventarioMedicamentos[]
+  insumos          Insumo[]
   capacitaciones   EnfermeroCapacitacion[]
   
   @@map("enfermero")
@@ -114,7 +115,6 @@ model RegistroMedico {
   // Relaciones
   paciente       Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
   enfermero      Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Restrict)
-  medicamentos   Medicamentos[]
   
   @@map("registromedico")
 }
@@ -126,11 +126,9 @@ model Medicamentos {
   viaAdministracion        String?  @db.VarChar(50)
   frecuencia               String?  @db.VarChar(50)
   fechaHoraAdministracion  DateTime?
-  registroMedicoId         Int
   enfermeroResponsable     Int
   
   // Relaciones
-  registroMedico           RegistroMedico @relation(fields: [registroMedicoId], references: [registroId], onDelete: Cascade)
   enfermero                Enfermero @relation(fields: [enfermeroResponsable], references: [enfermeroId], onDelete: Restrict)
   
   @@map("medicamentos")
@@ -146,6 +144,22 @@ model InventarioMedicamentos {
   responsable             Enfermero @relation(fields: [responsableId], references: [enfermeroId], onDelete: Restrict)
   
   @@map("inventariomedicamentos")
+}
+
+model Insumo {
+  insumoId            Int      @id @default(autoincrement())
+  nombre              String   @db.VarChar(100)
+  descripcion         String?  @db.VarChar(255)
+  categoria           String?  @db.VarChar(100)
+  cantidadDisponible  Int      @default(0)
+  unidadMedida        String?  @db.VarChar(50)
+  ubicacion           String?  @db.VarChar(120)
+  responsableId       Int?
+  actualizadoEn       DateTime @default(now())
+
+  responsable         Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
+
+  @@map("insumo")
 }
 
 model Capacitacion {
