@@ -47,9 +47,11 @@ function RegistrarPacientes() {
   useEffect(() => {
     const fetchServicios = async () => {
       try {
-        const resp = await axios.get("http://localhost:5000/api/servicios/");
+        const resp = await axios.get("http://localhost:5000/api/servicios/listServices");
         if (Array.isArray(resp.data?.data)) {
           setServicios(resp.data.data as ServicioResumen[]);
+        } else if (Array.isArray(resp.data)) {
+          setServicios(resp.data as ServicioResumen[]);
         }
       } catch (err) {
         console.warn("No se pudieron cargar servicios:", err);

@@ -21,7 +21,7 @@ function AdminHome() {
         }
       })
       .catch(() => setEnfermerosCount(0));
-    axios.get("http://localhost:5000/api/servicios")
+    axios.get("http://localhost:5000/api/servicios/listServices")
       .then(res => {
         if (res.data && Array.isArray(res.data.data)) {
           setServiciosCount(res.data.data.length);
