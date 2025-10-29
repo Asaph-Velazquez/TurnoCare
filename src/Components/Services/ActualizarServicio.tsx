@@ -4,28 +4,53 @@ import TextField from "../utilities/Form/TextField";
 import UpdateCard from "../utilities/DeleteUpdate/Update";
 
 type Service = {
-  id: number;
+  servicioId: number;
   nombre: string;
   descripcion?: string | null;
-  capacidadmaxima?: number | null;
-  personalasignado?: number | null;
-  hospitalid?: number | null;
+  capacidadMaxima?: number | null;
+  personalAsignado?: number | null;
+  hospitalId?: number | null;
+  hospital?: { hospitalId?: number; nombre?: string } | null;
+};
+
+type Hospital = {
+  hospitalId: number;
+  nombre: string;
 };
 
 export default function ActualizarServicio() {
   const [services, setServices] = useState<Service[]>([]);
   const [filtered, setFiltered] = useState<Service[]>([]);
+  const [hospitals, setHospitals] = useState<Hospital[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingList, setLoadingList] = useState(true);
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
 
-  useEffect(() => { fetchServices(); }, []);
+  useEffect(() => { fetchServices(); fetchHospitals(); }, []);
 
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) setFiltered(services); else setFiltered(services.filter(s => s.nombre.toLowerCase().includes(term) || (s.descripcion||"").toLowerCase().includes(term)));
+    if (!term) setFiltered(services); 
+    else {
+      setFiltered(services.filter(s => 
+        s.nombre.toLowerCase().includes(term) || 
+        (s.descripcion||"").toLowerCase().includes(term) ||
+        (s.hospital?.nombre||"").toLowerCase().includes(term)
+      ));
+    }
   }, [searchTerm, services]);
+
+  const fetchHospitals = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/hospital");
+      const data = res.data?.data ?? res.data;
+      setHospitals(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error("Error fetching hospitals:", e);
+      setHospitals([]);
+    }
+  };
 
   const fetchServices = async () => {
     try {
@@ -84,27 +109,60 @@ export default function ActualizarServicio() {
                 searchTerm={searchTerm}
                 onClearSearch={searchTerm ? () => setSearchTerm("") : undefined}
                 saving={saving}
-                getKey={(s) => (s as any).id}
-                renderInfo={(s) => (<><div className="flex items-start justify-between mb-3"><div className="flex-1"><h3 className="text-lg font-bold text-auto-primary group-hover:text-sky-500 transition-colors">{(s as any).nombre}</h3></div></div><div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto"><p className="text-sm text-auto-secondary">{(s as any).descripcion || <span className="italic text-auto-tertiary">No especificada</span>}</p></div></>) }
+                getKey={(s) => (s as Service).servicioId}
+                renderInfo={(s) => {
+                  const svc = s as Service;
+                  return (
+                    <>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-auto-primary group-hover:text-sky-500 transition-colors">{svc.nombre}</h3>
+                          {svc.hospital?.nombre && (
+                            <p className="text-sm text-auto-secondary mt-1">Hospital: {svc.hospital.nombre}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto">
+                        <p className="text-sm text-auto-secondary">{svc.descripcion || <span className="italic text-auto-tertiary">No especificada</span>}</p>
+                      </div>
+                    </>
+                  );
+                }}
                 buildForm={(s) => ({ ...s })}
                 renderEditor={(form, onFieldChange) => (
                   <div className="grid gap-3 md:grid-cols-2">
                     <TextField label="Nombre" name="nombre" value={form.nombre ?? ""} onChange={(e) => onFieldChange("nombre", e.target.value)} />
                     <TextField label="Descripción" name="descripcion" value={form.descripcion ?? ""} onChange={(e) => onFieldChange("descripcion", e.target.value)} />
-                    <TextField label="Capacidad máxima" name="capacidadmaxima" value={form.capacidadmaxima ?? ""} onChange={(e) => onFieldChange("capacidadmaxima", e.target.value)} />
-                    <TextField label="Personal asignado" name="personalasignado" value={form.personalasignado ?? ""} onChange={(e) => onFieldChange("personalasignado", e.target.value)} />
-                    <TextField label="ID Hospital" name="hospitalid" value={form.hospitalid ?? ""} onChange={(e) => onFieldChange("hospitalid", e.target.value)} />
+                    <TextField label="Capacidad máxima" name="capacidadMaxima" value={form.capacidadMaxima ?? ""} onChange={(e) => onFieldChange("capacidadMaxima", e.target.value)} />
+                    <TextField label="Personal asignado" name="personalAsignado" value={form.personalAsignado ?? ""} onChange={(e) => onFieldChange("personalAsignado", e.target.value)} />
+                    <div>
+                      <label className="block text-sm font-medium text-auto-primary mb-1">Hospital</label>
+                      <select
+                        name="hospitalId"
+                        value={form.hospitalId ?? ""}
+                        onChange={(e) => onFieldChange("hospitalId", e.target.value ? Number(e.target.value) : null)}
+                        className="w-full rounded-xl border border-gray-300 px-3 py-2"
+                        required
+                      >
+                        <option value="">Selecciona un hospital</option>
+                        {hospitals.map((h) => (
+                          <option key={h.hospitalId} value={h.hospitalId}>
+                            {h.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
                 onSave={async (_s, form) => {
                   setSaving(true); setAlert(null);
                   try {
-                    await axios.put(`http://localhost:5000/api/servicios/updateService/${form.id}`, {
+                    await axios.put(`http://localhost:5000/api/servicios/updateService/${form.servicioId}`, {
                       nombre: form.nombre,
                       descripcion: form.descripcion ?? null,
-                      capacidadmaxima: form.capacidadmaxima ? Number(form.capacidadmaxima) : null,
-                      personalasignado: form.personalasignado ? Number(form.personalasignado) : null,
-                      hospitalid: form.hospitalid ? Number(form.hospitalid) : null,
+                      capacidadmaxima: form.capacidadMaxima ? Number(form.capacidadMaxima) : null,
+                      personalasignado: form.personalAsignado ? Number(form.personalAsignado) : null,
+                      hospitalid: form.hospitalId ? Number(form.hospitalId) : null,
                     });
                     setAlert({ type: "success", message: "Servicio actualizado correctamente" });
                     await fetchServices();

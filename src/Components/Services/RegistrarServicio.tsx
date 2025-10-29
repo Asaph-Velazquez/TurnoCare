@@ -44,7 +44,6 @@ function RegistrarServicio({ onBack }: { onBack?: () => void }) {
       setHospitalsError(null);
       try {
         const resp = await axios.get("http://localhost:5000/api/hospital");
-        // backend returns { success: true, data: hospitales }
         const data = resp.data?.data ?? resp.data;
         setHospitals(Array.isArray(data) ? data : []);
       } catch (err: any) {

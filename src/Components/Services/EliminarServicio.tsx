@@ -3,9 +3,10 @@ import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
 
 type Service = {
-  id: number;
+  servicioId: number;
   nombre: string;
   descripcion?: string | null;
+  hospital?: { hospitalId?: number; nombre?: string } | null;
 };
 
 function EliminarServicio() {
@@ -20,7 +21,14 @@ function EliminarServicio() {
 
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
-    if (!term) setFiltered(services); else setFiltered(services.filter(s => s.nombre.toLowerCase().includes(term) || (s.descripcion||"").toLowerCase().includes(term)));
+    if (!term) setFiltered(services); 
+    else {
+      setFiltered(services.filter(s => 
+        s.nombre.toLowerCase().includes(term) || 
+        (s.descripcion||"").toLowerCase().includes(term) ||
+        (s.hospital?.nombre||"").toLowerCase().includes(term)
+      ));
+    }
   }, [searchTerm, services]);
 
   const fetchServices = async () => {
@@ -31,7 +39,16 @@ function EliminarServicio() {
     const ok = window.confirm(`¿Seguro que deseas eliminar el servicio "${s.nombre}"? Esta acción no se puede deshacer.`);
     if (!ok) return;
     setLoading(true); setAlert(null);
-    try { await axios.delete(`http://localhost:5000/api/servicios/deleteService/${s.id}`); setAlert({ type: "success", message: `Servicio "${s.nombre}" eliminado correctamente` }); await fetchServices(); } catch (err: any) { const msg = err?.response?.data?.error || err?.message || "Error al eliminar"; setAlert({ type: "danger", message: msg }); } finally { setLoading(false); }
+    try { 
+      await axios.delete(`http://localhost:5000/api/servicios/deleteService/${s.servicioId}`); 
+      setAlert({ type: "success", message: `Servicio "${s.nombre}" eliminado correctamente` }); 
+      await fetchServices(); 
+    } catch (err: any) { 
+      const msg = err?.response?.data?.error || err?.message || "Error al eliminar"; 
+      setAlert({ type: "danger", message: msg }); 
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   return (
@@ -71,8 +88,41 @@ function EliminarServicio() {
           {alert && (<div className={`mb-6 p-4 rounded-xl shadow-lg backdrop-blur-sm ${alert.type === "success" ? "bg-green-100 text-green-800 border-2 border-green-300" : "bg-red-100 text-red-800 border-2 border-red-300"}`}><div className="flex items-center gap-2"><span className="font-medium">{alert.message}</span></div></div>)}
 
           <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 md:p-8 border border-auto backdrop-blur-sm">
-            {loadingList ? (<div className="flex items-center justify-center py-16"><div className="text-center"><div className="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-500 mx-auto mb-4"></div><p className="text-auto-secondary font-medium">Cargando servicios...</p></div></div>) : (
-              <DeleteCard items={filtered} loading={loading} onDelete={handleDelete} searchTerm={searchTerm} onClearSearch={searchTerm ? () => setSearchTerm("") : undefined} emptyMessage="No se encontraron servicios" deleteLabel="Eliminar Servicio" renderInfo={(s) => (<><div className="flex items-start justify-between mb-3"><div className="flex-1"><h3 className="text-lg font-bold text-auto-primary">{s.nombre}</h3></div></div><div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto"><p className="text-sm text-auto-secondary">{s.descripcion || <span className="italic text-auto-tertiary">No especificada</span>}</p></div></>)} />
+            {loadingList ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-500 mx-auto mb-4"></div>
+                  <p className="text-auto-secondary font-medium">Cargando servicios...</p>
+                </div>
+              </div>
+            ) : (
+              <DeleteCard 
+                items={filtered} 
+                loading={loading} 
+                onDelete={handleDelete} 
+                searchTerm={searchTerm} 
+                onClearSearch={searchTerm ? () => setSearchTerm("") : undefined} 
+                emptyMessage="No se encontraron servicios" 
+                deleteLabel="Eliminar Servicio" 
+                renderInfo={(s) => {
+                  const svc = s as Service;
+                  return (
+                    <>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <h3 className="text-lg font-bold text-auto-primary">{svc.nombre}</h3>
+                          {svc.hospital?.nombre && (
+                            <p className="text-sm text-auto-secondary mt-1">Hospital: {svc.hospital.nombre}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto">
+                        <p className="text-sm text-auto-secondary">{svc.descripcion || <span className="italic text-auto-tertiary">No especificada</span>}</p>
+                      </div>
+                    </>
+                  );
+                }} 
+              />
             )}
           </div>
         </main>

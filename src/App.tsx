@@ -10,8 +10,8 @@ import Enfermero from "./Components/Enfermero/Enfermero";
 import ActualizarEnfermero from "./Components/Enfermero/ActualizarEnfermero";
 import Footer from "./Components/Footer";
 import RegistrarHospital from "./Components/Hospital/RegistrarHospital";
-import ActualizarHospital from './Components/Hospital/ActualizarHospital';
-import EliminarHospital from './Components/Hospital/EliminarHospital';
+import ActualizarHospital from "./Components/Hospital/ActualizarHospital";
+import EliminarHospital from "./Components/Hospital/EliminarHospital";
 import Hospital from "./Components/Hospital/Hospital";
 import RegistrarMedicamento from "./Components/Medicamentos/RegistrarMedicamento";
 import Medicamento from "./Components/Medicamentos/Medicamento";
@@ -22,13 +22,13 @@ import Insumos from "./Components/Insumos/Insumos";
 import RegistrarInsumo from "./Components/Insumos/RegistrarInsumo";
 import ActualizarInsumo from "./Components/Insumos/ActualizarInsumo";
 import EliminarInsumo from "./Components/Insumos/EliminarInsumo";
-import Pacientes from './Components/Pacientes/Pacientes';
-import RegistrarPacientes from './Components/Pacientes/RegistrarPacientes';
-import Service from './Components/Services/Service';
-import RegistrarServicio from './Components/Services/RegistrarServicio';
-import ListarServicios from './Components/Services/ListarServicios';
-import ActualizarServicio from './Components/Services/ActualizarServicio';
-import EliminarServicio from './Components/Services/EliminarServicio';
+import Pacientes from "./Components/Pacientes/Pacientes";
+import RegistrarPacientes from "./Components/Pacientes/RegistrarPacientes";
+import Service from "./Components/Services/Service";
+import RegistrarServicio from "./Components/Services/RegistrarServicio";
+import ListarServicios from "./Components/Services/ListarServicios";
+import ActualizarServicio from "./Components/Services/ActualizarServicio";
+import EliminarServicio from "./Components/Services/EliminarServicio";
 
 function App() {
   return (
@@ -54,14 +54,8 @@ function App() {
         <Route path="/EliminarServicio" element={<EliminarServicio />} />
         <Route path="/Inventario" element={<Inventario />} />
         <Route path="/Medicamento" element={<Medicamento />} />
-        <Route
-          path="/RegistrarMedicamento"
-          element={<RegistrarMedicamento />}
-        />
-        <Route
-          path="/ActualizarMedicamento"
-          element={<ActualizarMedicamento />}
-        />
+        <Route path="/RegistrarMedicamento" element={<RegistrarMedicamento />}/>
+        <Route path="/ActualizarMedicamento" element={<ActualizarMedicamento />}/>
         <Route path="/EliminarMedicamento" element={<EliminarMedicamento />} />
         <Route path="/Insumos" element={<Insumos />} />
         <Route path="/RegistrarInsumo" element={<RegistrarInsumo />} />
