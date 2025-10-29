@@ -35,7 +35,7 @@ function App() {
         <Route path="/Hospital" element={<Hospital />} />
         <Route path="/pacientes" element={<Pacientes />} />
         <Route path="/pacientes/registrar" element={<RegistrarPacientes />} />
-  <Route path="/pacientes/eliminar" element={<EliminarPacientes />} />
+        <Route path="/pacientes/eliminar" element={<EliminarPacientes />} />
         <Route path="/pacientes/actualizar" element={<ActualizarPacientes />} />
       </Routes>
       <Footer />
