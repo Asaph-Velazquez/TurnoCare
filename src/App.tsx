@@ -15,6 +15,8 @@ import EliminarHospital from './Components/Hospital/EliminarHospital';
 import Hospital from './Components/Hospital/Hospital';
 import Pacientes from './Components/Pacientes/Pacientes';
 import RegistrarPacientes from './Components/Pacientes/RegistrarPacientes';
+import EliminarPacientes from './Components/Pacientes/EliminarPacientes';
+import ActualizarPacientes from './Components/Pacientes/ActualizarPacientes';
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
         <Route path="/Hospital" element={<Hospital />} />
         <Route path="/pacientes" element={<Pacientes />} />
         <Route path="/pacientes/registrar" element={<RegistrarPacientes />} />
+  <Route path="/pacientes/eliminar" element={<EliminarPacientes />} />
+        <Route path="/pacientes/actualizar" element={<ActualizarPacientes />} />
       </Routes>
       <Footer />
     </div>

@@ -42,18 +42,6 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
     fetchPacientes();
   }, [refreshTrigger]);
 
-  const handleEliminar = async (id: number) => {
-    const confirmed = window.confirm("¿Eliminar paciente? Esta acción no se puede deshacer.");
-    if (!confirmed) return;
-
-    try {
-      await axios.delete(`http://localhost:5000/api/pacientes/${id}`);
-      setPacientes((prev) => prev.filter((paciente) => paciente.pacienteId !== id));
-    } catch (err: any) {
-      alert(err.response?.data?.error || err.message || "Error al eliminar paciente");
-    }
-  };
-
   const formatFechaIngreso = (value?: string | null) => {
     if (!value) return "-";
     const date = new Date(value);
@@ -100,20 +88,12 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
       key: "actions",
       label: "Acciones",
       render: (paciente: Paciente) => (
-        <div className="flex gap-2">
-          <button
-            onClick={() => onPacienteSelect?.(paciente)}
-            className="text-sky-600 hover:text-sky-800 font-medium text-sm transition-colors duration-200"
-          >
-            Ver detalles →
-          </button>
-          <button
-            onClick={() => handleEliminar(paciente.pacienteId)}
-            className="text-sm px-3 py-1 rounded-md bg-red-50 text-red-700 border"
-          >
-            Eliminar
-          </button>
-        </div>
+        <button
+          onClick={() => onPacienteSelect?.(paciente)}
+          className="text-sky-600 hover:text-sky-800 font-medium text-sm transition-colors duration-200"
+        >
+          Ver detalles →
+        </button>
       ),
     },
   ];

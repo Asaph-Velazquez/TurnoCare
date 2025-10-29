@@ -62,6 +62,12 @@ function AdminNav() {
               >
                 Pacientes
               </a>
+              <a
+                href="/pacientes/eliminar"
+                className="text-auto-secondary hover:text-sky-600 transition-colors"
+              >
+                Eliminar Pacientes
+              </a>
             </div>
           </div>
         </div>

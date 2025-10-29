@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+  import { useNavigate } from "react-router-dom";
 import PacientesList, { type Paciente } from "./PacientesList";
 
 function Pacientes() {
@@ -75,6 +75,12 @@ function Pacientes() {
     switch (optionId) {
       case "RegistrarPaciente":
         navigate("/pacientes/registrar");
+        break;
+      case "EliminarPaciente":
+        navigate("/pacientes/eliminar");
+        break;
+      case "ActualizarPaciente":
+        navigate("/pacientes/actualizar");
         break;
       // Puedes agregar lógica para eliminar o actualizar si implementas esas vistas
     }

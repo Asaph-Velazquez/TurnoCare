@@ -71,9 +71,52 @@ const deletePaciente = async (req, resp) => {
     }
 };
 
+// Actualizar paciente
+const updatePaciente = async (req, resp) => {
+    const { id } = req.params;
+    const {
+        numeroExpediente,
+        nombre,
+        apellidop,
+        apellidom,
+        edad,
+        numeroCama,
+        numeroHabitacion,
+        motivoConsulta
+    } = req.body;
+
+    try {
+        const paciente = await prisma.paciente.update({
+            where: { pacienteId: parseInt(id) },
+            data: {
+                numeroExpediente,
+                nombre,
+                apellidop,
+                apellidom,
+                edad,
+                numeroCama,
+                numeroHabitacion,
+                motivoConsulta
+            }
+        });
+
+        resp.json({ success: true, data: paciente });
+    } catch (err) {
+        console.error('Error actualizando paciente:', err);
+        if (err.code === 'P2002') {
+            return resp.status(409).json({ success: false, error: 'Número de expediente ya existe' });
+        }
+        if (err.code === 'P2025') {
+            return resp.status(404).json({ success: false, error: 'Paciente no encontrado' });
+        }
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
 module.exports = {
     listPacientes,
     createPaciente,
-    deletePaciente
+    deletePaciente,
+    updatePaciente
 };
 
