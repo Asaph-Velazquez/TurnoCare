@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { listPacientes, createPaciente, deletePaciente } = require("../controllers/pacientes.controller");
+const { listPacientes, createPaciente, deletePaciente, updatePaciente } = require("../controllers/pacientes.controller");
 
 const router = Router();
 
@@ -16,5 +16,8 @@ router.post("/", createPaciente);
 
 // Eliminar paciente
 router.delete("/:id", deletePaciente);
+
+// Actualizar paciente
+router.put("/:id", updatePaciente);
 
 module.exports = router;

@@ -29,6 +29,8 @@ import RegistrarServicio from "./Components/Services/RegistrarServicio";
 import ListarServicios from "./Components/Services/ListarServicios";
 import ActualizarServicio from "./Components/Services/ActualizarServicio";
 import EliminarServicio from "./Components/Services/EliminarServicio";
+import EliminarPacientes from './Components/Pacientes/EliminarPacientes';
+import ActualizarPacientes from './Components/Pacientes/ActualizarPacientes';
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
         <Route path="/RegistrarInsumo" element={<RegistrarInsumo />} />
         <Route path="/ActualizarInsumo" element={<ActualizarInsumo />} />
         <Route path="/EliminarInsumo" element={<EliminarInsumo />} />
+        <Route path="/pacientes/eliminar" element={<EliminarPacientes />} />
+        <Route path="/pacientes/actualizar" element={<ActualizarPacientes />} />
       </Routes>
       <Footer />
     </div>
