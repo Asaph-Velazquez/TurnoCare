@@ -35,6 +35,7 @@ const login = async (req, resp) => {
                     esCoordinador: enfermero.esCoordinador,
                     turnoAsignadoId: enfermero.turnoAsignadoId,
                     servicioActualId: enfermero.servicioActualId,
+                    habitacionAsignada: enfermero.habitacionAsignada,
                     servicio: enfermero.servicio,
                     turno: enfermero.turno
                 }
@@ -69,13 +70,27 @@ const listEnfermeros = async (req, resp) => {
 
 // Crear un nuevo enfermero
 const createEnfermero = async (req, resp) => {
-    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador } = req.body;
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
 
     if (!numeroEmpleado || !nombre || !apellidoPaterno || !apellidoMaterno) {
         return resp.status(400).json({ success: false, error: 'Faltan campos requeridos' });
     }
 
     try {
+        // Validar que el servicio existe si se proporciona
+        if (servicioActualId) {
+            const servicioExists = await prisma.servicio.findUnique({
+                where: { servicioId: servicioActualId }
+            });
+            
+            if (!servicioExists) {
+                return resp.status(400).json({ 
+                    success: false, 
+                    error: 'El servicio especificado no existe' 
+                });
+            }
+        }
+
         const enfermero = await prisma.enfermero.create({
             data: {
                 numeroEmpleado,
@@ -83,7 +98,8 @@ const createEnfermero = async (req, resp) => {
                 apellidoPaterno,
                 apellidoMaterno,
                 especialidad: especialidad || null,
-                esCoordinador: esCoordinador === true || esCoordinador === 'true'
+                esCoordinador: esCoordinador === true || esCoordinador === 'true',
+                servicioActualId: servicioActualId || null
             }
         });
 
@@ -131,7 +147,7 @@ const deleteEnfermero = async (req, resp) => {
 // Actualizar un enfermero por ID
 const updateEnfermero = async (req, resp) => {
     const { id } = req.params;
-    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador } = req.body;
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
 
     if (!id) {
         return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
@@ -144,13 +160,47 @@ const updateEnfermero = async (req, resp) => {
             return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
         }
 
-        const data = {};
-        if (numeroEmpleado !== undefined) data.numeroEmpleado = numeroEmpleado;
-        if (nombre !== undefined) data.nombre = nombre;
-        if (apellidoPaterno !== undefined) data.apellidoPaterno = apellidoPaterno;
-        if (apellidoMaterno !== undefined) data.apellidoMaterno = apellidoMaterno;
-        if (especialidad !== undefined) data.especialidad = especialidad;
-        if (esCoordinador !== undefined) data.esCoordinador = esCoordinador === true || esCoordinador === 'true';
+        // Validar que el servicio existe si se proporciona
+        if (servicioActualId !== undefined && servicioActualId !== null) {
+            const servicioExists = await prisma.servicio.findUnique({
+                where: { servicioId: servicioActualId }
+            });
+            
+            if (!servicioExists) {
+                return resp.status(400).json({ 
+                    success: false, 
+                    error: 'El servicio especificado no existe' 
+                });
+            }
+        }
+
+    const data = {};
+    if (numeroEmpleado !== undefined) data.numeroEmpleado = numeroEmpleado;
+    if (nombre !== undefined) data.nombre = nombre;
+    if (apellidoPaterno !== undefined) data.apellidoPaterno = apellidoPaterno;
+    if (apellidoMaterno !== undefined) data.apellidoMaterno = apellidoMaterno;
+    if (especialidad !== undefined) data.especialidad = especialidad;
+    if (esCoordinador !== undefined) data.esCoordinador = esCoordinador === true || esCoordinador === 'true';
+                if (servicioActualId !== undefined) {
+                    if (servicioActualId === null || servicioActualId === "") {
+                        data.servicio = { disconnect: true };
+                    } else {
+                        data.servicio = { connect: { servicioId: servicioActualId } };
+                    }
+                }
+    if (habitacionesAsignadas !== undefined) data.habitacionAsignada = habitacionesAsignadas;
+    if (turno !== undefined) {
+        if (turno === null || turno === "") {
+            data.turno = { disconnect: true };
+        } else {
+            // Buscar el turnoId por nombre
+            const turnoObj = await prisma.turno.findFirst({ where: { nombre: { equals: turno, mode: 'insensitive' } } });
+            if (!turnoObj) {
+                return resp.status(400).json({ success: false, error: `El turno '${turno}' no existe` });
+            }
+            data.turno = { connect: { turnoId: turnoObj.turnoId } };
+        }
+    }
 
         const updated = await prisma.enfermero.update({
             where: { enfermeroId: parseInt(id) },

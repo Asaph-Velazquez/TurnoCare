@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "../utilities/DataTable";
-
+import { useNavigate } from "react-router-dom";
 interface Enfermero {
   enfermeroId: number;
   numeroEmpleado: string;
@@ -10,6 +10,9 @@ interface Enfermero {
   apellidoMaterno: string;
   especialidad: string | null;
   esCoordinador: boolean;
+  servicioActualId: number | null;
+  habitacionAsignada?: string | null;
+  habitacionesAsignadas?: string | null;
 }
 
 interface EnfermeroListProps {
@@ -20,6 +23,7 @@ interface EnfermeroListProps {
 function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListProps) {
   const [enfermeros, setEnfermeros] = useState<Enfermero[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchEnfermeros();
@@ -76,8 +80,18 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
       label: "Acciones",
       render: (enf: Enfermero) => (
         <button
-          onClick={() => onEnfermeroSelect?.(enf)}
-          className="text-sky-600 hover:text-sky-800 font-medium text-sm transition-colors duration-200"
+          onClick={() => {
+            onEnfermeroSelect?.(enf);
+            navigate("/Enfermeros/Detalles", { 
+              state: { 
+                servicioActualId: enf.servicioActualId,
+                enfermeroNombre: `${enf.nombre} ${enf.apellidoPaterno}`,
+                enfermeroId: enf.enfermeroId,
+                habitacionesAsignadas: enf.habitacionesAsignadas ?? enf.habitacionAsignada ?? null
+              } 
+            });
+          }}
+          className="text-sky-600 hover:text-sky-800 font-medium text-sm transition-colors duration-200"        
         >
           Ver detalles →
         </button>

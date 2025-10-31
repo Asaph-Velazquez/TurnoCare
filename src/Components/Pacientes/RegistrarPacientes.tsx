@@ -154,6 +154,7 @@ function RegistrarPacientes() {
                     onChange={handleInputChange}
                   />
                   <div>
+                    <label className="block text-sm font-medium text-auto-primary mb-2">Fecha de Ingreso</label>
                     <input
                       id="Fecha de Ingreso"
                       name="fechaIngreso"

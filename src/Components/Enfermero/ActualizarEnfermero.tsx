@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import TextField from "../utilities/Form/TextField";
+import SelectField from "../utilities/Form/SelectField";
 import UpdateCard from "../utilities/DeleteUpdate/Update";
 
 type Enfermero = {
@@ -11,18 +12,30 @@ type Enfermero = {
   apellidoMaterno: string;
   especialidad: string | null;
   esCoordinador: boolean;
+  servicioActualId: number | null;
+  habitacionesAsignadas?: string;
+  turno?: string;
+};
+
+type Servicio = {
+  servicioId: number;
+  nombre: string;
+  descripcion?: string;
 };
 
 export default function ActualizarEnfermero() {
   const [enfermeros, setEnfermeros] = useState<Enfermero[]>([]);
   const [filteredEnfermeros, setFilteredEnfermeros] = useState<Enfermero[]>([]);
+  const [servicios, setServicios] = useState<Servicio[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingList, setLoadingList] = useState(true);
+  const [loadingServicios, setLoadingServicios] = useState(false);
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
 
   useEffect(() => {
     fetchEnfermeros();
+    fetchServicios();
   }, []);
 
   useEffect(() => {
@@ -40,11 +53,18 @@ export default function ActualizarEnfermero() {
     }
   }, [searchTerm, enfermeros]);
 
+  const mapEnfermeros = (raw: any[]): Enfermero[] => raw.map((e) => ({
+    ...e,
+    habitacionesAsignadas: e.habitacionesAsignadas ?? e.habitacionAsignada ?? "",
+    turno: e.turno && typeof e.turno === "object" && e.turno.nombre ? e.turno.nombre : (typeof e.turno === "string" ? e.turno : ""),
+  }));
+
   const fetchEnfermeros = async () => {
     try {
       setLoadingList(true);
       const res = await axios.get("http://localhost:5000/api/enfermeros");
-      const data: Enfermero[] = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+      const raw: any[] = Array.isArray(res.data?.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+      const data: Enfermero[] = mapEnfermeros(raw);
       setEnfermeros(data);
       setFilteredEnfermeros(data);
     } catch (e) {
@@ -52,6 +72,20 @@ export default function ActualizarEnfermero() {
       setFilteredEnfermeros([]);
     } finally {
       setLoadingList(false);
+    }
+  };
+
+  const fetchServicios = async () => {
+    try {
+      setLoadingServicios(true);
+      const response = await axios.get("http://localhost:5000/api/servicios/listServices");
+      const data = response.data.success ? response.data.data : response.data;
+      setServicios(data || []);
+    } catch (error) {
+      console.error("❌ Error al cargar servicios:", error);
+      setServicios([]);
+    } finally {
+      setLoadingServicios(false);
     }
   };
 
@@ -165,15 +199,35 @@ export default function ActualizarEnfermero() {
                       )}
                     </div>
                     <div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto">
-                      <p className="text-sm text-auto-secondary flex items-start gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span>
-                          <span className="font-semibold">Especialidad:</span>{" "}
-                          {(enf as any).especialidad || <span className="italic text-auto-tertiary">No especificada</span>}
-                        </span>
-                      </p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <p className="text-sm text-auto-secondary flex items-start gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                          <span>
+                            <span className="font-semibold">Especialidad:</span>{" "}
+                            {(enf as any).especialidad || <span className="italic text-auto-tertiary">No especificada</span>}
+                          </span>
+                        </p>
+                        <p className="text-sm text-auto-secondary flex items-start gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 8c-2.21 0-4-1.79-4-4h2a2 2 0 104 0h2c0 2.21-1.79 4-4 4z" />
+                          </svg>
+                          <span>
+                            <span className="font-semibold">Habitación(es):</span>{" "}
+                            {(enf as any).habitacionesAsignadas || <span className="italic text-auto-tertiary">No asignada</span>}
+                          </span>
+                        </p>
+                        <p className="text-sm text-auto-secondary flex items-start gap-2">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" />
+                          </svg>
+                          <span>
+                            <span className="font-semibold">Turno:</span>{" "}
+                            {(enf as any).turno || <span className="italic text-auto-tertiary">No asignado</span>}
+                          </span>
+                        </p>
+                      </div>
                     </div>
                   </>
                 )}
@@ -185,6 +239,32 @@ export default function ActualizarEnfermero() {
                     <TextField label="Apellido paterno" name="apellidoPaterno" value={form.apellidoPaterno ?? ""} onChange={(e) => onFieldChange("apellidoPaterno", e.target.value)} />
                     <TextField label="Apellido materno" name="apellidoMaterno" value={form.apellidoMaterno ?? ""} onChange={(e) => onFieldChange("apellidoMaterno", e.target.value)} />
                     <TextField label="Especialidad" name="especialidad" value={form.especialidad ?? ""} onChange={(e) => onFieldChange("especialidad", e.target.value)} />
+                    <TextField label="Habitación(es) asignada(s)" name="habitacionesAsignadas" value={form.habitacionesAsignadas ?? ""} onChange={(e) => onFieldChange("habitacionesAsignadas", e.target.value)} placeholder="Ej: 101, 102, 103" />
+                    <SelectField 
+                      label="Turno"
+                      name="turno"
+                      value={form.turno ?? ""}
+                      onChange={(e) => onFieldChange("turno", e.target.value)}
+                      options={[
+                        { value: "", label: "Seleccionar turno" },
+                        { value: "matutino", label: "Matutino" },
+                        { value: "vespertino", label: "Vespertino" },
+                        { value: "nocturno", label: "Nocturno" },
+                      ]}
+                    />
+                    <SelectField 
+                      label="Servicio Asignado" 
+                      name="servicioActualId" 
+                      value={form.servicioActualId?.toString() ?? ""} 
+                      onChange={(e) => onFieldChange("servicioActualId", e.target.value ? parseInt(e.target.value) : null)}
+                      options={[
+                        { value: "", label: loadingServicios ? "Cargando servicios..." : "Sin asignar" },
+                        ...servicios.map(s => ({
+                          value: s.servicioId.toString(),
+                          label: `${s.nombre}${s.descripcion ? ` - ${s.descripcion}` : ''}`
+                        }))
+                      ]}
+                    />
                     <div className="flex items-center gap-3 mt-2">
                       <input id={`coord-${(enf as any).enfermeroId}`} type="checkbox" checked={!!form.esCoordinador} onChange={(e) => onFieldChange("esCoordinador", e.currentTarget.checked)} className="h-4 w-4" />
                       <label htmlFor={`coord-${(enf as any).enfermeroId}`} className="text-auto-primary">Es coordinador</label>
@@ -202,6 +282,9 @@ export default function ActualizarEnfermero() {
                       apellidoMaterno: form.apellidoMaterno,
                       especialidad: form.especialidad ?? null,
                       esCoordinador: !!form.esCoordinador,
+                      servicioActualId: form.servicioActualId ?? null,
+                      habitacionesAsignadas: form.habitacionesAsignadas ?? "",
+                      turno: form.turno ?? "",
                     });
                     setAlert({ type: "success", message: "Datos actualizados correctamente" });
                     await fetchEnfermeros();

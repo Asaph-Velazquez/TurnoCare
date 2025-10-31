@@ -137,3 +137,7 @@ CREATE TABLE Enfermero_Capacitacion(
 alter table paciente drop column apellido;
 alter table paciente add column apellidop varchar(50);
 alter table paciente add column apellidom varchar(100); 
+
+
+--modificaciones de enfermero
+alter table enfermero add column habitacionAsignada varchar(100);

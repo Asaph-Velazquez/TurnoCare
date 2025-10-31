@@ -68,6 +68,27 @@ function Enfermero() {
         </svg>
       ),
     },
+    {
+      id: "AsignarPaciente",
+      name: "Asignar Paciente",
+      description: "Asignar un paciente a un servicio de enfermería",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+          />
+        </svg>
+      ),
+    },
   ];
   const handleOptionClick = (optionId: string) => {
     console.log(`Navegando a: ${optionId}`);
@@ -81,12 +102,15 @@ function Enfermero() {
       case "ActualizarEnfermero":
         navigate("/ActualizarEnfermero");
         break;
+      case "AsignarPaciente":
+        navigate("/AsignarPaciente");
+        break;
     }
   };
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
       {/* Fondo decorativo */}
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-127 w-full absolute top-0 left-0"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-185 w-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen">
         {/* Header */}
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">

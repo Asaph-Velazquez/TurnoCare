@@ -69,6 +69,7 @@ model Enfermero {
   numeroEmpleado   String  @unique @db.VarChar(20)
   especialidad     String? @db.VarChar(100)
   esCoordinador    Boolean @default(false)
+  habitacionAsignada  String? @db.VarChar(100)
   turnoAsignadoId  Int?
   servicioActualId Int?
   

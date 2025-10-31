@@ -82,7 +82,6 @@ function Pacientes() {
       case "ActualizarPaciente":
         navigate("/pacientes/actualizar");
         break;
-      // Puedes agregar lógica para eliminar o actualizar si implementas esas vistas
     }
   };
 

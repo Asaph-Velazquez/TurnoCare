@@ -82,10 +82,25 @@ const updatePaciente = async (req, resp) => {
         edad,
         numeroCama,
         numeroHabitacion,
-        motivoConsulta
+        motivoConsulta,
+        servicioId
     } = req.body;
 
     try {
+        // Validar que el servicio existe si se proporciona
+        if (servicioId !== undefined && servicioId !== null) {
+            const servicioExists = await prisma.servicio.findUnique({
+                where: { servicioId: servicioId }
+            });
+            
+            if (!servicioExists) {
+                return resp.status(400).json({ 
+                    success: false, 
+                    error: 'El servicio especificado no existe' 
+                });
+            }
+        }
+
         const paciente = await prisma.paciente.update({
             where: { pacienteId: parseInt(id) },
             data: {
@@ -96,7 +111,8 @@ const updatePaciente = async (req, resp) => {
                 edad,
                 numeroCama,
                 numeroHabitacion,
-                motivoConsulta
+                motivoConsulta,
+                servicioId: servicioId !== undefined ? servicioId : undefined
             }
         });
 

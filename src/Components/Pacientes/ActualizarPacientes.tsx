@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import TextField from "../utilities/Form/TextField";
+import SelectField from "../utilities/Form/SelectField";
 import UpdateCard from "../utilities/DeleteUpdate/Update";
 
 type Paciente = {
@@ -17,16 +18,25 @@ type Paciente = {
   servicioId?: number | null;
 };
 
+type Servicio = {
+  servicioId: number;
+  nombre: string;
+  descripcion?: string;
+};
+
 export default function ActualizarPacientes() {
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [filteredPacientes, setFilteredPacientes] = useState<Paciente[]>([]);
+  const [servicios, setServicios] = useState<Servicio[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingList, setLoadingList] = useState(true);
+  const [loadingServicios, setLoadingServicios] = useState(false);
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
 
   useEffect(() => {
     fetchPacientes();
+    fetchServicios();
   }, []);
 
   useEffect(() => {
@@ -57,6 +67,20 @@ export default function ActualizarPacientes() {
       setFilteredPacientes([]);
     } finally {
       setLoadingList(false);
+    }
+  };
+
+  const fetchServicios = async () => {
+    try {
+      setLoadingServicios(true);
+      const response = await axios.get("http://localhost:5000/api/servicios/listServices");
+      const data = response.data.success ? response.data.data : response.data;
+      setServicios(data || []);
+    } catch (error) {
+      console.error("❌ Error al cargar servicios:", error);
+      setServicios([]);
+    } finally {
+      setLoadingServicios(false);
     }
   };
 
@@ -232,6 +256,19 @@ export default function ActualizarPacientes() {
                       value={form.numeroCama ?? ""} 
                       onChange={(e) => onFieldChange("numeroCama", e.target.value)} 
                     />
+                    <SelectField 
+                      label="Servicio Asignado" 
+                      name="servicioId" 
+                      value={form.servicioId?.toString() ?? ""} 
+                      onChange={(e) => onFieldChange("servicioId", e.target.value ? parseInt(e.target.value) : null)}
+                      options={[
+                        { value: "", label: loadingServicios ? "Cargando servicios..." : "Sin asignar" },
+                        ...servicios.map(s => ({
+                          value: s.servicioId.toString(),
+                          label: `${s.nombre}${s.descripcion ? ` - ${s.descripcion}` : ''}`
+                        }))
+                      ]}
+                    />
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-auto-primary mb-2">Motivo de consulta</label>
                       <textarea
@@ -256,6 +293,7 @@ export default function ActualizarPacientes() {
                       numeroCama: form.numeroCama || null,
                       numeroHabitacion: form.numeroHabitacion || null,
                       motivoConsulta: form.motivoConsulta || null,
+                      servicioId: form.servicioId ?? null,
                     });
                     setAlert({ type: "success", message: "Datos del paciente actualizados correctamente" });
                     await fetchPacientes();

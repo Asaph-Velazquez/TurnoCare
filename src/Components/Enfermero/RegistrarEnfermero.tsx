@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import FormLayout from "../utilities/Form/FormLayout";
 import TextField from "../utilities/Form/TextField";
 import SelectField from "../utilities/Form/SelectField";
 import SubmitButton from "../utilities/Form/SubmitButton";
+
+interface Servicio {
+  servicioId: number;
+  nombre: string;
+  descripcion?: string;
+}
 
 function RegistrarEnfermero() {
   const [form, setForm] = useState({
@@ -13,10 +19,35 @@ function RegistrarEnfermero() {
     apellidoMaterno: "",
     especialidad: "",
     esCoordinador: "false",
+    servicioActualId: "",
+    habitacionesAsignadas: "",
+    turno: "",
   });
 
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [loadingServicios, setLoadingServicios] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{type: string, message: string} | null>(null);
+
+  useEffect(() => {
+    const fetchServicios = async () => {
+      setLoadingServicios(true);
+      try {
+        const response = await axios.get("http://localhost:5000/api/servicios/listServices");
+        const data = response.data.success ? response.data.data : response.data;
+        setServicios(data || []);
+      } catch (error) {
+        console.error("❌ Error al cargar servicios:", error);
+        setAlert({
+          type: "danger",
+          message: "Error al cargar la lista de servicios"
+        });
+      } finally {
+        setLoadingServicios(false);
+      }
+    };
+    fetchServicios();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -29,7 +60,16 @@ function RegistrarEnfermero() {
     setLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/enfermeros/", form);
+      // Preparar datos para enviar
+      const dataToSend = {
+        ...form,
+        esCoordinador: form.esCoordinador === "true",
+        servicioActualId: form.servicioActualId ? parseInt(form.servicioActualId) : null,
+        habitacionesAsignadas: form.habitacionesAsignadas,
+        turno: form.turno,
+      };
+
+      const response = await axios.post("http://localhost:5000/api/enfermeros/", dataToSend);
       console.log("✅ Enfermero registrado:", response.data);
       
       setAlert({
@@ -44,6 +84,9 @@ function RegistrarEnfermero() {
         apellidoMaterno: "",
         especialidad: "",
         esCoordinador: "false",
+        servicioActualId: "",
+        habitacionesAsignadas: "",
+        turno: "",
       });
     } catch (error: any) {
       console.error("❌ Error al registrar enfermero:", error);
@@ -79,6 +122,33 @@ function RegistrarEnfermero() {
                   <TextField label="Apellido Materno" name="apellidoMaterno" value={form.apellidoMaterno} onChange={handleChange as any} required />
                   <TextField label="Especialidad" name="especialidad" value={form.especialidad} onChange={handleChange as any} />
                   <SelectField label="Es Coordinador" name="esCoordinador" value={form.esCoordinador} onChange={handleChange as any} options={[{ value: "true", label: "Sí" }, { value: "false", label: "No" }]} />
+                  <TextField label="Habitación(es) Asignada(s)" name="habitacionesAsignadas" value={form.habitacionesAsignadas} onChange={handleChange as any} placeholder="Ej: 101, 102, 103" required />
+                  <SelectField 
+                    label="Turno"
+                    name="turno"
+                    value={form.turno}
+                    onChange={handleChange as any}
+                    required
+                    options={[
+                      { value: "", label: "Seleccionar turno" },
+                      { value: "matutino", label: "Matutino" },
+                      { value: "vespertino", label: "Vespertino" },
+                      { value: "nocturno", label: "Nocturno" },
+                    ]}
+                  />
+                  <SelectField 
+                    label="Servicio Asignado" 
+                    name="servicioActualId" 
+                    value={form.servicioActualId} 
+                    onChange={handleChange as any}
+                    options={[
+                      { value: "", label: loadingServicios ? "Cargando servicios..." : "Sin asignar" },
+                      ...servicios.map(s => ({
+                        value: s.servicioId.toString(),
+                        label: `${s.nombre}${s.descripcion ? ` - ${s.descripcion}` : ''}`
+                      }))
+                    ]}
+                  />
                 </div>
 
                 <div className="mt-6">
