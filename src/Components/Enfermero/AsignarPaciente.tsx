@@ -182,7 +182,6 @@ function AsignarPaciente() {
     e.servicioActualId?.toString() === form.servicioId
   );
 
-  /* Render principal */
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
       <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
@@ -192,7 +191,7 @@ function AsignarPaciente() {
             <div className="lg:col-span-2">
               <FormLayout title="Asignar Paciente a Servicio" onSubmit={handleSubmit} widthClass="max-w-4xl">
                 <div className="grid grid-cols-1 gap-6">
-                  /* Bloque: Selección y búsqueda de paciente */
+                  {/* Bloque: Selección y búsqueda de paciente */}
                   <div className="relative search-container">
                     <label className="block text-sm font-medium text-auto-primary mb-2">
                       Paciente <span className="text-red-500">*</span>
@@ -232,7 +231,7 @@ function AsignarPaciente() {
                       ))}
                     </select>
                   </div>
-                  /* Bloque: Información del paciente seleccionado */
+                  {/* Bloque: Información del paciente seleccionado */}
                   {selectedPaciente && (
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                       <h4 className="font-semibold text-blue-900 mb-2">Información del Paciente</h4>
@@ -247,10 +246,10 @@ function AsignarPaciente() {
                       </div>
                     </div>
                   )}
-                  /* Bloque: Selección de servicio */
-                  <SelectField 
-                    label="Servicio" 
-                    name="servicioId" 
+                  {/* Bloque: Selección de servicio */}
+                  <SelectField
+                    label="Servicio"
+                    name="servicioId"
                     value={form.servicioId} 
                     onChange={handleChange}
                     required
@@ -262,7 +261,7 @@ function AsignarPaciente() {
                       }))
                     ]}
                   />
-                  /* Bloque: Enfermeros en el servicio seleccionado */
+                  {/* Bloque: Enfermeros en el servicio seleccionado */}
                   {selectedServicio && enfermerosEnServicio.length > 0 && (
                     <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                       <h4 className="font-semibold text-green-900 mb-2">
@@ -316,20 +315,8 @@ function AsignarPaciente() {
                     <span className="font-semibold">Asignación de Pacientes:</span> Los pacientes se asignan a servicios de enfermería.
                   </p>
                   <p>
-                    Los enfermeros asignados al mismo servicio podrán ver y atender a estos pacientes.
+                    Los enfermeros asignados al mismo servicio y al mismo numero de habitacion podrán ver y atender a estos pacientes.
                   </p>
-                  <div className="mt-4 p-3 bg-sky-50 rounded-lg border border-sky-200">
-                    <p className="font-semibold text-sky-900 mb-1">🔄 Relación Enfermero-Paciente:</p>
-                    <p className="text-sky-800 text-xs">
-                      Al asignar un paciente a un servicio, todos los enfermeros de ese servicio tendrán acceso para atenderlo.
-                    </p>
-                  </div>
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="font-semibold text-blue-900 mb-1">💡 Nota:</p>
-                    <p className="text-blue-800 text-xs">
-                      Un paciente solo puede estar asignado a un servicio a la vez. Si reasignas un paciente, se actualizará su servicio actual.
-                    </p>
-                  </div>
                   {form.servicioId && enfermerosEnServicio.length > 0 && (
                     <div className="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
                       <p className="font-semibold text-green-900 mb-1">✅ Enfermeros disponibles:</p>

@@ -46,8 +46,28 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
 
   const columns = [
     {
+      key: "habitacionesAsignadas",
+      label: "Habitaciones",
+      render: (enf: Enfermero) => {
+        const habitaciones = enf.habitacionesAsignadas || enf.habitacionAsignada || "-";
+        const display = habitaciones.length > 12 ? habitaciones.slice(0, 12) + "..." : habitaciones;
+        return (
+          <span
+            title={habitaciones}
+            className="block max-w-[90px] truncate text-xs text-gray-700 dark:text-white"
+            style={{ maxWidth: 90 }}
+          >
+            {display}
+          </span>
+        );
+      }
+    },
+    {
       key: "numeroEmpleado",
       label: "Número",
+      render: (enf: Enfermero) => (
+        <span className="font-mono text-auto-primary dark:text-white">{enf.numeroEmpleado}</span>
+      )
     },
     {
       key: "nombre",
@@ -99,19 +119,21 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
     },
   ];
 
+
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-auto-primary">
+      <div className="mb-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+        <h3 className="text-xl font-bold text-auto-primary">
           Lista de Enfermeros
         </h3>
         <button
           onClick={fetchEnfermeros}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-5 py-2 bg-sky-500 hover:bg-sky-600 text-white rounded-xl font-medium text-base transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ height: 44 }}
         >
           <svg
-            className={`w-4 h-4 ${loading ? "animate-spin" : ""}`}
+            className={`w-5 h-5 ${loading ? "animate-spin" : ""}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -131,7 +153,7 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
         data={enfermeros}
         columns={columns}
         loading={loading}
-        searchPlaceholder="Buscar por nombre, número o especialidad..."
+        searchPlaceholder="Buscar por nombre, número, especialidad o habitación..."
         emptyMessage="No hay enfermeros registrados"
       />
     </div>
