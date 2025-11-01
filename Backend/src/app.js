@@ -14,11 +14,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Aquí asegúrate de montar el router en la ruta correcta:
-app.use("/api/pacientes", pacientesRoutes);
-
 //routes
-
+app.use("/api/pacientes", pacientesRoutes);
 app.use("/api/enfermeros", enfermeroRoutes);
 app.use("/api/servicios", serviciosRoutes);
 app.use("/api/turnos", turnosRoutes);

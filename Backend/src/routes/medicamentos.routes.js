@@ -7,24 +7,21 @@ const {
     deleteMedicamento,
     asignarMedicamentosAPaciente,
     getMedicamentosAsignadosPaciente,
+    desasignarMedicamentoDePaciente,
 } = require("../controllers/medicamentos.controller");
 
 const router = Router();
 
-// Ruta de prueba
-router.get("/hola", (req, resp) => {
-    resp.send("Medicamentos API");
-});
+// Asignación a pacientes (rutas específicas primero)
+router.post("/asignar", asignarMedicamentosAPaciente);
+router.get("/asignados/:pacienteId", getMedicamentosAsignadosPaciente);
+router.delete("/desasignar/:pacienteId/:medicamentoId", desasignarMedicamentoDePaciente);
 
-// CRUD endpoints
-router.post("/", createMedicamento);           // CREATE
-router.get("/", getAllMedicamentos);            // READ ALL
-router.get("/:id", getMedicamentoById);         // READ ONE
-router.put("/:id", updateMedicamento);          // UPDATE
-router.delete("/:id", deleteMedicamento);       // DELETE
-
-// Endpoints de asignación
-router.post("/asignar", asignarMedicamentosAPaciente);         // Asignar medicamentos a paciente
-router.get("/asignados/:pacienteId", getMedicamentosAsignadosPaciente); // Obtener medicamentos asignados
+// CRUD
+router.post("/", createMedicamento);
+router.get("/", getAllMedicamentos);
+router.get("/:id", getMedicamentoById);
+router.put("/:id", updateMedicamento);
+router.delete("/:id", deleteMedicamento);
 
 module.exports = router;

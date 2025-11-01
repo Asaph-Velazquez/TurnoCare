@@ -62,20 +62,22 @@ const emptyForm: PacienteFormState = {
 };
 
 function RegistrarPacientes() {
+  // Estado para medicamentos
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [medicamentoSeleccionado, setMedicamentoSeleccionado] = useState<string>("");
   const [medicamentoSeleccionadoId, setMedicamentoSeleccionadoId] = useState<number|null>(null);
   const [dosis, setDosis] = useState("");
   const [frecuencia, setFrecuencia] = useState("");
   const [medicamentosAsignados, setMedicamentosAsignados] = useState<MedicamentoAsignado[]>([]);
-  // INSUMOS HOOKS Y LOGICA
+  
+  // Estado para insumos
   const [insumos, setInsumos] = useState<Insumo[]>([]);
   const [insumoSeleccionado, setInsumoSeleccionado] = useState<string>("");
   const [insumoSeleccionadoId, setInsumoSeleccionadoId] = useState<number|null>(null);
   const [cantidadInsumo, setCantidadInsumo] = useState("");
   const [insumosAsignados, setInsumosAsignados] = useState<InsumoAsignado[]>([]);
 
-  // Cargar medicamentos disponibles
+  // Cargar medicamentos
   useEffect(() => {
     const fetchMedicamentos = async () => {
       try {
@@ -90,10 +92,7 @@ function RegistrarPacientes() {
     fetchMedicamentos();
   }, []);
 
-
-
-
-  // Agregar medicamento asignado
+  // Agregar medicamento a la lista
   const handleAgregarMedicamento = () => {
     if (!medicamentoSeleccionadoId || !dosis || !frecuencia) return;
     const med = medicamentos.find((m: Medicamento) => m.medicamentoId === medicamentoSeleccionadoId);
@@ -108,12 +107,12 @@ function RegistrarPacientes() {
     setFrecuencia("");
   };
 
-  // Eliminar medicamento asignado
+  // Eliminar medicamento de la lista
   const handleEliminarAsignado = (id: number) => {
     setMedicamentosAsignados((prev: MedicamentoAsignado[]) => prev.filter((m) => m.medicamentoId !== id));
   };
 
-  // Cargar insumos disponibles
+  // Cargar insumos
   useEffect(() => {
     const fetchInsumos = async () => {
       try {
@@ -128,7 +127,7 @@ function RegistrarPacientes() {
     fetchInsumos();
   }, []);
 
-  // Agregar insumo asignado
+  // Agregar insumo a la lista
   const handleAgregarInsumo = () => {
     if (!insumoSeleccionadoId || !cantidadInsumo) return;
     const ins = insumos.find((i: Insumo) => i.insumoId === insumoSeleccionadoId);
@@ -142,15 +141,18 @@ function RegistrarPacientes() {
     setCantidadInsumo("");
   };
 
-  // Eliminar insumo asignado
+  // Eliminar insumo de la lista
   const handleEliminarInsumo = (id: number) => {
     setInsumosAsignados((prev: InsumoAsignado[]) => prev.filter((i) => i.insumoId !== id));
   };
+  
+  // Estado del formulario
   const [form, setForm] = useState<PacienteFormState>(emptyForm);
   const [servicios, setServicios] = useState<ServicioResumen[]>([]);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
 
+  // Cargar servicios disponibles
   useEffect(() => {
     const fetchServicios = async () => {
       try {
@@ -168,11 +170,13 @@ function RegistrarPacientes() {
     fetchServicios();
   }, []);
 
+  // Opciones de servicios para el select
   const servicioOptions = useMemo(
     () => servicios.map((servicio: ServicioResumen) => ({ value: String(servicio.servicioId), label: servicio.nombre })),
     [servicios]
   );
 
+  // Manejadores de cambio en formulario
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = event.target;
     setForm((prev: PacienteFormState) => ({ ...prev, [name]: value }));
@@ -184,6 +188,7 @@ function RegistrarPacientes() {
 
   const resetForm = () => setForm(emptyForm);
 
+  // Enviar formulario
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setAlert(null);
@@ -207,28 +212,26 @@ function RegistrarPacientes() {
       const response = await axios.post("http://localhost:5000/api/pacientes/", payload);
       const pacienteId = response.data?.data?.pacienteId;
       
-      console.log("✅ Paciente registrado con ID:", pacienteId);
-      
-      // Si hay medicamentos asignados, asociarlos usando el endpoint de asignación
+      // Asignar medicamentos si existen
       if (pacienteId && medicamentosAsignados.length > 0) {
-        console.log("📋 Asignando medicamentos:", medicamentosAsignados);
         try {
           await axios.post("http://localhost:5000/api/medicamentos/asignar", {
             pacienteId,
             medicamentos: medicamentosAsignados.map((m: MedicamentoAsignado) => ({
               medicamentoId: m.medicamentoId,
-              cantidad: 1, // Por defecto 1, puedes agregar un campo si lo necesitas
+              cantidad: 1,
+              dosis: m.dosis || null,
+              frecuencia: m.frecuencia || null,
+              viaAdministracion: null,
             }))
           });
-          console.log("✅ Medicamentos asignados correctamente");
         } catch (medError: any) {
-          console.error("❌ Error al asignar medicamentos:", medError.response?.data || medError.message);
+          console.error("Error al asignar medicamentos:", medError.response?.data || medError.message);
         }
       }
       
-      // Si hay insumos asignados, asociarlos usando el endpoint de asignación
+      // Asignar insumos si existen
       if (pacienteId && insumosAsignados.length > 0) {
-        console.log("📦 Asignando insumos:", insumosAsignados);
         try {
           await axios.post("http://localhost:5000/api/insumos/asignar", {
             pacienteId,
@@ -237,9 +240,8 @@ function RegistrarPacientes() {
               cantidad: Number(i.cantidad),
             }))
           });
-          console.log("✅ Insumos asignados correctamente");
         } catch (insError: any) {
-          console.error("❌ Error al asignar insumos:", insError.response?.data || insError.message);
+          console.error("Error al asignar insumos:", insError.response?.data || insError.message);
         }
       }
 
@@ -249,10 +251,10 @@ function RegistrarPacientes() {
       });
 
       resetForm();
-  setMedicamentosAsignados([]);
-  setInsumosAsignados([]);
+      setMedicamentosAsignados([]);
+      setInsumosAsignados([]);
     } catch (error: any) {
-      console.error("❌ Error al registrar paciente:", error);
+      console.error("Error al registrar paciente:", error);
       const message = error.response?.data?.error || error.message || "Error al registrar paciente";
       setAlert({ type: "danger", message });
     } finally {

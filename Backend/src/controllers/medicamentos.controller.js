@@ -8,7 +8,7 @@ const parseOptionalInt = (value) => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
-// Crear medicamento (RF-M001, RF-M002, RF-M005)
+// CRUD - Crear
 const createMedicamento = async (req, resp) => {
   const {
     nombre,
@@ -43,7 +43,7 @@ const createMedicamento = async (req, resp) => {
   }
 };
 
-// Obtener todos los medicamentos (RF-M001)
+// CRUD - Leer todos
 const getAllMedicamentos = async (req, resp) => {
   try {
     const medicamentos = await prisma.medicamento.findMany({
@@ -56,7 +56,7 @@ const getAllMedicamentos = async (req, resp) => {
   }
 };
 
-// Obtener medicamento por ID
+// CRUD - Leer por ID
 const getMedicamentoById = async (req, resp) => {
   const { id } = req.params;
   try {
@@ -73,7 +73,7 @@ const getMedicamentoById = async (req, resp) => {
   }
 };
 
-// Actualizar medicamento (RF-M002, RF-M003)
+// CRUD - Actualizar
 const updateMedicamento = async (req, resp) => {
   const { id } = req.params;
   const {
@@ -115,7 +115,7 @@ const updateMedicamento = async (req, resp) => {
   }
 };
 
-// Eliminar medicamento
+// CRUD - Eliminar
 const deleteMedicamento = async (req, resp) => {
   const { id } = req.params;
   try {
@@ -129,23 +129,43 @@ const deleteMedicamento = async (req, resp) => {
   }
 };
 
-// Asignar medicamentos a un paciente
+// Asignar medicamentos a paciente (reemplazar o agregar)
 const asignarMedicamentosAPaciente = async (req, resp) => {
-  // Espera body: { pacienteId: number, medicamentos: [{ medicamentoId: number, cantidad: number }] }
-  const { pacienteId, medicamentos } = req.body;
+  const { pacienteId, medicamentos, reemplazar = true } = req.body;
+  
   if (!pacienteId || !Array.isArray(medicamentos)) {
     return resp.status(400).json({ error: "Datos insuficientes para asignar medicamentos" });
   }
   try {
-    // Borra asignaciones previas (opcional, según lógica de negocio)
-    await prisma.pacienteMedicamento.deleteMany({ where: { pacienteId } });
-    // Asigna los nuevos medicamentos
+    if (reemplazar) {
+      await prisma.pacienteMedicamento.deleteMany({ where: { pacienteId } });
+    }
+    
     const asignaciones = await Promise.all(
-      medicamentos.map(({ medicamentoId, cantidad }) =>
-        prisma.pacienteMedicamento.create({
-          data: { pacienteId, medicamentoId, cantidad }
-        })
-      )
+      medicamentos.map(async ({ medicamentoId, cantidad, dosis, frecuencia, viaAdministracion }) => {
+        return prisma.pacienteMedicamento.upsert({
+          where: {
+            pacienteId_medicamentoId: {
+              pacienteId,
+              medicamentoId
+            }
+          },
+          update: {
+            cantidadAsignada: cantidad,
+            dosis: dosis || null,
+            frecuencia: frecuencia || null,
+            viaAdministracion: viaAdministracion || null
+          },
+          create: {
+            pacienteId, 
+            medicamentoId, 
+            cantidadAsignada: cantidad,
+            dosis: dosis || null,
+            frecuencia: frecuencia || null,
+            viaAdministracion: viaAdministracion || null
+          }
+        });
+      })
     );
     resp.json({ success: true, data: asignaciones });
   } catch (err) {
@@ -154,7 +174,7 @@ const asignarMedicamentosAPaciente = async (req, resp) => {
   }
 };
 
-// Consultar medicamentos asignados a un paciente
+// Obtener medicamentos asignados a un paciente
 const getMedicamentosAsignadosPaciente = async (req, resp) => {
   const { pacienteId } = req.params;
   if (!pacienteId) {
@@ -173,6 +193,30 @@ const getMedicamentosAsignadosPaciente = async (req, resp) => {
   }
 };
 
+// Desasignar medicamento de un paciente
+const desasignarMedicamentoDePaciente = async (req, resp) => {
+  const { pacienteId, medicamentoId } = req.params;
+  
+  if (!pacienteId || !medicamentoId) {
+    return resp.status(400).json({ error: "Faltan parámetros requeridos" });
+  }
+
+  try {
+    await prisma.pacienteMedicamento.delete({
+      where: {
+        pacienteId_medicamentoId: {
+          pacienteId: Number(pacienteId),
+          medicamentoId: Number(medicamentoId)
+        }
+      }
+    });
+    resp.json({ success: true, message: "Medicamento desasignado correctamente" });
+  } catch (err) {
+    console.error("Error al desasignar medicamento:", err);
+    resp.status(500).json({ error: "Error al desasignar medicamento" });
+  }
+};
+
 module.exports = {
   createMedicamento,
   getAllMedicamentos,
@@ -181,4 +225,5 @@ module.exports = {
   deleteMedicamento,
   asignarMedicamentosAPaciente,
   getMedicamentosAsignadosPaciente,
+  desasignarMedicamentoDePaciente,
 };

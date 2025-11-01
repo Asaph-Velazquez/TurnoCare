@@ -1,4 +1,17 @@
-// Obtener un paciente por ID
+const { prisma } = require("../dbPostgres");
+
+// CRUD - Leer todos
+const listPacientes = async (req, resp) => {
+    try {
+        const pacientes = await prisma.paciente.findMany();
+        resp.json({ success: true, data: pacientes });
+    } catch (err) {
+        console.error('Error listando pacientes:', err);
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+// CRUD - Leer por ID
 const getPacienteById = async (req, resp) => {
     const { id } = req.params;
     try {
@@ -14,20 +27,8 @@ const getPacienteById = async (req, resp) => {
         resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
-const { prisma } = require("../dbPostgres");
 
-// Listar todos los pacientes
-const listPacientes = async (req, resp) => {
-    try {
-        const pacientes = await prisma.paciente.findMany();
-        resp.json({ success: true, data: pacientes });
-    } catch (err) {
-        console.error('Error listando pacientes:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
-    }
-};
-
-// Crear un nuevo paciente
+// CRUD - Crear
 const createPaciente = async (req, resp) => {
     const { 
         apellidop,
@@ -41,10 +42,6 @@ const createPaciente = async (req, resp) => {
         motivoConsulta,
         servicioId
     } = req.body;
-
-    /*if (!apellidop || !apellidom || !nombre || !numeroExpediente || !edad || !numeroCama || !numeroHabitacion || !fechaIngreso || !motivoConsulta || !servicioId) {
-        return resp.status(400).json({ success: false, error: 'Faltan campos requeridos' });
-    }*/
 
     try {
         const paciente = await prisma.paciente.create({
@@ -72,22 +69,7 @@ const createPaciente = async (req, resp) => {
     }
 };
 
-// Eliminar paciente
-const deletePaciente = async (req, resp) => {
-    const { id } = req.params;
-    
-    try {
-        await prisma.paciente.delete({
-            where: { pacienteId: parseInt(id) }
-        });
-        resp.json({ success: true, message: 'Paciente eliminado' });
-    } catch (err) {
-        console.error('Error eliminando paciente:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
-    }
-};
-
-// Actualizar paciente
+// CRUD - Actualizar
 const updatePaciente = async (req, resp) => {
     const { id } = req.params;
     const {
@@ -103,7 +85,6 @@ const updatePaciente = async (req, resp) => {
     } = req.body;
 
     try {
-        // Validar que el servicio existe si se proporciona
         if (servicioId !== undefined && servicioId !== null) {
             const servicioExists = await prisma.servicio.findUnique({
                 where: { servicioId: servicioId }
@@ -141,6 +122,21 @@ const updatePaciente = async (req, resp) => {
         if (err.code === 'P2025') {
             return resp.status(404).json({ success: false, error: 'Paciente no encontrado' });
         }
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+// CRUD - Eliminar
+const deletePaciente = async (req, resp) => {
+    const { id } = req.params;
+    
+    try {
+        await prisma.paciente.delete({
+            where: { pacienteId: parseInt(id) }
+        });
+        resp.json({ success: true, message: 'Paciente eliminado' });
+    } catch (err) {
+        console.error('Error eliminando paciente:', err);
         resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };

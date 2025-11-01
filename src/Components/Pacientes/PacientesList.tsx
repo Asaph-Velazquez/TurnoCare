@@ -25,6 +25,7 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Cargar lista de pacientes
   const fetchPacientes = async () => {
     try {
       setLoading(true);
@@ -38,10 +39,12 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
     }
   };
 
+  // Recargar al cambiar refreshTrigger
   useEffect(() => {
     fetchPacientes();
   }, [refreshTrigger]);
 
+  // Formatear fecha de ingreso
   const formatFechaIngreso = (value?: string | null) => {
     if (!value) return "-";
     const date = new Date(value);
@@ -49,6 +52,7 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
     return new Intl.DateTimeFormat("es-MX", { dateStyle: "short", timeStyle: "short" }).format(date);
   };
 
+  // Definición de columnas de la tabla
   const columns = [
     {
       key: "numeroExpediente",

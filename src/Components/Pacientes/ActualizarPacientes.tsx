@@ -34,11 +34,13 @@ export default function ActualizarPacientes() {
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
 
+  // Cargar datos iniciales
   useEffect(() => {
     fetchPacientes();
     fetchServicios();
   }, []);
 
+  // Filtrar pacientes por búsqueda
   useEffect(() => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) {
@@ -133,7 +135,7 @@ export default function ActualizarPacientes() {
             </div>
           </div>
 
-          {/* Alertas */}
+          {/* Alertas de estado */}
           {alert && (
             <div
               className={`mb-6 p-4 rounded-xl shadow-lg backdrop-blur-sm ${
@@ -157,7 +159,7 @@ export default function ActualizarPacientes() {
             </div>
           )}
 
-          {/* Lista editable modular */}
+          {/* Lista editable de pacientes */}
           <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 md:p-8 border border-auto backdrop-blur-sm">
             {loadingList ? (
               <div className="flex items-center justify-center py-16">

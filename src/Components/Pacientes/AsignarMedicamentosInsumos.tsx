@@ -57,7 +57,7 @@ function AsignarMedicamentosInsumos() {
   
   const [activeTab, setActiveTab] = useState<'medicamentos' | 'insumos'>('medicamentos');
 
-  /* Carga inicial de datos */
+  // Cargar datos iniciales
   useEffect(() => {
     const fetchData = async () => {
       setLoadingPacientes(true);
@@ -96,7 +96,7 @@ function AsignarMedicamentosInsumos() {
     fetchData();
   }, []);
 
-  /* Filtro de pacientes por búsqueda */
+  // Filtrar pacientes por búsqueda
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredPacientes([]);
@@ -112,7 +112,7 @@ function AsignarMedicamentosInsumos() {
     setFilteredPacientes(filtered);
   }, [searchTerm, pacientes]);
 
-  /* Agregar medicamento a la lista de asignados */
+  // Agregar medicamento a la lista
   const handleAddMedicamento = (medicamentoId: number) => {
     if (medicamentosAsignados.some(m => m.id === medicamentoId)) {
       setAlert({ type: "danger", message: "Este medicamento ya está en la lista" });
@@ -124,7 +124,7 @@ function AsignarMedicamentosInsumos() {
     ]);
   };
 
-  /* Agregar insumo a la lista de asignados */
+  // Agregar insumo a la lista
   const handleAddInsumo = (insumoId: number) => {
     if (insumosAsignados.some(i => i.id === insumoId)) {
       setAlert({ type: "danger", message: "Este insumo ya está en la lista" });
@@ -136,7 +136,7 @@ function AsignarMedicamentosInsumos() {
     ]);
   };
 
-  /* Actualizar cantidad/detalles de medicamento asignado */
+  // Actualizar detalles de medicamento
   const handleUpdateMedicamento = (medicamentoId: number, field: string, value: any) => {
     setMedicamentosAsignados(medicamentosAsignados.map(m => 
       m.id === medicamentoId ? { ...m, [field]: value } : m
@@ -150,17 +150,17 @@ function AsignarMedicamentosInsumos() {
     ));
   };
 
-  /* Eliminar medicamento de la lista */
+  // Eliminar medicamento de la lista
   const handleRemoveMedicamento = (medicamentoId: number) => {
     setMedicamentosAsignados(medicamentosAsignados.filter(m => m.id !== medicamentoId));
   };
 
-  /* Eliminar insumo de la lista */
+  // Eliminar insumo de la lista
   const handleRemoveInsumo = (insumoId: number) => {
     setInsumosAsignados(insumosAsignados.filter(i => i.id !== insumoId));
   };
 
-  /* Enviar asignación */
+  // Enviar formulario de asignación
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setAlert(null);
@@ -177,22 +177,27 @@ function AsignarMedicamentosInsumos() {
 
     setLoading(true);
     try {
-      // Asignar medicamentos
+      // Asignar medicamentos si existen
       if (medicamentosAsignados.length > 0) {
         const medicamentosPayload = {
           pacienteId: parseInt(selectedPacienteId),
+          reemplazar: false,
           medicamentos: medicamentosAsignados.map(m => ({
             medicamentoId: m.id,
             cantidad: m.cantidad,
+            dosis: m.dosis?.trim() || null,
+            frecuencia: m.frecuencia?.trim() || null,
+            viaAdministracion: m.viaAdministracion?.trim() || null,
           }))
         };
         await axios.post("http://localhost:5000/api/medicamentos/asignar", medicamentosPayload);
       }
 
-      // Asignar insumos
+      // Asignar insumos si existen
       if (insumosAsignados.length > 0) {
         const insumosPayload = {
           pacienteId: parseInt(selectedPacienteId),
+          reemplazar: false,
           insumos: insumosAsignados.map(i => ({
             insumoId: i.id,
             cantidad: i.cantidad,
@@ -222,6 +227,7 @@ function AsignarMedicamentosInsumos() {
     }
   };
 
+  // Filtros de medicamentos e insumos disponibles
   const selectedPaciente = pacientes.find(p => p.pacienteId.toString() === selectedPacienteId);
   const medicamentosDisponibles = medicamentos.filter(m => 
     !medicamentosAsignados.some(ma => ma.id === m.medicamentoId) && m.cantidadStock > 0
@@ -280,9 +286,9 @@ function AsignarMedicamentosInsumos() {
 
                   {/* Información del paciente seleccionado */}
                   {selectedPaciente && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                      <h4 className="font-semibold text-blue-900 mb-2">👤 Paciente Seleccionado</h4>
-                      <div className="text-sm text-blue-800">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-4">
+                      <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">👤 Paciente Seleccionado</h4>
+                      <div className="text-sm text-blue-800 dark:text-blue-200">
                         <p><span className="font-medium">Nombre:</span> {selectedPaciente.nombre} {selectedPaciente.apellidop} {selectedPaciente.apellidom}</p>
                         <p><span className="font-medium">Expediente:</span> {selectedPaciente.numeroExpediente}</p>
                       </div>
@@ -320,19 +326,19 @@ function AsignarMedicamentosInsumos() {
                       {/* Contenido de Medicamentos */}
                       {activeTab === 'medicamentos' && (
                         <div className="space-y-4">
-                          <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
-                            <h4 className="font-semibold text-purple-900 mb-3">Agregar Medicamento</h4>
+                          <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-xl p-4">
+                            <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-3">Agregar Medicamento</h4>
                             <div className="max-h-60 overflow-y-auto space-y-2">
                               {loadingMedicamentos ? (
-                                <p className="text-sm text-purple-700">Cargando medicamentos...</p>
+                                <p className="text-sm text-purple-700 dark:text-purple-300">Cargando medicamentos...</p>
                               ) : medicamentosDisponibles.length === 0 ? (
-                                <p className="text-sm text-purple-700">No hay medicamentos disponibles en inventario</p>
+                                <p className="text-sm text-purple-700 dark:text-purple-300">No hay medicamentos disponibles en inventario</p>
                               ) : (
                                 medicamentosDisponibles.map(med => (
-                                  <div key={med.medicamentoId} className="bg-white rounded-lg p-3 flex items-center justify-between">
+                                  <div key={med.medicamentoId} className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between border border-transparent dark:border-gray-700">
                                     <div className="flex-1">
-                                      <p className="font-medium text-purple-900">{med.nombre}</p>
-                                      <p className="text-xs text-purple-700">
+                                      <p className="font-medium text-purple-900 dark:text-purple-300">{med.nombre}</p>
+                                      <p className="text-xs text-purple-700 dark:text-purple-400">
                                         Stock: {med.cantidadStock} unidades
                                         {med.lote && ` • Lote: ${med.lote}`}
                                         {med.ubicacion && ` • ${med.ubicacion}`}
@@ -353,64 +359,78 @@ function AsignarMedicamentosInsumos() {
 
                           {/* Lista de medicamentos asignados */}
                           {medicamentosAsignados.length > 0 && (
-                            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                              <h4 className="font-semibold text-green-900 mb-3">Medicamentos a Asignar</h4>
+                            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
+                              <h4 className="font-semibold text-green-900 dark:text-green-300 mb-3">Medicamentos a Asignar</h4>
                               <div className="space-y-3">
                                 {medicamentosAsignados.map(item => {
                                   const med = medicamentos.find(m => m.medicamentoId === item.id);
                                   if (!med) return null;
                                   return (
-                                    <div key={item.id} className="bg-white rounded-lg p-3 border border-green-300">
+                                    <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-green-300 dark:border-green-700">
                                       <div className="flex items-center justify-between mb-2">
-                                        <p className="font-medium text-green-900">{med.nombre}</p>
+                                        <p className="font-medium text-green-900 dark:text-green-300">{med.nombre}</p>
                                         <button
                                           type="button"
                                           onClick={() => handleRemoveMedicamento(item.id)}
-                                          className="text-red-500 hover:text-red-700"
+                                          className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                                         >
-                                          ✕
+                                        <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        strokeWidth="1.5"
+                                        stroke="currentColor"
+                                        className="w-8 h-8 text-auto-primary"
+                                        >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 4.5v15m7.5-7.5h-15"
+                                        />
+                                        </svg>
                                         </button>
                                       </div>
                                       <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                          <label className="text-xs text-green-800">Cantidad</label>
+                                          <label className="text-xs text-green-800 dark:text-green-200">Cantidad</label>
                                           <input
                                             type="number"
                                             min="1"
                                             max={med.cantidadStock}
                                             value={item.cantidad}
                                             onChange={(e) => handleUpdateMedicamento(item.id, 'cantidad', parseInt(e.target.value) || 1)}
-                                            className="w-full px-2 py-1 border border-green-300 rounded text-sm"
+                                            className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                                           />
                                         </div>
                                         <div>
-                                          <label className="text-xs text-green-800">Dosis</label>
+                                          <label className="text-xs text-green-800 dark:text-green-200">Dosis</label>
                                           <input
                                             type="text"
                                             value={item.dosis || ''}
                                             onChange={(e) => handleUpdateMedicamento(item.id, 'dosis', e.target.value)}
                                             placeholder="ej: 500mg"
-                                            className="w-full px-2 py-1 border border-green-300 rounded text-sm"
+                                            className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                                           />
                                         </div>
                                         <div>
-                                          <label className="text-xs text-green-800">Frecuencia</label>
+                                          <label className="text-xs text-green-800 dark:text-green-200">Frecuencia</label>
                                           <input
                                             type="text"
                                             value={item.frecuencia || ''}
                                             onChange={(e) => handleUpdateMedicamento(item.id, 'frecuencia', e.target.value)}
                                             placeholder="ej: cada 8 horas"
-                                            className="w-full px-2 py-1 border border-green-300 rounded text-sm"
+                                            className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                                           />
                                         </div>
                                         <div>
-                                          <label className="text-xs text-green-800">Vía</label>
+                                          <label className="text-xs text-green-800 dark:text-green-200">Vía</label>
                                           <input
                                             type="text"
                                             value={item.viaAdministracion || ''}
                                             onChange={(e) => handleUpdateMedicamento(item.id, 'viaAdministracion', e.target.value)}
                                             placeholder="ej: oral, IV"
-                                            className="w-full px-2 py-1 border border-green-300 rounded text-sm"
+                                            className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
                                           />
                                         </div>
                                       </div>
@@ -426,19 +446,19 @@ function AsignarMedicamentosInsumos() {
                       {/* Contenido de Insumos */}
                       {activeTab === 'insumos' && (
                         <div className="space-y-4">
-                          <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
-                            <h4 className="font-semibold text-cyan-900 mb-3">Agregar Insumo</h4>
+                          <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-700 rounded-xl p-4">
+                            <h4 className="font-semibold text-cyan-900 dark:text-cyan-300 mb-3">Agregar Insumo</h4>
                             <div className="max-h-60 overflow-y-auto space-y-2">
                               {loadingInsumos ? (
-                                <p className="text-sm text-cyan-700">Cargando insumos...</p>
+                                <p className="text-sm text-cyan-700 dark:text-cyan-300">Cargando insumos...</p>
                               ) : insumosDisponibles.length === 0 ? (
-                                <p className="text-sm text-cyan-700">No hay insumos disponibles en inventario</p>
+                                <p className="text-sm text-cyan-700 dark:text-cyan-300">No hay insumos disponibles en inventario</p>
                               ) : (
                                 insumosDisponibles.map(ins => (
-                                  <div key={ins.insumoId} className="bg-white rounded-lg p-3 flex items-center justify-between">
+                                  <div key={ins.insumoId} className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between border border-transparent dark:border-gray-700">
                                     <div className="flex-1">
-                                      <p className="font-medium text-cyan-900">{ins.nombre}</p>
-                                      <p className="text-xs text-cyan-700">
+                                      <p className="font-medium text-cyan-900 dark:text-cyan-300">{ins.nombre}</p>
+                                      <p className="text-xs text-cyan-700 dark:text-cyan-400">
                                         Disponible: {ins.cantidadDisponible} unidades
                                         {ins.categoria && ` • ${ins.categoria}`}
                                         {ins.ubicacion && ` • ${ins.ubicacion}`}
@@ -459,32 +479,32 @@ function AsignarMedicamentosInsumos() {
 
                           {/* Lista de insumos asignados */}
                           {insumosAsignados.length > 0 && (
-                            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                              <h4 className="font-semibold text-green-900 mb-3">Insumos a Asignar</h4>
+                            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
+                              <h4 className="font-semibold text-green-900 dark:text-green-300 mb-3">Insumos a Asignar</h4>
                               <div className="space-y-3">
                                 {insumosAsignados.map(item => {
                                   const ins = insumos.find(i => i.insumoId === item.id);
                                   if (!ins) return null;
                                   return (
-                                    <div key={item.id} className="bg-white rounded-lg p-3 border border-green-300 flex items-center justify-between">
+                                    <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-green-300 dark:border-green-700 flex items-center justify-between">
                                       <div className="flex-1">
-                                        <p className="font-medium text-green-900">{ins.nombre}</p>
+                                        <p className="font-medium text-green-900 dark:text-green-300">{ins.nombre}</p>
                                         <div className="mt-2">
-                                          <label className="text-xs text-green-800">Cantidad</label>
+                                          <label className="text-xs text-green-800 dark:text-green-200">Cantidad</label>
                                           <input
                                             type="number"
                                             min="1"
                                             max={ins.cantidadDisponible}
                                             value={item.cantidad}
                                             onChange={(e) => handleUpdateInsumo(item.id, parseInt(e.target.value) || 1)}
-                                            className="w-24 px-2 py-1 border border-green-300 rounded text-sm"
+                                            className="w-24 px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                                           />
                                         </div>
                                       </div>
                                       <button
                                         type="button"
                                         onClick={() => handleRemoveInsumo(item.id)}
-                                        className="text-red-500 hover:text-red-700 ml-3"
+                                        className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-3"
                                       >
                                         ✕
                                       </button>
@@ -511,7 +531,11 @@ function AsignarMedicamentosInsumos() {
                 </div>
 
                 {alert && (
-                  <div className={`mt-4 p-4 rounded-xl ${alert.type === 'success' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-red-100 text-red-800 border border-red-300'}`}>
+                  <div className={`mt-4 p-4 rounded-xl ${
+                    alert.type === 'success' 
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700' 
+                      : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700'
+                  }`}>
                     {alert.message}
                   </div>
                 )}
@@ -534,13 +558,13 @@ function AsignarMedicamentosInsumos() {
                     Puedes especificar la cantidad, dosis, frecuencia y vía de administración para cada medicamento.
                   </p>
                   {medicamentosAsignados.length > 0 && (
-                    <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                      <p className="font-semibold text-purple-900 mb-1">💊 Medicamentos: {medicamentosAsignados.length}</p>
+                    <div className="mt-4 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
+                      <p className="font-semibold text-purple-900 dark:text-purple-300 mb-1">💊 Medicamentos: {medicamentosAsignados.length}</p>
                     </div>
                   )}
                   {insumosAsignados.length > 0 && (
-                    <div className="mt-4 p-3 bg-cyan-50 rounded-lg border border-cyan-200">
-                      <p className="font-semibold text-cyan-900 mb-1">🏥 Insumos: {insumosAsignados.length}</p>
+                    <div className="mt-4 p-3 bg-cyan-50 dark:bg-cyan-900/20 rounded-lg border border-cyan-200 dark:border-cyan-700">
+                      <p className="font-semibold text-cyan-900 dark:text-cyan-300 mb-1">🏥 Insumos: {insumosAsignados.length}</p>
                     </div>
                   )}
                 </div>

@@ -16,9 +16,38 @@ type Paciente = {
   servicioId?: number | null;
 };
 
+type MedicamentoAsignado = {
+  pacienteMedicamentoId: number;
+  medicamentoId: number;
+  cantidadAsignada: number;
+  dosis?: string | null;
+  frecuencia?: string | null;
+  viaAdministracion?: string | null;
+  asignadoEn: string;
+  medicamento: {
+    medicamentoId: number;
+    nombre: string;
+    descripcion?: string;
+  };
+};
+
+type InsumoAsignado = {
+  pacienteInsumoId: number;
+  insumoId: number;
+  cantidad: number;
+  asignadoEn: string;
+  insumo: {
+    insumoId: number;
+    nombre: string;
+    descripcion?: string;
+  };
+};
+
 function Detalles() {
   const location = useLocation();
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
+  const [medicamentosPorPaciente, setMedicamentosPorPaciente] = useState<{ [key: number]: MedicamentoAsignado[] }>({});
+  const [insumosPorPaciente, setInsumosPorPaciente] = useState<{ [key: number]: InsumoAsignado[] }>({});
   const [habitacionesAsignadas, setHabitacionesAsignadas] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,6 +130,39 @@ function Detalles() {
           });
         }
         setPacientes(filtered);
+        
+        // Cargar medicamentos e insumos para cada paciente
+        if (filtered.length > 0) {
+          const medicamentosMap: { [key: number]: MedicamentoAsignado[] } = {};
+          const insumosMap: { [key: number]: InsumoAsignado[] } = {};
+          
+          await Promise.all(
+            filtered.map(async (paciente) => {
+              try {
+                // Obtener medicamentos asignados
+                const medRes = await axios.get(`http://localhost:5000/api/medicamentos/asignados/${paciente.pacienteId}`);
+                const medicamentosData = medRes.data?.data || [];
+                console.log(`📋 Medicamentos del paciente ${paciente.pacienteId}:`, medicamentosData);
+                medicamentosMap[paciente.pacienteId] = medicamentosData;
+              } catch (err) {
+                console.error(`Error al cargar medicamentos del paciente ${paciente.pacienteId}:`, err);
+                medicamentosMap[paciente.pacienteId] = [];
+              }
+              
+              try {
+                // Obtener insumos asignados
+                const insRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${paciente.pacienteId}`);
+                insumosMap[paciente.pacienteId] = insRes.data?.data || [];
+              } catch (err) {
+                console.error(`Error al cargar insumos del paciente ${paciente.pacienteId}:`, err);
+                insumosMap[paciente.pacienteId] = [];
+              }
+            })
+          );
+          
+          setMedicamentosPorPaciente(medicamentosMap);
+          setInsumosPorPaciente(insumosMap);
+        }
       } catch (err: any) {
         setError("No se pudieron cargar los pacientes");
       } finally {
@@ -252,6 +314,76 @@ function Detalles() {
                                   <p className="text-sm text-auto-secondary">
                                     <span className="font-semibold">Motivo de consulta:</span> {paciente.motivoConsulta}
                                   </p>
+                                </div>
+                              )}
+                              
+                              {/* Medicamentos asignados */}
+                              {medicamentosPorPaciente[paciente.pacienteId]?.length > 0 && (
+                                <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
+                                  <h4 className="font-semibold text-purple-900 mb-2 flex items-center">
+                                    💊 Medicamentos Asignados ({medicamentosPorPaciente[paciente.pacienteId].length})
+                                  </h4>
+                                  <div className="space-y-3">
+                                    {medicamentosPorPaciente[paciente.pacienteId].map((med) => (
+                                      <div key={med.pacienteMedicamentoId} className="bg-white border border-purple-100 rounded-lg p-3 shadow-sm">
+                                        <div className="flex items-start justify-between mb-2">
+                                          <p className="font-semibold text-purple-900 text-base">{med.medicamento?.nombre || 'Sin nombre'}</p>
+                                          <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                                            x{med.cantidadAsignada || 0}
+                                          </span>
+                                        </div>
+                                        {med.medicamento?.descripcion && (
+                                          <p className="text-xs text-purple-600 mb-2 italic">{med.medicamento.descripcion}</p>
+                                        )}
+                                        <div className="grid grid-cols-2 gap-2 text-xs">
+                                          {med.dosis && med.dosis.trim() !== '' && (
+                                            <div className="bg-purple-50 rounded px-2 py-1">
+                                              <span className="font-semibold text-purple-800">Dosis:</span>
+                                              <span className="text-purple-700 ml-1">{med.dosis}</span>
+                                            </div>
+                                          )}
+                                          {med.frecuencia && med.frecuencia.trim() !== '' && (
+                                            <div className="bg-purple-50 rounded px-2 py-1">
+                                              <span className="font-semibold text-purple-800">Frecuencia:</span>
+                                              <span className="text-purple-700 ml-1">{med.frecuencia}</span>
+                                            </div>
+                                          )}
+                                          {med.viaAdministracion && med.viaAdministracion.trim() !== '' && (
+                                            <div className="bg-purple-50 rounded px-2 py-1">
+                                              <span className="font-semibold text-purple-800">Vía:</span>
+                                              <span className="text-purple-700 ml-1">{med.viaAdministracion}</span>
+                                            </div>
+                                          )}
+                                          <div className="bg-purple-50 rounded px-2 py-1">
+                                            <span className="font-semibold text-purple-800">Asignado:</span>
+                                            <span className="text-purple-700 ml-1">{new Date(med.asignadoEn).toLocaleDateString("es-MX")}</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                              
+                              {/* Insumos asignados */}
+                              {insumosPorPaciente[paciente.pacienteId]?.length > 0 && (
+                                <div className="mt-4 bg-cyan-50 border border-cyan-200 rounded-lg p-3">
+                                  <h4 className="font-semibold text-cyan-900 mb-2 flex items-center">
+                                    🏥 Insumos Asignados ({insumosPorPaciente[paciente.pacienteId].length})
+                                  </h4>
+                                  <div className="space-y-2">
+                                    {insumosPorPaciente[paciente.pacienteId].map((ins) => (
+                                      <div key={ins.pacienteInsumoId} className="bg-white rounded-lg p-2 text-sm">
+                                        <p className="font-medium text-cyan-900">{ins.insumo.nombre}</p>
+                                        {ins.insumo.descripcion && (
+                                          <p className="text-xs text-cyan-700">{ins.insumo.descripcion}</p>
+                                        )}
+                                        <p className="text-xs text-cyan-600 mt-1">
+                                          Cantidad: {ins.cantidad} • Asignado: {new Date(ins.asignadoEn).toLocaleDateString("es-MX")}
+                                        </p>
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
                               )}
                             </div>

@@ -1,21 +1,3 @@
-// Consultar insumos asignados a un paciente
-const getInsumosAsignadosPaciente = async (req, resp) => {
-  const { pacienteId } = req.params;
-  if (!pacienteId) {
-    return resp.status(400).json({ error: "Falta pacienteId" });
-  }
-  try {
-    const asignados = await prisma.pacienteInsumo.findMany({
-      where: { pacienteId: Number(pacienteId) },
-      include: { insumo: true },
-      orderBy: { asignadoEn: "desc" },
-    });
-    resp.json({ success: true, data: asignados });
-  } catch (err) {
-    console.error("Error al consultar insumos asignados:", err);
-    resp.status(500).json({ error: "Error al consultar insumos asignados" });
-  }
-};
 const { prisma } = require("../dbPostgres");
 
 const parseOptionalInt = (value) => {
@@ -26,6 +8,7 @@ const parseOptionalInt = (value) => {
   return Number.isNaN(parsed) ? null : parsed;
 };
 
+// CRUD - Crear
 const createInsumo = async (req, resp) => {
   const {
     nombre,
@@ -66,6 +49,7 @@ const createInsumo = async (req, resp) => {
   }
 };
 
+// CRUD - Leer todos
 const getAllInsumos = async (_req, resp) => {
   try {
     const insumos = await prisma.insumo.findMany({
@@ -79,6 +63,7 @@ const getAllInsumos = async (_req, resp) => {
   }
 };
 
+// CRUD - Leer por ID
 const getInsumoById = async (req, resp) => {
   const { id } = req.params;
 
@@ -99,6 +84,7 @@ const getInsumoById = async (req, resp) => {
   }
 };
 
+// CRUD - Actualizar
 const updateInsumo = async (req, resp) => {
   const { id } = req.params;
   const {
@@ -145,6 +131,7 @@ const updateInsumo = async (req, resp) => {
   }
 };
 
+// CRUD - Eliminar
 const deleteInsumo = async (req, resp) => {
   const { id } = req.params;
 
@@ -157,28 +144,84 @@ const deleteInsumo = async (req, resp) => {
   }
 };
 
-// Asignar insumos a un paciente
+// Asignar insumos a paciente (reemplazar o agregar)
 const asignarInsumosAPaciente = async (req, resp) => {
-  // Espera body: { pacienteId: number, insumos: [{ insumoId: number, cantidad: number }] }
-  const { pacienteId, insumos } = req.body;
+  const { pacienteId, insumos, reemplazar = true } = req.body;
   if (!pacienteId || !Array.isArray(insumos)) {
     return resp.status(400).json({ error: "Datos insuficientes para asignar insumos" });
   }
   try {
-    // Borra asignaciones previas (opcional, según lógica de negocio)
-    await prisma.pacienteInsumo.deleteMany({ where: { pacienteId } });
-    // Asigna los nuevos insumos
+    if (reemplazar) {
+      await prisma.pacienteInsumo.deleteMany({ where: { pacienteId } });
+    }
+    
     const asignaciones = await Promise.all(
-      insumos.map(({ insumoId, cantidad }) =>
-        prisma.pacienteInsumo.create({
-          data: { pacienteId, insumoId, cantidad }
-        })
-      )
+      insumos.map(async ({ insumoId, cantidad }) => {
+        return prisma.pacienteInsumo.upsert({
+          where: {
+            pacienteId_insumoId: {
+              pacienteId,
+              insumoId
+            }
+          },
+          update: {
+            cantidad
+          },
+          create: {
+            pacienteId,
+            insumoId,
+            cantidad
+          }
+        });
+      })
     );
     resp.json({ success: true, data: asignaciones });
   } catch (err) {
     console.error("Error al asignar insumos a paciente:", err);
     resp.status(500).json({ error: "Error al asignar insumos a paciente" });
+  }
+};
+
+// Obtener insumos asignados a un paciente
+const getInsumosAsignadosPaciente = async (req, resp) => {
+  const { pacienteId } = req.params;
+  if (!pacienteId) {
+    return resp.status(400).json({ error: "Falta pacienteId" });
+  }
+  try {
+    const asignados = await prisma.pacienteInsumo.findMany({
+      where: { pacienteId: Number(pacienteId) },
+      include: { insumo: true },
+      orderBy: { asignadoEn: "desc" },
+    });
+    resp.json({ success: true, data: asignados });
+  } catch (err) {
+    console.error("Error al consultar insumos asignados:", err);
+    resp.status(500).json({ error: "Error al consultar insumos asignados" });
+  }
+};
+
+// Desasignar insumo de un paciente
+const desasignarInsumoDePaciente = async (req, resp) => {
+  const { pacienteId, insumoId } = req.params;
+  
+  if (!pacienteId || !insumoId) {
+    return resp.status(400).json({ error: "Faltan parámetros requeridos" });
+  }
+
+  try {
+    await prisma.pacienteInsumo.delete({
+      where: {
+        pacienteId_insumoId: {
+          pacienteId: Number(pacienteId),
+          insumoId: Number(insumoId)
+        }
+      }
+    });
+    resp.json({ success: true, message: "Insumo desasignado correctamente" });
+  } catch (err) {
+    console.error("Error al desasignar insumo:", err);
+    resp.status(500).json({ error: "Error al desasignar insumo" });
   }
 };
 
@@ -190,4 +233,5 @@ module.exports = {
   deleteInsumo,
   asignarInsumosAPaciente,
   getInsumosAsignadosPaciente,
+  desasignarInsumoDePaciente,
 };

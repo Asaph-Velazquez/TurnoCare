@@ -1,5 +1,19 @@
 const { prisma } = require("../dbPostgres");
 
+// CRUD - Leer todos
+const listServices = async (req, resp) => {
+    try {
+        const services = await prisma.servicio.findMany({
+            include: { hospital: true },
+        });
+        resp.status(200).json(services);
+    } catch (error) {
+        console.error("Error listing services:", error);
+        resp.status(500).json({ error: "Error listing services" });
+    }
+};
+
+// CRUD - Crear
 const registerService = async (req, resp) => {
     const {
         nombre,
@@ -9,7 +23,6 @@ const registerService = async (req, resp) => {
         hospitalid, 
     } = req.body;
 
-    // Basic validation: nombre and hospitalid are required; numeric fields should parse
     if (!nombre || hospitalid === undefined || hospitalid === null) {
         return resp.status(400).json({ error: "Nombre y ID de hospital son requeridos" });
     }
@@ -44,20 +57,7 @@ const registerService = async (req, resp) => {
     }
 };
 
-const deleteService = async (req, resp) => {
-    const { id } = req.params;
-
-    try {
-        const deletedService = await prisma.servicio.delete({
-            where: { servicioId: parseInt(id) }
-        });
-        resp.status(200).json(deletedService);
-    } catch (error) {
-        console.error("Error deleting service:", error);
-        resp.status(500).json({ error: "Error deleting service" });
-    }
-};
-
+// CRUD - Actualizar
 const updateService = async (req, resp) => {
     const { id } = req.params;
     const { 
@@ -102,20 +102,22 @@ const updateService = async (req, resp) => {
     }
 };
 
-const listServices = async (req, resp) => {
+// CRUD - Eliminar
+const deleteService = async (req, resp) => {
+    const { id } = req.params;
+
     try {
-        const services = await prisma.servicio.findMany({
-            include: { hospital: true },
+        const deletedService = await prisma.servicio.delete({
+            where: { servicioId: parseInt(id) }
         });
-        resp.status(200).json(services);
+        resp.status(200).json(deletedService);
     } catch (error) {
-        console.error("Error listing services:", error);
-        resp.status(500).json({ error: "Error listing services" });
+        console.error("Error deleting service:", error);
+        resp.status(500).json({ error: "Error deleting service" });
     }
 };
 
 module.exports = {
-
     registerService,
     deleteService,
     updateService,

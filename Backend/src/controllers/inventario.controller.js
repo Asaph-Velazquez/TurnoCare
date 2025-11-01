@@ -27,6 +27,42 @@ const parseMedicamentosDisponibles = (value) => {
   return value;
 };
 
+// CRUD - Leer todos
+const getAllInventarios = async (_req, resp) => {
+  try {
+    const inventarios = await prisma.inventarioMedicamentos.findMany({
+      include: { responsable: true },
+      orderBy: { inventarioId: "desc" },
+    });
+    resp.json({ success: true, data: inventarios });
+  } catch (err) {
+    console.error("Error al obtener inventarios:", err);
+    resp.status(500).json({ error: "Error al obtener inventarios" });
+  }
+};
+
+// CRUD - Leer por ID
+const getInventarioById = async (req, resp) => {
+  const { id } = req.params;
+
+  try {
+    const inventario = await prisma.inventarioMedicamentos.findUnique({
+      where: { inventarioId: Number(id) },
+      include: { responsable: true },
+    });
+
+    if (!inventario) {
+      return resp.status(404).json({ error: "Inventario no encontrado" });
+    }
+
+    resp.json({ success: true, data: inventario });
+  } catch (err) {
+    console.error("Error al obtener inventario:", err);
+    resp.status(500).json({ error: "Error al obtener inventario" });
+  }
+};
+
+// CRUD - Crear
 const createInventario = async (req, resp) => {
   const { medicamentosDisponibles, ubicacionAlmacen, responsableId } = req.body;
 
@@ -54,39 +90,7 @@ const createInventario = async (req, resp) => {
   }
 };
 
-const getAllInventarios = async (_req, resp) => {
-  try {
-    const inventarios = await prisma.inventarioMedicamentos.findMany({
-      include: { responsable: true },
-      orderBy: { inventarioId: "desc" },
-    });
-    resp.json({ success: true, data: inventarios });
-  } catch (err) {
-    console.error("Error al obtener inventarios:", err);
-    resp.status(500).json({ error: "Error al obtener inventarios" });
-  }
-};
-
-const getInventarioById = async (req, resp) => {
-  const { id } = req.params;
-
-  try {
-    const inventario = await prisma.inventarioMedicamentos.findUnique({
-      where: { inventarioId: Number(id) },
-      include: { responsable: true },
-    });
-
-    if (!inventario) {
-      return resp.status(404).json({ error: "Inventario no encontrado" });
-    }
-
-    resp.json({ success: true, data: inventario });
-  } catch (err) {
-    console.error("Error al obtener inventario:", err);
-    resp.status(500).json({ error: "Error al obtener inventario" });
-  }
-};
-
+// CRUD - Actualizar
 const updateInventario = async (req, resp) => {
   const { id } = req.params;
   const { medicamentosDisponibles, ubicacionAlmacen, responsableId } = req.body;
@@ -125,6 +129,7 @@ const updateInventario = async (req, resp) => {
   }
 };
 
+// CRUD - Eliminar
 const deleteInventario = async (req, resp) => {
   const { id } = req.params;
 

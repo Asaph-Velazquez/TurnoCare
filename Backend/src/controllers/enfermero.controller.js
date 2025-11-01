@@ -1,5 +1,6 @@
 const { prisma } = require("../dbPostgres");
-// ===== LOGIN =====
+
+// Autenticación
 const login = async (req, resp) => {
     const {numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno} = req.body;
     
@@ -52,10 +53,7 @@ const login = async (req, resp) => {
     }
 };
 
-
-
-// ===== ENFERMEROS =====
-// Listar todos los enfermeros
+// CRUD - Leer todos
 const listEnfermeros = async (req, resp) => {
     try {
         const enfermeros = await prisma.enfermero.findMany({
@@ -68,7 +66,7 @@ const listEnfermeros = async (req, resp) => {
     }
 };
 
-// Crear un nuevo enfermero
+// CRUD - Crear
 const createEnfermero = async (req, resp) => {
     const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
 
@@ -77,7 +75,6 @@ const createEnfermero = async (req, resp) => {
     }
 
     try {
-        // Validar que el servicio existe si se proporciona
         if (servicioActualId) {
             const servicioExists = await prisma.servicio.findUnique({
                 where: { servicioId: servicioActualId }
@@ -106,7 +103,6 @@ const createEnfermero = async (req, resp) => {
         resp.status(201).json({ success: true, data: enfermero });
     } catch (err) {
         console.error('Error creando enfermero:', err);
-        // Manejar error de unique constraint (numeroEmpleado)
         if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
             return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
         }
@@ -114,37 +110,7 @@ const createEnfermero = async (req, resp) => {
     }
 };
 
-// Eliminar un enfermero por ID
-const deleteEnfermero = async (req, resp) => {
-    const { id } = req.params;
-
-    if (!id) {
-        return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
-    }
-
-    try {
-        // Verificar que el enfermero existe
-        const enfermero = await prisma.enfermero.findUnique({
-            where: { enfermeroId: parseInt(id) }
-        });
-
-        if (!enfermero) {
-            return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
-        }
-
-        // Eliminar el enfermero
-        await prisma.enfermero.delete({
-            where: { enfermeroId: parseInt(id) }
-        });
-
-        resp.json({ success: true, message: 'Enfermero eliminado exitosamente' });
-    } catch (err) {
-        console.error('Error eliminando enfermero:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
-    }
-};
-
-// Actualizar un enfermero por ID
+// CRUD - Actualizar
 const updateEnfermero = async (req, resp) => {
     const { id } = req.params;
     const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
@@ -154,13 +120,11 @@ const updateEnfermero = async (req, resp) => {
     }
 
     try {
-        // Verificar que el enfermero existe
         const existing = await prisma.enfermero.findUnique({ where: { enfermeroId: parseInt(id) } });
         if (!existing) {
             return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
         }
 
-        // Validar que el servicio existe si se proporciona
         if (servicioActualId !== undefined && servicioActualId !== null) {
             const servicioExists = await prisma.servicio.findUnique({
                 where: { servicioId: servicioActualId }
@@ -174,33 +138,32 @@ const updateEnfermero = async (req, resp) => {
             }
         }
 
-    const data = {};
-    if (numeroEmpleado !== undefined) data.numeroEmpleado = numeroEmpleado;
-    if (nombre !== undefined) data.nombre = nombre;
-    if (apellidoPaterno !== undefined) data.apellidoPaterno = apellidoPaterno;
-    if (apellidoMaterno !== undefined) data.apellidoMaterno = apellidoMaterno;
-    if (especialidad !== undefined) data.especialidad = especialidad;
-    if (esCoordinador !== undefined) data.esCoordinador = esCoordinador === true || esCoordinador === 'true';
-                if (servicioActualId !== undefined) {
-                    if (servicioActualId === null || servicioActualId === "") {
-                        data.servicio = { disconnect: true };
-                    } else {
-                        data.servicio = { connect: { servicioId: servicioActualId } };
-                    }
-                }
-    if (habitacionesAsignadas !== undefined) data.habitacionAsignada = habitacionesAsignadas;
-    if (turno !== undefined) {
-        if (turno === null || turno === "") {
-            data.turno = { disconnect: true };
-        } else {
-            // Buscar el turnoId por nombre
-            const turnoObj = await prisma.turno.findFirst({ where: { nombre: { equals: turno, mode: 'insensitive' } } });
-            if (!turnoObj) {
-                return resp.status(400).json({ success: false, error: `El turno '${turno}' no existe` });
+        const data = {};
+        if (numeroEmpleado !== undefined) data.numeroEmpleado = numeroEmpleado;
+        if (nombre !== undefined) data.nombre = nombre;
+        if (apellidoPaterno !== undefined) data.apellidoPaterno = apellidoPaterno;
+        if (apellidoMaterno !== undefined) data.apellidoMaterno = apellidoMaterno;
+        if (especialidad !== undefined) data.especialidad = especialidad;
+        if (esCoordinador !== undefined) data.esCoordinador = esCoordinador === true || esCoordinador === 'true';
+        if (servicioActualId !== undefined) {
+            if (servicioActualId === null || servicioActualId === "") {
+                data.servicio = { disconnect: true };
+            } else {
+                data.servicio = { connect: { servicioId: servicioActualId } };
             }
-            data.turno = { connect: { turnoId: turnoObj.turnoId } };
         }
-    }
+        if (habitacionesAsignadas !== undefined) data.habitacionAsignada = habitacionesAsignadas;
+        if (turno !== undefined) {
+            if (turno === null || turno === "") {
+                data.turno = { disconnect: true };
+            } else {
+                const turnoObj = await prisma.turno.findFirst({ where: { nombre: { equals: turno, mode: 'insensitive' } } });
+                if (!turnoObj) {
+                    return resp.status(400).json({ success: false, error: `El turno '${turno}' no existe` });
+                }
+                data.turno = { connect: { turnoId: turnoObj.turnoId } };
+            }
+        }
 
         const updated = await prisma.enfermero.update({
             where: { enfermeroId: parseInt(id) },
@@ -213,6 +176,34 @@ const updateEnfermero = async (req, resp) => {
         if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
             return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
         }
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
+
+// CRUD - Eliminar
+const deleteEnfermero = async (req, resp) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
+    }
+
+    try {
+        const enfermero = await prisma.enfermero.findUnique({
+            where: { enfermeroId: parseInt(id) }
+        });
+
+        if (!enfermero) {
+            return resp.status(404).json({ success: false, error: 'Enfermero no encontrado' });
+        }
+
+        await prisma.enfermero.delete({
+            where: { enfermeroId: parseInt(id) }
+        });
+
+        resp.json({ success: true, message: 'Enfermero eliminado exitosamente' });
+    } catch (err) {
+        console.error('Error eliminando enfermero:', err);
         resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };

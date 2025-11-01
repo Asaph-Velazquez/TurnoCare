@@ -3,6 +3,8 @@ import PacientesList, { type Paciente } from "./PacientesList";
 
 function Pacientes() {
   const navigate = useNavigate();
+  
+  // Opciones del menú de pacientes
   const PacienteOptions = [
     {
       id: "RegistrarPaciente",
@@ -71,7 +73,7 @@ function Pacientes() {
     },
     {
       id: "AsignarMedicamentosInsumos",
-      name: "Asignar Medicamentos/Insumos",
+      name: "Administrar Tratamientos",
       description: "Asignar medicamentos e insumos a pacientes",
       icon: (
         <svg
@@ -92,13 +94,14 @@ function Pacientes() {
     }
   ];
 
+  // Manejar navegación según opción seleccionada
   const handleOptionClick = (optionId: string) => {
     switch (optionId) {
       case "RegistrarPaciente":
         navigate("/pacientes/registrar");
         break;
       case "AsignarMedicamentosInsumos":
-        navigate("/pacientes/asignar-medicamentos-insumos");
+        navigate("/pacientes/gestionar-asignaciones");
         break;
       case "EliminarPaciente":
         navigate("/pacientes/eliminar");
@@ -159,7 +162,7 @@ function Pacientes() {
             </div>
           </div>
 
-          {/* Sección de listado de pacientes */}
+          {/* Lista de pacientes */}
           <div className="mt-8">
             <PacientesList
             onPacienteSelect={(paciente: Paciente) => {

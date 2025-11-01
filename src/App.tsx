@@ -35,7 +35,9 @@ import EliminarPacientes from './Components/Pacientes/EliminarPacientes';
 import ActualizarPacientes from './Components/Pacientes/ActualizarPacientes';
 import PacienteDetalles from "./Components/Pacientes/PacienteDetalles";
 import AsignarMedicamentosInsumos from "./Components/Pacientes/AsignarMedicamentosInsumos";
-
+import ActualizarAsignaciones from "./Components/Pacientes/ActualizarAsignaciones";
+import EliminarAsignaciones from "./Components/Pacientes/EliminarAsignaciones";
+import GestionAsignaciones from "./Components/Pacientes/GestionAsignaciones";
 function App() {
   return (
     <div>
@@ -73,6 +75,9 @@ function App() {
         <Route path="/pacientes/actualizar" element={<ActualizarPacientes />} />
         <Route path="/pacientes/detalles/:pacienteId" element={<PacienteDetalles />} />
         <Route path="/pacientes/asignar-medicamentos-insumos" element={<AsignarMedicamentosInsumos />} />
+        <Route path="/pacientes/actualizar-asignaciones" element={<ActualizarAsignaciones />} />
+        <Route path="/pacientes/eliminar-asignaciones" element={<EliminarAsignaciones />} />
+        <Route path="/pacientes/gestionar-asignaciones" element={<GestionAsignaciones />} />
       </Routes>
       <Footer />
     </div>

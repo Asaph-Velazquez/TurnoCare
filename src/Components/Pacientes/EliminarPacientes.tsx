@@ -24,10 +24,12 @@ function EliminarPacientes() {
   const [loadingList, setLoadingList] = useState(true);
   const [alert, setAlert] = useState<{ type: string; message: string } | null>(null);
 
+  // Cargar pacientes al montar
   useEffect(() => {
     fetchPacientes();
   }, []);
 
+  // Filtrar pacientes por búsqueda
   useEffect(() => {
     if (searchTerm.trim() === "") {
       setFilteredPacientes(pacientes);
@@ -52,6 +54,7 @@ function EliminarPacientes() {
     }
   }, [searchTerm, pacientes]);
 
+  // Obtener lista de pacientes
   const fetchPacientes = async () => {
     try {
       setLoadingList(true);
@@ -67,6 +70,7 @@ function EliminarPacientes() {
     }
   };
 
+  // Manejar eliminación de paciente
   const handleDelete = async (paciente: Paciente) => {
     const confirmDelete = window.confirm(
       `¿Estás seguro de eliminar al paciente ${paciente.nombre} ${paciente.apellidop} ${paciente.apellidom}?\n\nExpediente: ${paciente.numeroExpediente}\nHabitación: ${paciente.numeroHabitacion || "N/A"}\nCama: ${paciente.numeroCama || "N/A"}\n\nEsta acción no se puede deshacer.`
@@ -78,12 +82,11 @@ function EliminarPacientes() {
     setLoading(true);
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/pacientes/${paciente.pacienteId}`);
-      console.log("✅ Paciente eliminado:", response.data);
+      await axios.delete(`http://localhost:5000/api/pacientes/${paciente.pacienteId}`);
       setAlert({ type: "success", message: `Paciente ${paciente.nombre} ${paciente.apellidop} eliminado exitosamente` });
       await fetchPacientes();
     } catch (error: any) {
-      console.error("❌ Error al eliminar paciente:", error);
+      console.error("Error al eliminar paciente:", error);
       const errorMessage = error.response?.data?.error || error.message || "Error al eliminar paciente";
       setAlert({ type: "danger", message: errorMessage });
     } finally {
@@ -139,7 +142,7 @@ function EliminarPacientes() {
             </div>
           </div>
 
-          {/* Alertas */}
+          {/* Alertas de estado */}
           {alert && (
             <div
               className={`mb-6 p-4 rounded-xl shadow-lg backdrop-blur-sm ${
@@ -163,7 +166,7 @@ function EliminarPacientes() {
             </div>
           )}
 
-          {/* Tarjeta de lista de pacientes */}
+          {/* Lista de pacientes */}
           <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 md:p-8 border border-auto backdrop-blur-sm">
             {loadingList ? (
               <div className="flex items-center justify-center py-16">

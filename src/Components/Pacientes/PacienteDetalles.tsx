@@ -55,12 +55,13 @@ function PacienteDetalles() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Cargar datos del paciente
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Obtener datos del paciente (acepta objeto o array)
+        // Obtener datos del paciente
         const pacienteRes = await axios.get(`http://localhost:5000/api/pacientes/${pacienteId}`);
         let p = pacienteRes.data?.data ?? pacienteRes.data;
         if (Array.isArray(p)) {
@@ -68,7 +69,7 @@ function PacienteDetalles() {
         }
         setPaciente(p);
 
-        // Obtener insumos asignados a este paciente
+        // Obtener insumos asignados
         if (p && p.pacienteId) {
           const insumosRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${p.pacienteId}`);
           let ins: InsumoAsignado[] = [];
@@ -78,14 +79,14 @@ function PacienteDetalles() {
           setInsumos(ins);
         }
 
-        // Obtener medicamentos asignados a este paciente
+        // Obtener medicamentos asignados
         if (p && p.pacienteId) {
-          const medsRes = await axios.get(`http://localhost:5000/api/medicamentos?pacienteId=${p.pacienteId}`);
+          const medsRes = await axios.get(`http://localhost:5000/api/medicamentos/asignados/${p.pacienteId}`);
           let meds: MedicamentoAsignado[] = [];
           if (Array.isArray(medsRes.data?.data)) {
             meds = medsRes.data.data.map((m: any) => ({
-              medicamentoId: m.medicamentoId,
-              nombre: m.nombre,
+              medicamentoId: m.medicamento.medicamentoId,
+              nombre: m.medicamento.nombre,
               dosis: m.dosis || "",
               frecuencia: m.frecuencia || "",
             }));
@@ -93,12 +94,12 @@ function PacienteDetalles() {
           setMedicamentos(meds);
         }
 
-        // Obtener enfermeros
+        // Obtener enfermeros del servicio y habitación
         const enfermerosRes = await axios.get("http://localhost:5000/api/enfermeros");
         const allEnfermeros: Enfermero[] = enfermerosRes.data?.data ?? enfermerosRes.data;
         let filtered: Enfermero[] = [];
 
-        // Filtrar enfermeros por servicio y habitación
+        // Filtrar por servicio y habitación
         if (p && p.servicioId && p.numeroHabitacion) {
           filtered = allEnfermeros.filter((e) => {
             const matchServicio = e.servicioActualId === p.servicioId;
@@ -119,6 +120,7 @@ function PacienteDetalles() {
     fetchData();
   }, [pacienteId]);
 
+  // Estado de carga
   if (loading) {
     return (
       <div className="min-h-screen bg-auto-primary pt-20 flex items-center justify-center">
@@ -130,6 +132,7 @@ function PacienteDetalles() {
     );
   }
 
+  // Estado de error
   if (error || !paciente) {
     return (
       <div className="min-h-screen bg-auto-primary pt-20 flex items-center justify-center">
@@ -151,7 +154,7 @@ function PacienteDetalles() {
       <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-135 w-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen flex flex-col items-center justify-start">
         <div className="w-full max-w-6xl px-6 py-10">
-          {/* Tarjeta 1: Detalles generales */}
+          {/* Detalles generales */}
           <div className="bg-auto-secondary border border-auto rounded-3xl shadow-2xl p-10 md:p-14 lg:p-16 mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-auto-primary mb-6 text-center tracking-tight">Detalles del Paciente</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -172,7 +175,7 @@ function PacienteDetalles() {
             </div>
           </div>
 
-          {/* Tarjeta 2: Medicamentos asignados */}
+          {/* Medicamentos asignados */}
           <div className="bg-auto-secondary border border-auto rounded-3xl shadow-2xl p-8 md:p-10 lg:p-12 mb-8">
             <h2 className="text-2xl font-bold text-sky-700 mb-4 text-center">Medicamentos asignados a este paciente</h2>
             {medicamentos.length === 0 ? (
@@ -191,8 +194,12 @@ function PacienteDetalles() {
                       {med.nombre}
                     </div>
                     <div className="text-xs text-auto-secondary dark:text-gray-300 mt-1 text-center">
-                      <span className="inline-block bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-200 rounded px-2 py-0.5 mr-2">Dosis: {med.dosis}</span>
-                      <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-700 dark:text-cyan-200 rounded px-2 py-0.5 mt-1">Frecuencia: {med.frecuencia}</span>
+                      <span className="inline-block bg-sky-100 dark:bg-sky-800 text-sky-700 dark:text-sky-200 rounded px-2 py-0.5 mr-2">
+                        Dosis: {med.dosis || "No especificada"}
+                      </span>
+                      <span className="inline-block bg-cyan-100 dark:bg-cyan-800 text-cyan-700 dark:text-cyan-200 rounded px-2 py-0.5 mt-1">
+                        Frecuencia: {med.frecuencia || "No especificada"}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -200,7 +207,7 @@ function PacienteDetalles() {
             )}
           </div>
 
-          {/* Tarjeta 3: Insumos asignados */}
+          {/* Insumos asignados */}
           <div className="bg-auto-secondary border border-auto rounded-3xl shadow-2xl p-8 md:p-10 lg:p-12 mb-8">
             <h2 className="text-2xl font-bold text-sky-700 mb-4 text-center">Insumos asignados a este paciente</h2>
             {insumos.length === 0 ? (
@@ -228,7 +235,9 @@ function PacienteDetalles() {
             )}
           </div>
 
-            <h2 className="text-2xl font-bold text-sky-700 mb-4 mt-10 text-center">Enfermeros asignados a este paciente</h2>
+          {/* Enfermeros asignados */}
+          <div className="bg-auto-secondary border border-auto rounded-3xl shadow-2xl p-8 md:p-10 lg:p-12">
+            <h2 className="text-2xl font-bold text-sky-700 mb-4 text-center">Enfermeros asignados a este paciente</h2>
             {enfermeros.length === 0 ? (
               <div className="text-auto-tertiary text-base text-center">No hay enfermeros asignados a este paciente según su cuarto y servicio.</div>
             ) : (
@@ -256,17 +265,18 @@ function PacienteDetalles() {
                 ))}
               </div>
             )}
+            
             <button
               onClick={() => navigate(-1)}
-              className="mt-10 w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-4 rounded-lg text-lg transition-colors shadow-md"
+              className="mt-8 w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold py-3 px-4 rounded-lg text-lg transition-colors shadow-md"
             >
               Volver
             </button>
           </div>
         </div>
       </div>
-    
-  )
+    </div>
+  );
 }
 
 export default PacienteDetalles;
