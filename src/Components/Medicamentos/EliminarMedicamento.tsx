@@ -5,10 +5,11 @@ import DeleteCard from "../utilities/DeleteUpdate/Delete";
 type Medicamento = {
   medicamentoId: number;
   nombre: string;
-  dosis: string | null;
-  viaAdministracion: string | null;
-  frecuencia: string | null;
-  fechaHoraAdministracion: string | null;
+  descripcion: string | null;
+  cantidadStock: number;
+  lote: string | null;
+  fechaCaducidad: string | null;
+  ubicacion: string | null;
 };
 
 type AlertState = { type: "success" | "danger"; message: string } | null;
@@ -35,14 +36,14 @@ export default function EliminarMedicamento() {
     setFiltered(
       medicamentos.filter((med) => {
         const nombre = med.nombre.toLowerCase();
-        const via = (med.viaAdministracion ?? "").toLowerCase();
-        const frecuencia = (med.frecuencia ?? "").toLowerCase();
-        const dosis = (med.dosis ?? "").toLowerCase();
+        const ubicacion = (med.ubicacion ?? "").toLowerCase();
+        const lote = (med.lote ?? "").toLowerCase();
+        const descripcion = (med.descripcion ?? "").toLowerCase();
         return (
           nombre.includes(term) ||
-          via.includes(term) ||
-          frecuencia.includes(term) ||
-          dosis.includes(term)
+          ubicacion.includes(term) ||
+          lote.includes(term) ||
+          descripcion.includes(term)
         );
       })
     );
@@ -70,10 +71,12 @@ export default function EliminarMedicamento() {
 
   const handleDelete = async (medicamento: Medicamento) => {
     const confirmDelete = window.confirm(
-      `¿Deseas eliminar el medicamento ${medicamento.nombre}?\n\nVía: ${
-        medicamento.viaAdministracion || "Sin registro"
-      }\nFrecuencia: ${
-        medicamento.frecuencia || "Sin registro"
+      `¿Deseas eliminar el medicamento ${medicamento.nombre}?\n\nStock: ${
+        medicamento.cantidadStock
+      } unidades\nLote: ${
+        medicamento.lote || "Sin lote"
+      }\nUbicación: ${
+        medicamento.ubicacion || "Sin ubicación"
       }\n\nEsta acción no se puede deshacer.`
     );
 
@@ -88,7 +91,7 @@ export default function EliminarMedicamento() {
       );
       setAlert({
         type: "success",
-        message: `Medicamento ${medicamento.nombre} eliminado correctamente`,
+        message: `Medicamento ${medicamento.nombre} eliminado del inventario correctamente`,
       });
       await fetchMedicamentos();
     } catch (error: any) {
@@ -240,11 +243,11 @@ export default function EliminarMedicamento() {
                           {med.nombre}
                         </h3>
                         <p className="text-sm text-auto-secondary mt-1">
-                          {med.frecuencia || "Sin frecuencia definida"}
+                          Stock: {med.cantidadStock} unidades
                         </p>
                       </div>
                       <span className="ml-2 px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-800 text-xs font-bold rounded-lg shadow-sm border border-sky-200">
-                        {med.viaAdministracion || "Sin vía"}
+                        {med.ubicacion || "Sin ubicación"}
                       </span>
                     </div>
                     <div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto">
@@ -264,10 +267,10 @@ export default function EliminarMedicamento() {
                           />
                         </svg>
                         <span>
-                          <span className="font-semibold">Dosis:</span>{" "}
-                          {med.dosis || (
+                          <span className="font-semibold">Lote:</span>{" "}
+                          {med.lote || (
                             <span className="italic text-auto-tertiary">
-                              Sin dosis registrada
+                              Sin lote
                             </span>
                           )}
                         </span>

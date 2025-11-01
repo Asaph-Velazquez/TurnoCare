@@ -7,6 +7,7 @@ function AdminHome() {
   const [enfermerosCount, setEnfermerosCount] = useState<number | null>(null);
   const [serviciosCount, setServiciosCount] = useState<number | null>(null);
   const [turnosCount, setTurnosCount] = useState<number | null>(null);
+  const [pacientesCount, setPacientesCount] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +44,17 @@ function AdminHome() {
         }
       })
       .catch(() => setTurnosCount(0));
+    axios.get("http://localhost:5000/api/pacientes")
+      .then(res => {
+        if (res.data && Array.isArray(res.data.data)) {
+          setPacientesCount(res.data.data.length);
+        } else if (Array.isArray(res.data)) {
+          setPacientesCount(res.data.length);
+        } else {
+          setPacientesCount(0);
+        }
+      })
+      .catch(() => setPacientesCount(0));
   }, []);
 
   let userInfo = {
@@ -312,6 +324,7 @@ function AdminHome() {
 
           {/* Quick Stats */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Total Enfermeros */}
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -342,6 +355,37 @@ function AdminHome() {
               </div>
             </div>
 
+            {/* Total Pacientes */}
+            <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0zm2 8a6 6 0 0112 0v1H5v-1a6 6 0 014-5.659"/>
+                      </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">
+                    Total Pacientes
+                  </p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {pacientesCount !== null ? pacientesCount : "--"}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Servicios Activos */}
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
@@ -367,36 +411,6 @@ function AdminHome() {
                   </p>
                   <p className="text-2xl font-semibold text-auto-primary">
                     {serviciosCount !== null ? serviciosCount : "--"}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-auto-tertiary">
-                    Turnos Hoy
-                  </p>
-                  <p className="text-2xl font-semibold text-auto-primary">
-                    {turnosCount !== null ? turnosCount : "--"}
                   </p>
                 </div>
               </div>

@@ -30,75 +30,75 @@ INSERT INTO servicio ("servicioId", nombre, descripcion, "capacidadMaxima", "per
 (10, 'Psiquiatría', 'Salud mental y trastornos psiquiátricos', 25, 3, 1);
 
 -- Insertar Enfermeros
-INSERT INTO enfermero (nombre, "apellidoPaterno", "apellidoMaterno", "numeroEmpleado", especialidad, "esCoordinador", "turnoAsignadoId", "servicioActualId") VALUES
+INSERT INTO enfermero (nombre, "apellidoPaterno", "apellidoMaterno", "numeroEmpleado", especialidad, "esCoordinador", "turnoAsignadoId", "servicioActualId", "habitacionAsignada") VALUES
 -- Coordinadores
-('Ana', 'García', 'Martínez', 'ENF001', 'Coordinación General', TRUE, 1, 1),
-('Carlos', 'López', 'Hernández', 'ENF002', 'Coordinación UCI', TRUE, 2, 8),
-('María Elena', 'Rodríguez', 'Silva', 'ENF003', 'Coordinación Pediatría', TRUE, 1, 2),
+('Ana', 'García', 'Martínez', 'ENF001', 'Coordinación General', TRUE, 1, 1, NULL),
+('Carlos', 'López', 'Hernández', 'ENF002', 'Coordinación UCI', TRUE, 2, 8, NULL),
+('María Elena', 'Rodríguez', 'Silva', 'ENF003', 'Coordinación Pediatría', TRUE, 1, 2, NULL),
 
--- Enfermeros de Urgencias
-('Luis', 'Pérez', 'González', 'ENF004', 'Urgencias', FALSE, 1, 1),
-('Carmen', 'Martínez', 'López', 'ENF005', 'Urgencias', FALSE, 2, 1),
-('Roberto', 'Sánchez', 'Ruiz', 'ENF006', 'Urgencias', FALSE, 3, 1),
-('Patricia', 'Torres', 'Mendoza', 'ENF007', 'Urgencias', FALSE, 1, 1),
-('Jorge', 'Ramírez', 'Castro', 'ENF008', 'Urgencias', FALSE, 2, 1),
 
--- Enfermeros de Pediatría
-('Lucía', 'Morales', 'Vega', 'ENF009', 'Pediatría', FALSE, 1, 2),
-('Manuel', 'Jiménez', 'Flores', 'ENF010', 'Pediatría', FALSE, 2, 2),
-('Diana', 'Vargas', 'Ochoa', 'ENF011', 'Pediatría', FALSE, 3, 2),
-('Fernando', 'Castillo', 'Romero', 'ENF012', 'Pediatría', FALSE, 1, 2),
+('Luis', 'Pérez', 'González', 'ENF004', 'Urgencias', FALSE, 1, 1, '101'),
+('Carmen', 'Martínez', 'López', 'ENF005', 'Urgencias', FALSE, 2, 1, '102'),
+('Roberto', 'Sánchez', 'Ruiz', 'ENF006', 'Urgencias', FALSE, 3, 1, '103'),
+('Patricia', 'Torres', 'Mendoza', 'ENF007', 'Urgencias', FALSE, 1, 1, '104'),
+('Jorge', 'Ramírez', 'Castro', 'ENF008', 'Urgencias', FALSE, 2, 1, '105'),
 
--- Enfermeros de Cardiología
-('Sofía', 'Herrera', 'Delgado', 'ENF013', 'Cardiología', FALSE, 1, 3),
-('Miguel', 'Aguilar', 'Santos', 'ENF014', 'Cardiología', FALSE, 2, 3),
-('Alejandra', 'Cruz', 'Moreno', 'ENF015', 'Cardiología', FALSE, 3, 3),
 
--- Enfermeros de Neurología
-('Antonio', 'Reyes', 'Guerrero', 'ENF016', 'Neurología', FALSE, 1, 4),
-('Gabriela', 'Mendoza', 'Ríos', 'ENF017', 'Neurología', FALSE, 2, 4),
-('Raúl', 'Ortega', 'Campos', 'ENF018', 'Neurología', FALSE, 3, 4),
+('Lucía', 'Morales', 'Vega', 'ENF009', 'Pediatría', FALSE, 1, 2, '201'),
+('Manuel', 'Jiménez', 'Flores', 'ENF010', 'Pediatría', FALSE, 2, 2, '202'),
+('Diana', 'Vargas', 'Ochoa', 'ENF011', 'Pediatría', FALSE, 3, 2, '203'),
+('Fernando', 'Castillo', 'Romero', 'ENF012', 'Pediatría', FALSE, 1, 2, '204'),
 
--- Enfermeros de Ginecología
-('Isabel', 'Valencia', 'Herrera', 'ENF019', 'Ginecología', FALSE, 1, 5),
-('Alberto', 'Gutiérrez', 'Peña', 'ENF020', 'Ginecología', FALSE, 2, 5),
-('Claudia', 'Ruiz', 'Montoya', 'ENF021', 'Ginecología', FALSE, 3, 5),
 
--- Enfermeros de Traumatología
-('Eduardo', 'Silva', 'Navarro', 'ENF022', 'Traumatología', FALSE, 1, 6),
-('Verónica', 'Ramos', 'Aguilera', 'ENF023', 'Traumatología', FALSE, 2, 6),
-('Osvaldo', 'Medina', 'Torres', 'ENF024', 'Traumatología', FALSE, 3, 6),
-('Mónica', 'Campos', 'Villareal', 'ENF025', 'Traumatología', FALSE, 1, 6),
+('Sofía', 'Herrera', 'Delgado', 'ENF013', 'Cardiología', FALSE, 1, 3, '301'),
+('Miguel', 'Aguilar', 'Santos', 'ENF014', 'Cardiología', FALSE, 2, 3, '302'),
+('Alejandra', 'Cruz', 'Moreno', 'ENF015', 'Cardiología', FALSE, 3, 3, '303'),
 
--- Enfermeros de Medicina Interna
-('Ricardo', 'León', 'Espinoza', 'ENF026', 'Medicina Interna', FALSE, 1, 7),
-('Natalia', 'Paredes', 'Álvarez', 'ENF027', 'Medicina Interna', FALSE, 2, 7),
-('Humberto', 'Vázquez', 'Jiménez', 'ENF028', 'Medicina Interna', FALSE, 3, 7),
-('Adriana', 'Domínguez', 'Luna', 'ENF029', 'Medicina Interna', FALSE, 1, 7),
 
--- Enfermeros de UCI
-('Sergio', 'Contreras', 'Soto', 'ENF030', 'Cuidados Intensivos', FALSE, 1, 8),
-('Leticia', 'Moreno', 'Cabrera', 'ENF031', 'Cuidados Intensivos', FALSE, 2, 8),
-('Arturo', 'Sandoval', 'Prieto', 'ENF032', 'Cuidados Intensivos', FALSE, 3, 8),
-('Rosa', 'Guerrero', 'Valdez', 'ENF033', 'Cuidados Intensivos', FALSE, 4, 8),
+('Antonio', 'Reyes', 'Guerrero', 'ENF016', 'Neurología', FALSE, 1, 4, '401'),
+('Gabriela', 'Mendoza', 'Ríos', 'ENF017', 'Neurología', FALSE, 2, 4, '402'),
+('Raúl', 'Ortega', 'Campos', 'ENF018', 'Neurología', FALSE, 3, 4, '403'),
 
--- Enfermeros de Oncología
-('Felipe', 'Acosta', 'Mendoza', 'ENF034', 'Oncología', FALSE, 1, 9),
-('Beatriz', 'Figueroa', 'Ramos', 'ENF035', 'Oncología', FALSE, 2, 9),
-('Ignacio', 'Cervantes', 'Rivas', 'ENF036', 'Oncología', FALSE, 3, 9),
 
--- Enfermeros de Psiquiatría
-('Esperanza', 'Maldonado', 'Cruz', 'ENF037', 'Psiquiatría', FALSE, 1, 10),
-('Rodrigo', 'Esquivel', 'Morales', 'ENF038', 'Psiquiatría', FALSE, 2, 10),
-('Mariana', 'Ibarra', 'Solís', 'ENF039', 'Psiquiatría', FALSE, 3, 10),
+('Isabel', 'Valencia', 'Herrera', 'ENF019', 'Ginecología', FALSE, 1, 5, '501'),
+('Alberto', 'Gutiérrez', 'Peña', 'ENF020', 'Ginecología', FALSE, 2, 5, '502'),
+('Claudia', 'Ruiz', 'Montoya', 'ENF021', 'Ginecología', FALSE, 3, 5, '503'),
+
+
+('Eduardo', 'Silva', 'Navarro', 'ENF022', 'Traumatología', FALSE, 1, 6, '601'),
+('Verónica', 'Ramos', 'Aguilera', 'ENF023', 'Traumatología', FALSE, 2, 6, '602'),
+('Osvaldo', 'Medina', 'Torres', 'ENF024', 'Traumatología', FALSE, 3, 6, '603'),
+('Mónica', 'Campos', 'Villareal', 'ENF025', 'Traumatología', FALSE, 1, 6, '604'),
+
+
+('Ricardo', 'León', 'Espinoza', 'ENF026', 'Medicina Interna', FALSE, 1, 7, '701'),
+('Natalia', 'Paredes', 'Álvarez', 'ENF027', 'Medicina Interna', FALSE, 2, 7, '702'),
+('Humberto', 'Vázquez', 'Jiménez', 'ENF028', 'Medicina Interna', FALSE, 3, 7, '703'),
+('Adriana', 'Domínguez', 'Luna', 'ENF029', 'Medicina Interna', FALSE, 1, 7, '704'),
+
+
+('Sergio', 'Contreras', 'Soto', 'ENF030', 'Cuidados Intensivos', FALSE, 1, 8, '801'),
+('Leticia', 'Moreno', 'Cabrera', 'ENF031', 'Cuidados Intensivos', FALSE, 2, 8, '802'),
+('Arturo', 'Sandoval', 'Prieto', 'ENF032', 'Cuidados Intensivos', FALSE, 3, 8, '803'),
+('Rosa', 'Guerrero', 'Valdez', 'ENF033', 'Cuidados Intensivos', FALSE, 4, 8, '804'),
+
+
+('Felipe', 'Acosta', 'Mendoza', 'ENF034', 'Oncología', FALSE, 1, 9, '901'),
+('Beatriz', 'Figueroa', 'Ramos', 'ENF035', 'Oncología', FALSE, 2, 9, '902'),
+('Ignacio', 'Cervantes', 'Rivas', 'ENF036', 'Oncología', FALSE, 3, 9, '903'),
+
+
+('Esperanza', 'Maldonado', 'Cruz', 'ENF037', 'Psiquiatría', FALSE, 1, 10, '1001'),
+('Rodrigo', 'Esquivel', 'Morales', 'ENF038', 'Psiquiatría', FALSE, 2, 10, '1002'),
+('Mariana', 'Ibarra', 'Solís', 'ENF039', 'Psiquiatría', FALSE, 3, 10, '1003'),
 
 -- Enfermeros flotantes (sin servicio asignado específico)
-('David', 'Galván', 'Cortés', 'ENF040', 'Enfermería General', FALSE, 1, NULL),
-('Paola', 'Rojas', 'Núñez', 'ENF041', 'Enfermería General', FALSE, 2, NULL),
-('Emilio', 'Salinas', 'Vargas', 'ENF042', 'Enfermería General', FALSE, 3, NULL),
-('Lidia', 'Quintero', 'Chávez', 'ENF043', 'Enfermería General', FALSE, 1, NULL),
-('Tomás', 'Velázquez', 'Herrera', 'ENF044', 'Enfermería General', FALSE, 2, NULL),
-('Silvia', 'Pacheco', 'Díaz', 'ENF045', 'Enfermería General', FALSE, 3, NULL);
+('David', 'Galván', 'Cortés', 'ENF040', 'Enfermería General', FALSE, 1, NULL, NULL),
+('Paola', 'Rojas', 'Núñez', 'ENF041', 'Enfermería General', FALSE, 2, NULL, NULL),
+('Emilio', 'Salinas', 'Vargas', 'ENF042', 'Enfermería General', FALSE, 3, NULL, NULL),
+('Lidia', 'Quintero', 'Chávez', 'ENF043', 'Enfermería General', FALSE, 1, NULL, NULL),
+('Tomás', 'Velázquez', 'Herrera', 'ENF044', 'Enfermería General', FALSE, 2, NULL, NULL),
+('Silvia', 'Pacheco', 'Díaz', 'ENF045', 'Enfermería General', FALSE, 3, NULL, NULL);
 
 -- Insertar registros en Urgencias para servicios que lo requieren
 INSERT INTO urgencias ("nivelTriaje", "tiempoEsperaPromedio", "servicioId") VALUES

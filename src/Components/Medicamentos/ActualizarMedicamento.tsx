@@ -1,40 +1,19 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import TextField from "../utilities/Form/TextField";
-import SelectField from "../utilities/Form/SelectField";
 import UpdateCard from "../utilities/DeleteUpdate/Update";
 
 type Medicamento = {
   medicamentoId: number;
   nombre: string;
-  dosis: string | null;
-  viaAdministracion: string | null;
-  frecuencia: string | null;
-  fechaHoraAdministracion: string | null;
+  descripcion: string | null;
+  cantidadStock: number;
+  lote: string | null;
+  fechaCaducidad: string | null;
+  ubicacion: string | null;
 };
 
 type AlertState = { type: "success" | "danger"; message: string } | null;
-
-const VIA_OPTIONS = [
-  "Oral",
-  "Intravenosa",
-  "Intramuscular",
-  "Subcutánea",
-  "Sublingual",
-  "Rectal",
-  "Tópica",
-  "Transdérmica",
-  "Inhalatoria",
-];
-
-const toDateTimeLocal = (value: string | null) => {
-  if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "";
-  const offset = date.getTimezoneOffset();
-  const local = new Date(date.getTime() - offset * 60000);
-  return local.toISOString().slice(0, 16);
-};
 
 export default function ActualizarMedicamento() {
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
@@ -58,14 +37,14 @@ export default function ActualizarMedicamento() {
     setFiltered(
       medicamentos.filter((med) => {
         const nombre = med.nombre.toLowerCase();
-        const via = (med.viaAdministracion ?? "").toLowerCase();
-        const frecuencia = (med.frecuencia ?? "").toLowerCase();
-        const dosis = (med.dosis ?? "").toLowerCase();
+        const ubicacion = (med.ubicacion ?? "").toLowerCase();
+        const lote = (med.lote ?? "").toLowerCase();
+        const descripcion = (med.descripcion ?? "").toLowerCase();
         return (
           nombre.includes(term) ||
-          via.includes(term) ||
-          frecuencia.includes(term) ||
-          dosis.includes(term)
+          ubicacion.includes(term) ||
+          lote.includes(term) ||
+          descripcion.includes(term)
         );
       })
     );
@@ -90,11 +69,6 @@ export default function ActualizarMedicamento() {
       setLoadingList(false);
     }
   };
-
-  const viaOptions = useMemo(
-    () => VIA_OPTIONS.map((value) => ({ value, label: value })),
-    []
-  );
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20 pb-10">
@@ -123,7 +97,7 @@ export default function ActualizarMedicamento() {
                   Actualizar Medicamento
                 </h2>
                 <p className="text-auto-secondary text-sm">
-                  Edita dosis, frecuencia y programación
+                  Actualiza el inventario de medicamentos
                 </p>
               </div>
             </div>
@@ -140,7 +114,7 @@ export default function ActualizarMedicamento() {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Buscar por nombre, dosis, vía o frecuencia..."
+                  placeholder="Buscar por nombre, descripción, lote o ubicación..."
                   className="block w-full pl-12 pr-4 py-4 border-2 border-auto rounded-xl bg-auto-primary text-auto-primary placeholder-auto-secondary/70 focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/20 transition-all duration-200 shadow-sm"
                 />
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 text-auto-secondary">
@@ -230,11 +204,11 @@ export default function ActualizarMedicamento() {
                           {med.nombre}
                         </h3>
                         <p className="text-sm text-auto-secondary mt-1">
-                          {med.frecuencia || "Sin frecuencia definida"}
+                          Stock: {med.cantidadStock} unidades
                         </p>
                       </div>
                       <span className="ml-2 px-3 py-1 bg-gradient-to-r from-sky-100 to-cyan-100 text-sky-800 text-xs font-bold rounded-lg shadow-sm border border-sky-200">
-                        {med.viaAdministracion || "Sin vía"}
+                        {med.ubicacion || "Sin ubicación"}
                       </span>
                     </div>
                     <div className="mb-4 bg-auto-secondary rounded-lg p-3 border border-auto">
@@ -254,10 +228,10 @@ export default function ActualizarMedicamento() {
                           />
                         </svg>
                         <span>
-                          <span className="font-semibold">Dosis:</span>{" "}
-                          {med.dosis || (
+                          <span className="font-semibold">Lote:</span>{" "}
+                          {med.lote || (
                             <span className="italic text-auto-tertiary">
-                              Sin dosis registrada
+                              Sin lote
                             </span>
                           )}
                         </span>
@@ -267,12 +241,10 @@ export default function ActualizarMedicamento() {
                 )}
                 buildForm={(med) => ({
                   ...med,
-                  dosis: med.dosis ?? "",
-                  viaAdministracion: med.viaAdministracion ?? "",
-                  frecuencia: med.frecuencia ?? "",
-                  fechaHoraAdministracion: toDateTimeLocal(
-                    med.fechaHoraAdministracion
-                  ),
+                  descripcion: med.descripcion ?? "",
+                  lote: med.lote ?? "",
+                  fechaCaducidad: med.fechaCaducidad ? med.fechaCaducidad.slice(0, 10) : "",
+                  ubicacion: med.ubicacion ?? "",
                 })}
                 renderEditor={(form, onFieldChange) => (
                   <div className="grid gap-3 md:grid-cols-2">
@@ -284,36 +256,44 @@ export default function ActualizarMedicamento() {
                       required
                     />
                     <TextField
-                      label="Dosis"
-                      name="dosis"
-                      value={form.dosis ?? ""}
-                      onChange={(e) => onFieldChange("dosis", e.target.value)}
-                    />
-                    <SelectField
-                      label="Vía de administración"
-                      name="viaAdministracion"
-                      value={form.viaAdministracion ?? ""}
-                      onChange={(e) =>
-                        onFieldChange("viaAdministracion", e.target.value)
-                      }
-                      options={viaOptions}
+                      label="Descripción"
+                      name="descripcion"
+                      value={form.descripcion ?? ""}
+                      onChange={(e) => onFieldChange("descripcion", e.target.value)}
                     />
                     <TextField
-                      label="Frecuencia"
-                      name="frecuencia"
-                      value={form.frecuencia ?? ""}
+                      label="Cantidad en Stock"
+                      name="cantidadStock"
+                      type="number"
+                      value={form.cantidadStock?.toString() ?? "0"}
                       onChange={(e) =>
-                        onFieldChange("frecuencia", e.target.value)
+                        onFieldChange("cantidadStock", parseInt(e.target.value) || 0)
                       }
-                      placeholder="Ej. Cada 8 horas"
+                      required
                     />
                     <TextField
-                      label="Próxima administración"
-                      name="fechaHoraAdministracion"
-                      type="datetime-local"
-                      value={form.fechaHoraAdministracion ?? ""}
+                      label="Lote"
+                      name="lote"
+                      value={form.lote ?? ""}
                       onChange={(e) =>
-                        onFieldChange("fechaHoraAdministracion", e.target.value)
+                        onFieldChange("lote", e.target.value)
+                      }
+                    />
+                    <TextField
+                      label="Fecha de Caducidad"
+                      name="fechaCaducidad"
+                      type="date"
+                      value={form.fechaCaducidad ?? ""}
+                      onChange={(e) =>
+                        onFieldChange("fechaCaducidad", e.target.value)
+                      }
+                    />
+                    <TextField
+                      label="Ubicación en Almacén"
+                      name="ubicacion"
+                      value={form.ubicacion ?? ""}
+                      onChange={(e) =>
+                        onFieldChange("ubicacion", e.target.value)
                       }
                     />
                   </div>
@@ -324,14 +304,11 @@ export default function ActualizarMedicamento() {
                   try {
                     const payload = {
                       nombre: formState.nombre,
-                      dosis: formState.dosis || null,
-                      viaAdministracion: formState.viaAdministracion || null,
-                      frecuencia: formState.frecuencia || null,
-                      fechaHoraAdministracion: formState.fechaHoraAdministracion
-                        ? new Date(
-                            formState.fechaHoraAdministracion
-                          ).toISOString()
-                        : null,
+                      descripcion: formState.descripcion || null,
+                      cantidadStock: formState.cantidadStock || 0,
+                      lote: formState.lote || null,
+                      fechaCaducidad: formState.fechaCaducidad || null,
+                      ubicacion: formState.ubicacion || null,
                     };
 
                     await axios.put(
@@ -341,7 +318,7 @@ export default function ActualizarMedicamento() {
 
                     setAlert({
                       type: "success",
-                      message: "Medicamento actualizado correctamente",
+                      message: "Medicamento actualizado correctamente en inventario",
                     });
                     await fetchMedicamentos();
                   } catch (error: any) {

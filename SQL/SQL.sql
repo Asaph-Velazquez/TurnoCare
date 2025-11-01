@@ -94,8 +94,11 @@ CREATE TABLE Medicamentos (
     frecuencia VARCHAR(50),
     fechaHoraAdministracion TIMESTAMP,
     enfermeroResponsable INTEGER NOT NULL,
+    pacienteId INTEGER,
     CONSTRAINT fk_medicamento_enfermero FOREIGN KEY (enfermeroResponsable) 
-        REFERENCES Enfermero(enfermeroId) ON DELETE RESTRICT
+        REFERENCES Enfermero(enfermeroId) ON DELETE RESTRICT,
+    CONSTRAINT fk_medicamento_paciente FOREIGN KEY (pacienteId)
+        REFERENCES Paciente(pacienteId) ON DELETE CASCADE
 );
 
 -- Tabla InventarioMedicamentos
@@ -141,3 +144,8 @@ alter table paciente add column apellidom varchar(100);
 
 --modificaciones de enfermero
 alter table enfermero add column habitacionAsignada varchar(100);
+
+-- modificaciones de medicamentos para asociar a paciente
+alter table medicamentos add column pacienteId integer;
+alter table medicamentos add constraint fk_medicamento_paciente foreign key (pacienteId)
+    references paciente(pacienteId) on delete cascade;

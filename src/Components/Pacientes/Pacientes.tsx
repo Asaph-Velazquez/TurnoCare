@@ -69,12 +69,36 @@ function Pacientes() {
         </svg>
       ),
     },
+    {
+      id: "AsignarMedicamentosInsumos",
+      name: "Asignar Medicamentos/Insumos",
+      description: "Asignar medicamentos e insumos a pacientes",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="currentColor"
+          className="w-8 h-8 text-auto-primary"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 16a9.065 9.065 0 0 1-6.23-.693L5 15.3m14.8 0 .94.342m-16.52-.34-.94.342m0 0a9.068 9.068 0 0 0-.445 1.682m16.93 0a9.068 9.068 0 0 0-.445-1.682M1.5 18.75h21"
+          />
+        </svg>
+      ),
+    }
   ];
 
   const handleOptionClick = (optionId: string) => {
     switch (optionId) {
       case "RegistrarPaciente":
         navigate("/pacientes/registrar");
+        break;
+      case "AsignarMedicamentosInsumos":
+        navigate("/pacientes/asignar-medicamentos-insumos");
         break;
       case "EliminarPaciente":
         navigate("/pacientes/eliminar");
@@ -88,7 +112,7 @@ function Pacientes() {
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
       {/* Fondo decorativo */}
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-127 w-full absolute top-0 left-0"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-185 w-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen">
         {/* Header */}
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
@@ -138,10 +162,9 @@ function Pacientes() {
           {/* Sección de listado de pacientes */}
           <div className="mt-8">
             <PacientesList
-              onPacienteSelect={(paciente: Paciente) => {
-                console.log("Paciente seleccionado:", paciente.numeroExpediente);
-                // TODO: agregar detalles
-              }}
+            onPacienteSelect={(paciente: Paciente) => {
+              navigate(`/pacientes/detalles/${paciente.pacienteId}`);            
+            }}
             />
           </div>
         </main>

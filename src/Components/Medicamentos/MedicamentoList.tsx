@@ -5,11 +5,12 @@ import DataTable from "../utilities/DataTable";
 interface Medicamento {
   medicamentoId: number;
   nombre: string;
-  dosis: string | null;
-  viaAdministracion: string | null;
-  frecuencia: string | null;
-  fechaHoraAdministracion: string | null; // ISO string
-  enfermeroResponsable: number;
+  descripcion: string | null;
+  cantidadStock: number;
+  lote: string | null;
+  fechaCaducidad: string | null;
+  ubicacion: string | null;
+  actualizadoEn: string;
 }
 
 interface MedicamentoListProps {
@@ -47,27 +48,32 @@ function MedicamentoList({
   const columns = [
     { key: "nombre", label: "Nombre" },
     {
-      key: "dosis",
-      label: "Dosis",
-      render: (m: Medicamento) => m.dosis || "-",
+      key: "descripcion",
+      label: "Descripción",
+      render: (m: Medicamento) => m.descripcion || "-",
     },
     {
-      key: "viaAdministracion",
-      label: "Vía",
-      render: (m: Medicamento) => m.viaAdministracion || "-",
+      key: "cantidadStock",
+      label: "Stock",
+      render: (m: Medicamento) => `${m.cantidadStock} unidades`,
     },
     {
-      key: "frecuencia",
-      label: "Frecuencia",
-      render: (m: Medicamento) => m.frecuencia || "-",
+      key: "lote",
+      label: "Lote",
+      render: (m: Medicamento) => m.lote || "-",
     },
     {
-      key: "fechaHoraAdministracion",
-      label: "Próxima administración",
+      key: "fechaCaducidad",
+      label: "Fecha de Caducidad",
       render: (m: Medicamento) =>
-        m.fechaHoraAdministracion
-          ? new Date(m.fechaHoraAdministracion).toLocaleString()
+        m.fechaCaducidad
+          ? new Date(m.fechaCaducidad).toLocaleDateString()
           : "-",
+    },
+    {
+      key: "ubicacion",
+      label: "Ubicación",
+      render: (m: Medicamento) => m.ubicacion || "-",
     },
     {
       key: "actions",
