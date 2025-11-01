@@ -1,3 +1,19 @@
+// Obtener un paciente por ID
+const getPacienteById = async (req, resp) => {
+    const { id } = req.params;
+    try {
+        const paciente = await prisma.paciente.findUnique({
+            where: { pacienteId: parseInt(id) }
+        });
+        if (!paciente) {
+            return resp.status(404).json({ success: false, error: 'Paciente no encontrado' });
+        }
+        resp.json({ success: true, data: paciente });
+    } catch (err) {
+        console.error('Error obteniendo paciente por ID:', err);
+        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+};
 const { prisma } = require("../dbPostgres");
 
 // Listar todos los pacientes
@@ -133,6 +149,7 @@ module.exports = {
     listPacientes,
     createPaciente,
     deletePaciente,
-    updatePaciente
+    updatePaciente,
+    getPacienteById
 };
 

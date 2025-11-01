@@ -1,7 +1,10 @@
-const { Router } = require("express");
-const { listPacientes, createPaciente, deletePaciente, updatePaciente } = require("../controllers/pacientes.controller");
 
+const { Router } = require("express");
+const { listPacientes, createPaciente, deletePaciente, updatePaciente, getPacienteById } = require("../controllers/pacientes.controller");
 const router = Router();
+
+// Obtener paciente por ID
+router.get("/:id", getPacienteById);
 
 // Ruta de prueba
 router.get("/hola", (req, resp) => {

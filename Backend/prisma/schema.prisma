@@ -77,7 +77,6 @@ model Enfermero {
   turno            Turno? @relation(fields: [turnoAsignadoId], references: [turnoId], onDelete: SetNull)
   servicio         Servicio? @relation(fields: [servicioActualId], references: [servicioId], onDelete: SetNull)
   registrosMedicos RegistroMedico[]
-  medicamentos     Medicamentos[]
   inventarios      InventarioMedicamentos[]
   insumos          Insumo[]
   capacitaciones   EnfermeroCapacitacion[]
@@ -97,12 +96,27 @@ model Paciente {
   fechaIngreso     DateTime @default(now())
   motivoConsulta   String?
   servicioId       Int?
-  
+
   // Relaciones
   servicio         Servicio? @relation(fields: [servicioId], references: [servicioId], onDelete: SetNull)
   registrosMedicos RegistroMedico[]
-  
+  insumosAsignados PacienteInsumo[]
+  medicamentosAsignados PacienteMedicamento[]
+
   @@map("paciente")
+}
+/// Relación muchos a muchos entre Paciente e Insumo, con cantidad asignada
+model PacienteInsumo {
+  pacienteInsumoId Int      @id @default(autoincrement())
+  paciente         Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
+  pacienteId       Int
+  insumo           Insumo   @relation(fields: [insumoId], references: [insumoId], onDelete: Cascade)
+  insumoId         Int
+  cantidad         Int
+  asignadoEn       DateTime @default(now())
+
+  @@unique([pacienteId, insumoId])
+  @@map("paciente_insumo")
 }
 
 model RegistroMedico {
@@ -120,19 +134,36 @@ model RegistroMedico {
   @@map("registromedico")
 }
 
-model Medicamentos {
-  medicamentoId            Int      @id @default(autoincrement())
-  nombre                   String   @db.VarChar(100)
-  dosis                    String?  @db.VarChar(50)
-  viaAdministracion        String?  @db.VarChar(50)
-  frecuencia               String?  @db.VarChar(50)
-  fechaHoraAdministracion  DateTime?
-  enfermeroResponsable     Int
-  
-  // Relaciones
-  enfermero                Enfermero @relation(fields: [enfermeroResponsable], references: [enfermeroId], onDelete: Restrict)
-  
+model Medicamento {
+  medicamentoId     Int      @id @default(autoincrement())
+  nombre            String   @db.VarChar(100)
+  descripcion       String?  @db.VarChar(255)
+  cantidadStock     Int      @default(0)
+  lote              String?  @db.VarChar(50)
+  fechaCaducidad    DateTime?
+  ubicacion         String?  @db.VarChar(100)
+  actualizadoEn     DateTime @default(now())
+
+  asignaciones      PacienteMedicamento[]
+
   @@map("medicamentos")
+}
+
+/// Relación muchos a muchos entre Paciente y Medicamento, con cantidad y detalles de administración
+model PacienteMedicamento {
+  pacienteMedicamentoId Int      @id @default(autoincrement())
+  paciente             Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
+  pacienteId           Int
+  medicamento          Medicamento @relation(fields: [medicamentoId], references: [medicamentoId], onDelete: Cascade)
+  medicamentoId        Int
+  cantidadAsignada     Int
+  dosis                String?
+  frecuencia           String?
+  viaAdministracion    String?
+  asignadoEn           DateTime @default(now())
+
+  @@unique([pacienteId, medicamentoId])
+  @@map("paciente_medicamento")
 }
 
 model InventarioMedicamentos {
@@ -159,6 +190,7 @@ model Insumo {
   actualizadoEn       DateTime @default(now())
 
   responsable         Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
+  pacientesAsignados  PacienteInsumo[]
 
   @@map("insumo")
 }

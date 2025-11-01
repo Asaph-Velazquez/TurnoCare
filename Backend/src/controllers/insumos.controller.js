@@ -1,3 +1,21 @@
+// Consultar insumos asignados a un paciente
+const getInsumosAsignadosPaciente = async (req, resp) => {
+  const { pacienteId } = req.params;
+  if (!pacienteId) {
+    return resp.status(400).json({ error: "Falta pacienteId" });
+  }
+  try {
+    const asignados = await prisma.pacienteInsumo.findMany({
+      where: { pacienteId: Number(pacienteId) },
+      include: { insumo: true },
+      orderBy: { asignadoEn: "desc" },
+    });
+    resp.json({ success: true, data: asignados });
+  } catch (err) {
+    console.error("Error al consultar insumos asignados:", err);
+    resp.status(500).json({ error: "Error al consultar insumos asignados" });
+  }
+};
 const { prisma } = require("../dbPostgres");
 
 const parseOptionalInt = (value) => {
@@ -139,10 +157,37 @@ const deleteInsumo = async (req, resp) => {
   }
 };
 
+// Asignar insumos a un paciente
+const asignarInsumosAPaciente = async (req, resp) => {
+  // Espera body: { pacienteId: number, insumos: [{ insumoId: number, cantidad: number }] }
+  const { pacienteId, insumos } = req.body;
+  if (!pacienteId || !Array.isArray(insumos)) {
+    return resp.status(400).json({ error: "Datos insuficientes para asignar insumos" });
+  }
+  try {
+    // Borra asignaciones previas (opcional, según lógica de negocio)
+    await prisma.pacienteInsumo.deleteMany({ where: { pacienteId } });
+    // Asigna los nuevos insumos
+    const asignaciones = await Promise.all(
+      insumos.map(({ insumoId, cantidad }) =>
+        prisma.pacienteInsumo.create({
+          data: { pacienteId, insumoId, cantidad }
+        })
+      )
+    );
+    resp.json({ success: true, data: asignaciones });
+  } catch (err) {
+    console.error("Error al asignar insumos a paciente:", err);
+    resp.status(500).json({ error: "Error al asignar insumos a paciente" });
+  }
+};
+
 module.exports = {
   createInsumo,
   getAllInsumos,
   getInsumoById,
   updateInsumo,
   deleteInsumo,
+  asignarInsumosAPaciente,
+  getInsumosAsignadosPaciente,
 };

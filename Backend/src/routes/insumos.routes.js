@@ -1,3 +1,4 @@
+
 const { Router } = require("express");
 const {
   createInsumo,
@@ -5,9 +6,16 @@ const {
   getInsumoById,
   updateInsumo,
   deleteInsumo,
+  asignarInsumosAPaciente,
+  getInsumosAsignadosPaciente,
 } = require("../controllers/insumos.controller");
 
 const router = Router();
+
+// Consultar insumos asignados a un paciente
+router.get("/asignados/:pacienteId", getInsumosAsignadosPaciente);
+// Asignar insumos a un paciente
+router.post("/asignar", asignarInsumosAPaciente);
 
 router.get("/hola", (_req, res) => {
   res.send("Insumos API");
