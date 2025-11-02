@@ -68,7 +68,7 @@ const listEnfermeros = async (req, resp) => {
 
 // CRUD - Crear
 const createEnfermero = async (req, resp) => {
-    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno, turnoAsignadoId } = req.body;
 
     if (!numeroEmpleado || !nombre || !apellidoPaterno || !apellidoMaterno) {
         return resp.status(400).json({ success: false, error: 'Faltan campos requeridos' });
@@ -88,6 +88,41 @@ const createEnfermero = async (req, resp) => {
             }
         }
 
+        // Determinar el ID del turno
+        let turnoId = null;
+        if (turnoAsignadoId) {
+            // Si se envió turnoAsignadoId directamente, usarlo
+            turnoId = parseInt(turnoAsignadoId);
+        } else if (turno) {
+            // Si se envió el campo turno, intentar parsearlo como ID o buscar por nombre
+            const turnoNum = parseInt(turno);
+            if (!isNaN(turnoNum)) {
+                turnoId = turnoNum;
+            } else {
+                // Buscar por nombre (compatibilidad con formato antiguo)
+                const turnoObj = await prisma.turno.findFirst({ 
+                    where: { nombre: { equals: turno, mode: 'insensitive' } } 
+                });
+                if (turnoObj) {
+                    turnoId = turnoObj.turnoId;
+                }
+            }
+        }
+
+        // Validar que el turno existe si se proporcionó
+        if (turnoId) {
+            const turnoExists = await prisma.turno.findUnique({
+                where: { turnoId: turnoId }
+            });
+            
+            if (!turnoExists) {
+                return resp.status(400).json({ 
+                    success: false, 
+                    error: 'El turno especificado no existe' 
+                });
+            }
+        }
+
         const enfermero = await prisma.enfermero.create({
             data: {
                 numeroEmpleado,
@@ -96,7 +131,9 @@ const createEnfermero = async (req, resp) => {
                 apellidoMaterno,
                 especialidad: especialidad || null,
                 esCoordinador: esCoordinador === true || esCoordinador === 'true',
-                servicioActualId: servicioActualId || null
+                servicioActualId: servicioActualId || null,
+                habitacionAsignada: habitacionesAsignadas || null,
+                turnoAsignadoId: turnoId
             }
         });
 
@@ -113,7 +150,7 @@ const createEnfermero = async (req, resp) => {
 // CRUD - Actualizar
 const updateEnfermero = async (req, resp) => {
     const { id } = req.params;
-    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno } = req.body;
+    const { numeroEmpleado, nombre, apellidoPaterno, apellidoMaterno, especialidad, esCoordinador, servicioActualId, habitacionesAsignadas, turno, turnoAsignadoId } = req.body;
 
     if (!id) {
         return resp.status(400).json({ success: false, error: 'ID de enfermero requerido' });
@@ -153,15 +190,46 @@ const updateEnfermero = async (req, resp) => {
             }
         }
         if (habitacionesAsignadas !== undefined) data.habitacionAsignada = habitacionesAsignadas;
-        if (turno !== undefined) {
-            if (turno === null || turno === "") {
+        
+        // Manejo del turno - acepta tanto ID como nombre
+        if (turno !== undefined || turnoAsignadoId !== undefined) {
+            const turnoValue = turnoAsignadoId || turno;
+            
+            if (turnoValue === null || turnoValue === "") {
                 data.turno = { disconnect: true };
             } else {
-                const turnoObj = await prisma.turno.findFirst({ where: { nombre: { equals: turno, mode: 'insensitive' } } });
-                if (!turnoObj) {
-                    return resp.status(400).json({ success: false, error: `El turno '${turno}' no existe` });
+                // Intentar convertir a número (ID)
+                const turnoNum = parseInt(turnoValue);
+                
+                if (!isNaN(turnoNum)) {
+                    // Es un ID numérico
+                    const turnoExists = await prisma.turno.findUnique({
+                        where: { turnoId: turnoNum }
+                    });
+                    
+                    if (!turnoExists) {
+                        return resp.status(400).json({ 
+                            success: false, 
+                            error: 'El turno especificado no existe' 
+                        });
+                    }
+                    
+                    data.turno = { connect: { turnoId: turnoNum } };
+                } else {
+                    // Es un nombre de turno (compatibilidad con formato antiguo)
+                    const turnoObj = await prisma.turno.findFirst({ 
+                        where: { nombre: { equals: turnoValue, mode: 'insensitive' } } 
+                    });
+                    
+                    if (!turnoObj) {
+                        return resp.status(400).json({ 
+                            success: false, 
+                            error: `El turno '${turnoValue}' no existe` 
+                        });
+                    }
+                    
+                    data.turno = { connect: { turnoId: turnoObj.turnoId } };
                 }
-                data.turno = { connect: { turnoId: turnoObj.turnoId } };
             }
         }
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import TextField from "../utilities/Form/TextField";
 import SelectField from "../utilities/Form/SelectField";
+import SearchableSelectField from "../utilities/Form/SearchableSelectField";
 import UpdateCard from "../utilities/DeleteUpdate/Update";
 
 type Enfermero = {
@@ -23,19 +24,29 @@ type Servicio = {
   descripcion?: string;
 };
 
+type Turno = {
+  turnoId: number;
+  nombre: string;
+  horaInicio: string;
+  horaFin: string;
+};
+
 export default function ActualizarEnfermero() {
   const [enfermeros, setEnfermeros] = useState<Enfermero[]>([]);
   const [filteredEnfermeros, setFilteredEnfermeros] = useState<Enfermero[]>([]);
   const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [turnos, setTurnos] = useState<Turno[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loadingList, setLoadingList] = useState(true);
   const [loadingServicios, setLoadingServicios] = useState(false);
+  const [loadingTurnos, setLoadingTurnos] = useState(false);
   const [saving, setSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
 
   useEffect(() => {
     fetchEnfermeros();
     fetchServicios();
+    fetchTurnos();
   }, []);
 
   useEffect(() => {
@@ -86,6 +97,34 @@ export default function ActualizarEnfermero() {
       setServicios([]);
     } finally {
       setLoadingServicios(false);
+    }
+  };
+
+  const fetchTurnos = async () => {
+    try {
+      setLoadingTurnos(true);
+      const response = await axios.get("http://localhost:5000/api/turnos");
+      const data = response.data?.data || response.data || [];
+      setTurnos(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("❌ Error al cargar turnos:", error);
+      setTurnos([]);
+    } finally {
+      setLoadingTurnos(false);
+    }
+  };
+
+  // Función auxiliar para formatear hora
+  const formatHora = (horaISO: string): string => {
+    try {
+      const fecha = new Date(horaISO);
+      return fecha.toLocaleTimeString('es-MX', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      });
+    } catch {
+      return horaISO;
     }
   };
 
@@ -240,17 +279,18 @@ export default function ActualizarEnfermero() {
                     <TextField label="Apellido materno" name="apellidoMaterno" value={form.apellidoMaterno ?? ""} onChange={(e) => onFieldChange("apellidoMaterno", e.target.value)} />
                     <TextField label="Especialidad" name="especialidad" value={form.especialidad ?? ""} onChange={(e) => onFieldChange("especialidad", e.target.value)} />
                     <TextField label="Habitación(es) asignada(s)" name="habitacionesAsignadas" value={form.habitacionesAsignadas ?? ""} onChange={(e) => onFieldChange("habitacionesAsignadas", e.target.value)} placeholder="Ej: 101, 102, 103" />
-                    <SelectField 
-                      label="Turno"
+                    <SearchableSelectField 
+                      label="Turno Laboral"
                       name="turno"
                       value={form.turno ?? ""}
-                      onChange={(e) => onFieldChange("turno", e.target.value)}
-                      options={[
-                        { value: "", label: "Seleccionar turno" },
-                        { value: "matutino", label: "Matutino" },
-                        { value: "vespertino", label: "Vespertino" },
-                        { value: "nocturno", label: "Nocturno" },
-                      ]}
+                      onChange={(value) => onFieldChange("turno", value)}
+                      placeholder="Buscar por horario o tipo..."
+                      emptyMessage={loadingTurnos ? "Cargando turnos..." : "No hay turnos disponibles"}
+                      options={turnos.map(t => ({
+                        value: t.turnoId.toString(),
+                        label: `${t.nombre} (${formatHora(t.horaInicio)} - ${formatHora(t.horaFin)})`,
+                        searchText: `${t.nombre} ${formatHora(t.horaInicio)} ${formatHora(t.horaFin)}`
+                      }))}
                     />
                     <SelectField 
                       label="Servicio Asignado" 

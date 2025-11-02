@@ -9,7 +9,7 @@ import EliminarEnfermero from "./Components/Enfermero/EliminarEnfermero";
 import Enfermero from "./Components/Enfermero/Enfermero";
 import ActualizarEnfermero from "./Components/Enfermero/ActualizarEnfermero";
 import Detalles from "./Components/Enfermero/Detalles";
-import AsignarPaciente from "./Components/Enfermero/AsignarPaciente";
+import AsignarServicioPaciente from "./Components/Pacientes/AsignarServicioPaciente";
 import Footer from "./Components/Footer";
 import RegistrarHospital from "./Components/Hospital/RegistrarHospital";
 import ActualizarHospital from "./Components/Hospital/ActualizarHospital";
@@ -38,46 +38,62 @@ import AsignarMedicamentosInsumos from "./Components/Pacientes/AsignarMedicament
 import ActualizarAsignaciones from "./Components/Pacientes/ActualizarAsignaciones";
 import EliminarAsignaciones from "./Components/Pacientes/EliminarAsignaciones";
 import GestionAsignaciones from "./Components/Pacientes/GestionAsignaciones";
+import InventarioPorServicio from "./Components/Inventario/InventarioPorServicio";
+import Turnos from "./Components/Turnos/Turnos";
+import RegistrarTurno from "./Components/Turnos/RegistrarTurno";
+import EliminarTurno from "./Components/Turnos/EliminarTurno";
+import ActualizarTurno from "./Components/Turnos/ActualizarTurno";
+import AsignarHorarioEnfermero from "./Components/Enfermero/AsignarHorarioEnfermero";
+import ListarTurnos from "./Components/Turnos/ListarTurnos";
+import ProtectedRoute from "./Components/ProtectedRoute";
+
 function App() {
   return (
     <div>
       <AdminNav />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/AdminHome" element={<AdminHome />} />
-        <Route path="/Enfermero" element={<Enfermero />} />
-        <Route path="/RegistrarEnfermero" element={<RegistrarEnfermero />} />
-        <Route path="/EliminarEnfermero" element={<EliminarEnfermero />} />
-        <Route path="/ActualizarEnfermero" element={<ActualizarEnfermero />} />
-        <Route path="/Enfermeros/Detalles" element={<Detalles />} />
-        <Route path="/AsignarPaciente" element={<AsignarPaciente />} />
-        <Route path="/RegistrarHospital" element={<RegistrarHospital />} />
-        <Route path="/ActualizarHospital" element={<ActualizarHospital />} />
-        <Route path="/EliminarHospital" element={<EliminarHospital />} />
-        <Route path="/Hospital" element={<Hospital />} />
-        <Route path="/pacientes" element={<Pacientes />} />
-        <Route path="/pacientes/registrar" element={<RegistrarPacientes />} />
-        <Route path="/Servicios" element={<Service />} />
-        <Route path="/RegistrarServicio" element={<RegistrarServicio />} />
-        <Route path="/ListarServicios" element={<ListarServicios />} />
-        <Route path="/ActualizarServicio" element={<ActualizarServicio />} />
-        <Route path="/EliminarServicio" element={<EliminarServicio />} />
-        <Route path="/Inventario" element={<Inventario />} />
-        <Route path="/Medicamento" element={<Medicamento />} />
-        <Route path="/RegistrarMedicamento" element={<RegistrarMedicamento />}/>
-        <Route path="/ActualizarMedicamento" element={<ActualizarMedicamento />}/>
-        <Route path="/EliminarMedicamento" element={<EliminarMedicamento />} />
-        <Route path="/Insumos" element={<Insumos />} />
-        <Route path="/RegistrarInsumo" element={<RegistrarInsumo />} />
-        <Route path="/ActualizarInsumo" element={<ActualizarInsumo />} />
-        <Route path="/EliminarInsumo" element={<EliminarInsumo />} />
-        <Route path="/pacientes/eliminar" element={<EliminarPacientes />} />
-        <Route path="/pacientes/actualizar" element={<ActualizarPacientes />} />
-        <Route path="/pacientes/detalles/:pacienteId" element={<PacienteDetalles />} />
-        <Route path="/pacientes/asignar-medicamentos-insumos" element={<AsignarMedicamentosInsumos />} />
-        <Route path="/pacientes/actualizar-asignaciones" element={<ActualizarAsignaciones />} />
-        <Route path="/pacientes/eliminar-asignaciones" element={<EliminarAsignaciones />} />
-        <Route path="/pacientes/gestionar-asignaciones" element={<GestionAsignaciones />} />
+        <Route path="/AdminHome" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
+        <Route path="/Enfermero" element={<ProtectedRoute><Enfermero /></ProtectedRoute>} />
+        <Route path="/RegistrarEnfermero" element={<ProtectedRoute><RegistrarEnfermero /></ProtectedRoute>} />
+        <Route path="/EliminarEnfermero" element={<ProtectedRoute><EliminarEnfermero /></ProtectedRoute>} />
+        <Route path="/ActualizarEnfermero" element={<ProtectedRoute><ActualizarEnfermero /></ProtectedRoute>} />
+        <Route path="/Enfermeros/Detalles" element={<ProtectedRoute><Detalles /></ProtectedRoute>} />
+        <Route path="/AsignarServicioPaciente" element={<ProtectedRoute><AsignarServicioPaciente /></ProtectedRoute>} />
+        <Route path="/RegistrarHospital" element={<ProtectedRoute><RegistrarHospital /></ProtectedRoute>} />
+        <Route path="/ActualizarHospital" element={<ProtectedRoute><ActualizarHospital /></ProtectedRoute>} />
+        <Route path="/EliminarHospital" element={<ProtectedRoute><EliminarHospital /></ProtectedRoute>} />
+        <Route path="/Hospital" element={<ProtectedRoute><Hospital /></ProtectedRoute>} />
+        <Route path="/pacientes" element={<ProtectedRoute><Pacientes /></ProtectedRoute>} />
+        <Route path="/pacientes/registrar" element={<ProtectedRoute><RegistrarPacientes /></ProtectedRoute>} />
+        <Route path="/Servicios" element={<ProtectedRoute><Service /></ProtectedRoute>} />
+        <Route path="/RegistrarServicio" element={<ProtectedRoute><RegistrarServicio /></ProtectedRoute>} />
+        <Route path="/ListarServicios" element={<ProtectedRoute><ListarServicios /></ProtectedRoute>} />
+        <Route path="/ActualizarServicio" element={<ProtectedRoute><ActualizarServicio /></ProtectedRoute>} />
+        <Route path="/EliminarServicio" element={<ProtectedRoute><EliminarServicio /></ProtectedRoute>} />
+        <Route path="/Inventario" element={<ProtectedRoute><Inventario /></ProtectedRoute>} />
+        <Route path="/Medicamento" element={<ProtectedRoute><Medicamento /></ProtectedRoute>} />
+        <Route path="/RegistrarMedicamento" element={<ProtectedRoute><RegistrarMedicamento /></ProtectedRoute>}/>
+        <Route path="/ActualizarMedicamento" element={<ProtectedRoute><ActualizarMedicamento /></ProtectedRoute>}/>
+        <Route path="/EliminarMedicamento" element={<ProtectedRoute><EliminarMedicamento /></ProtectedRoute>} />
+        <Route path="/Insumos" element={<ProtectedRoute><Insumos /></ProtectedRoute>} />
+        <Route path="/RegistrarInsumo" element={<ProtectedRoute><RegistrarInsumo /></ProtectedRoute>} />
+        <Route path="/ActualizarInsumo" element={<ProtectedRoute><ActualizarInsumo /></ProtectedRoute>} />
+        <Route path="/EliminarInsumo" element={<ProtectedRoute><EliminarInsumo /></ProtectedRoute>} />
+        <Route path="/pacientes/eliminar" element={<ProtectedRoute><EliminarPacientes /></ProtectedRoute>} />
+        <Route path="/pacientes/actualizar" element={<ProtectedRoute><ActualizarPacientes /></ProtectedRoute>} />
+        <Route path="/pacientes/detalles/:pacienteId" element={<ProtectedRoute><PacienteDetalles /></ProtectedRoute>} />
+        <Route path="/pacientes/asignar-medicamentos-insumos" element={<ProtectedRoute><AsignarMedicamentosInsumos /></ProtectedRoute>} />
+        <Route path="/pacientes/actualizar-asignaciones" element={<ProtectedRoute><ActualizarAsignaciones /></ProtectedRoute>} />
+        <Route path="/pacientes/eliminar-asignaciones" element={<ProtectedRoute><EliminarAsignaciones /></ProtectedRoute>} />
+        <Route path="/pacientes/gestionar-asignaciones" element={<ProtectedRoute><GestionAsignaciones /></ProtectedRoute>} />
+        <Route path="/inventario/servicios" element={<ProtectedRoute><InventarioPorServicio /></ProtectedRoute>} />
+        <Route path="/turnos" element={<ProtectedRoute><Turnos /></ProtectedRoute>} />
+        <Route path="/turnos/registrar" element={<ProtectedRoute><RegistrarTurno /></ProtectedRoute>} />
+        <Route path="/turnos/eliminar" element={<ProtectedRoute><EliminarTurno /></ProtectedRoute>} />
+        <Route path="/turnos/actualizar" element={<ProtectedRoute><ActualizarTurno /></ProtectedRoute>} />
+        <Route path="/turnos/asignar-enfermero" element={<ProtectedRoute><AsignarHorarioEnfermero /></ProtectedRoute>} />
+        <Route path="/turnos/listar" element={<ProtectedRoute><ListarTurnos /></ProtectedRoute>} />
       </Routes>
       <Footer />
     </div>

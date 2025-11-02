@@ -208,6 +208,27 @@ function AdminHome() {
         </svg>
       ),
     },
+    {
+      id: "turnos",
+      title: "Gestionar Turnos",
+      description: "Administrar turnos y asignaciones de enfermeros",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          strokeWidth={1.5}
+          stroke="currentColor"
+          className="size-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+      ),
+    },
   ];
 
   const handleOptionClick = (optionId: string) => {
@@ -229,6 +250,10 @@ function AdminHome() {
         break;
       case "inventario":
         navigate("/Inventario");
+        break;
+      case "turnos":
+        navigate("/turnos");
+        break;
     }
   };
 
@@ -321,7 +346,7 @@ function AdminHome() {
               </div>
             ))}
           </div>
-
+          <br />
           {/* Quick Stats */}
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Enfermeros */}

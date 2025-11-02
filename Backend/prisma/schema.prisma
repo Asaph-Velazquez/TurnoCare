@@ -53,7 +53,6 @@ model Turno {
   nombre     String   @db.VarChar(50)
   horaInicio DateTime @db.Time
   horaFin    DateTime @db.Time
-  fecha      DateTime? @db.Date
   
   // Relaciones
   enfermeros Enfermero[]

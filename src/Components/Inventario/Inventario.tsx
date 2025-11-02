@@ -57,6 +57,27 @@ function Inventario() {
         </svg>
       ),
     },
+    {
+      id: "InventarioServicios",
+      title: "Inventario por Servicio",
+      description: "Estado de medicamentos e insumos en cada servicio",
+      route: "/inventario/servicios",
+      icon: (
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#ffffff"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+        </svg>
+      ),
+    },
   ];
 
   const handleClick = (route: string) => {
@@ -65,7 +86,7 @@ function Inventario() {
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-127 w-full absolute top-0 left-0"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-full w-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen">
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

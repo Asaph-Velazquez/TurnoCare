@@ -13,6 +13,13 @@ interface Enfermero {
   servicioActualId: number | null;
   habitacionAsignada?: string | null;
   habitacionesAsignadas?: string | null;
+  turnoAsignadoId?: number | null;
+  turno?: {
+    turnoId: number;
+    nombre: string;
+    horaInicio: string;
+    horaFin: string;
+  } | null;
 }
 
 interface EnfermeroListProps {
@@ -42,6 +49,22 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
     } finally {
       setLoading(false);
     }
+  };
+
+  // Helper para formatear hora en formato 24 horas
+  const formatHora = (hora: string) => {
+    const date = new Date(hora);
+    const hours = date.getUTCHours().toString().padStart(2, '0');
+    const minutes = date.getUTCMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const getTipoTurno = (horaInicio: string) => {
+    const date = new Date(horaInicio);
+    const hours = date.getUTCHours();
+    if (hours >= 6 && hours < 14) return 'Matutino';
+    if (hours >= 14 && hours < 22) return 'Vespertino';
+    return 'Nocturno';
   };
 
   const columns = [
@@ -79,6 +102,33 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
       key: "especialidad",
       label: "Especialidad",
       render: (enf: Enfermero) => enf.especialidad || "Sin especialidad",
+    },
+    {
+      key: "turno",
+      label: "Turno Asignado",
+      render: (enf: Enfermero) => {
+        if (!enf.turno) {
+          return <span className="text-gray-400 italic text-xs">Sin turno</span>;
+        }
+        const tipo = getTipoTurno(enf.turno.horaInicio);
+        const icono = tipo === 'Matutino' ? '☀️' : tipo === 'Vespertino' ? '🌆' : '🌙';
+        const colorClass = tipo === 'Matutino' 
+          ? 'bg-yellow-100 text-yellow-800 border-yellow-300' 
+          : tipo === 'Vespertino'
+          ? 'bg-orange-100 text-orange-800 border-orange-300'
+          : 'bg-blue-100 text-blue-800 border-blue-300';
+        
+        return (
+          <div className="flex flex-col gap-1">
+            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold border ${colorClass} inline-block w-fit`}>
+              {icono} {tipo}
+            </span>
+            <span className="text-xs text-gray-600 dark:text-gray-400">
+              {formatHora(enf.turno.horaInicio)} - {formatHora(enf.turno.horaFin)}
+            </span>
+          </div>
+        );
+      },
     },
     {
       key: "esCoordinador",

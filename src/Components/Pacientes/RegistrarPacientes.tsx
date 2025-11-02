@@ -1,9 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
-import FormLayout from "../utilities/Form/FormLayout";
 import TextField from "../utilities/Form/TextField";
 import SelectField from "../utilities/Form/SelectField";
-import SubmitButton from "../utilities/Form/SubmitButton";
 
 type Insumo = {
   insumoId: number;
@@ -263,106 +261,157 @@ function RegistrarPacientes() {
   };
 
   return (
-    <div className="min-h-screen bg-auto-primary pt-20">
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 w-full h-full absolute"></div>
+    <div className="min-h-screen bg-auto-primary pt-20 pb-10">
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-400/10 via-transparent to-cyan-400/10"></div>
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-sky-300/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-cyan-300/20 rounded-full blur-3xl"></div>
+      </div>
+
       <div className="relative min-h-screen">
         <main className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-10 py-10">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <FormLayout title="Registrar Paciente" onSubmit={handleSubmit} widthClass="max-w-4xl">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <TextField
-                    label="Número de Expediente"
-                    name="numeroExpediente"
-                    value={form.numeroExpediente}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <TextField label="Nombre" name="nombre" value={form.nombre} onChange={handleInputChange} required />
-                  <TextField
-                    label="Apellido paterno"
-                    name="apellidop"
-                    value={form.apellidop}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <TextField
-                    label="Apellido materno"
-                    name="apellidom"
-                    value={form.apellidom}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  <TextField label="Edad" name="edad" type="number" value={form.edad} onChange={handleInputChange} />
-                  <TextField label="Número de Cama" name="numeroCama" value={form.numeroCama} onChange={handleInputChange} />
-                  <TextField
-                    label="Número de Habitación"
-                    name="numeroHabitacion"
-                    value={form.numeroHabitacion}
-                    onChange={handleInputChange}
-                  />
-                  <div>
-                    <label className="block text-sm font-medium text-auto-primary mb-2">Fecha de Ingreso</label>
-                    <input
-                      id="Fecha de Ingreso"
-                      name="fechaIngreso"
-                      type="datetime-local"
-                      value={form.fechaIngreso}
-                      onChange={handleInputChange}
-                      className="w-full pl-4 pr-4 py-3 border rounded-xl bg-auto-tertiary/60 text-auto-primary"
-                    />
+              <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 md:p-8 border border-auto backdrop-blur-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="bg-gradient-to-br from-sky-500 to-sky-600 p-3 rounded-xl shadow-lg">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="1.5"
+                      stroke="currentColor"
+                      className="w-6 h-6 text-white"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+                      />
+                    </svg>
                   </div>
                   <div>
-                    <SelectField
-                      label="Servicio"
-                      name="servicioId"
-                      value={form.servicioId}
-                      onChange={handleSelectChange}
-                      options={[{ value: "", label: "Sin asignar" }, ...servicioOptions]}
-                    />
+                    <h2 className="text-3xl font-bold text-auto-primary">Registrar Paciente</h2>
+                    <p className="text-auto-secondary text-sm">Ingresa los datos del nuevo paciente</p>
                   </div>
                 </div>
 
-                <div className="mt-6">
-                  <label className="block text-sm font-medium text-auto-primary mb-2">Motivo de Consulta</label>
-                  <textarea
-                    name="motivoConsulta"
-                    value={form.motivoConsulta}
-                    onChange={handleTextareaChange}
-                    placeholder="Descripción breve del motivo de ingreso"
-                    className="w-full pl-4 pr-4 py-3 border rounded-xl bg-auto-tertiary/60 text-auto-primary min-h-[100px]"
-                  />
-                </div>
+                <div className="h-px bg-gradient-to-r from-transparent via-auto-tertiary to-transparent my-6"></div>
 
-                <div className="mt-6">
-                  <SubmitButton label={loading ? "Registrando..." : "Registrar"} />
-                </div>
-
+                {/* Alertas */}
                 {alert && (
                   <div
-                    className={`mt-4 p-4 rounded-xl ${
+                    className={`mb-6 p-4 rounded-xl shadow-lg backdrop-blur-sm ${
                       alert.type === "success"
-                        ? "bg-green-100 text-green-800 border border-green-300"
-                        : "bg-red-100 text-red-800 border border-red-300"
+                        ? "bg-green-100 text-green-800 border-2 border-green-300 dark:bg-green-900/40 dark:text-green-200 dark:border-green-700"
+                        : "bg-red-100 text-red-800 border-2 border-red-300 dark:bg-red-900/40 dark:text-red-200 dark:border-red-700"
                     }`}
                   >
-                    {alert.message}
+                    <div className="flex items-center gap-2">
+                      {alert.type === "success" ? (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      ) : (
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                      <span className="font-medium">{alert.message}</span>
+                    </div>
                   </div>
                 )}
-              </FormLayout>
+
+                {/* Formulario */}
+                <form onSubmit={handleSubmit}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <TextField
+                      label="Número de Expediente"
+                      name="numeroExpediente"
+                      value={form.numeroExpediente}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <TextField label="Nombre" name="nombre" value={form.nombre} onChange={handleInputChange} required />
+                    <TextField
+                      label="Apellido paterno"
+                      name="apellidop"
+                      value={form.apellidop}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <TextField
+                      label="Apellido materno"
+                      name="apellidom"
+                      value={form.apellidom}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <TextField label="Edad" name="edad" type="number" value={form.edad} onChange={handleInputChange} />
+                    <TextField label="Número de Cama" name="numeroCama" value={form.numeroCama} onChange={handleInputChange} />
+                    <TextField
+                      label="Número de Habitación"
+                      name="numeroHabitacion"
+                      value={form.numeroHabitacion}
+                      onChange={handleInputChange}
+                    />
+                    <div>
+                      <label className="block text-sm font-semibold text-auto-primary mb-2">Fecha de Ingreso</label>
+                      <input
+                        id="Fecha de Ingreso"
+                        name="fechaIngreso"
+                        type="datetime-local"
+                        value={form.fechaIngreso}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-3 border-2 border-auto rounded-xl bg-auto-primary text-auto-primary focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/20 transition-all duration-200"
+                      />
+                    </div>
+                    <div>
+                      <SelectField
+                        label="Servicio"
+                        name="servicioId"
+                        value={form.servicioId}
+                        onChange={handleSelectChange}
+                        options={[{ value: "", label: "Sin asignar" }, ...servicioOptions]}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <label className="block text-sm font-semibold text-auto-primary mb-2">Motivo de Consulta</label>
+                    <textarea
+                      name="motivoConsulta"
+                      value={form.motivoConsulta}
+                      onChange={handleTextareaChange}
+                      placeholder="Descripción breve del motivo de ingreso"
+                      className="w-full px-4 py-3 border-2 border-auto rounded-xl bg-auto-primary text-auto-primary placeholder-auto-secondary/70 focus:border-sky-500 focus:outline-none focus:ring-4 focus:ring-sky-500/20 transition-all duration-200 min-h-[100px] resize-y"
+                    />
+                  </div>
+
+                  <div className="mt-6">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full px-6 py-3 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-semibold rounded-xl hover:from-sky-600 hover:to-cyan-600 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-200 shadow-lg"
+                    >
+                      {loading ? "Registrando..." : "Registrar Paciente"}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
 
             <aside className="lg:col-span-1 flex flex-col gap-6">
               {/* Tarjeta medicamentos */}
-              <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl p-6 shadow-lg">
-                <h3 className="text-lg font-semibold text-auto-primary mb-3">Asignar Medicamentos</h3>
+              <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 border border-auto backdrop-blur-sm">
+                <h3 className="text-lg font-semibold text-auto-primary mb-2">💊 Asignar Medicamentos</h3>
                 <p className="text-auto-secondary text-sm mb-4">Selecciona un medicamento, especifica dosis y frecuencia, y agrégalo a la lista.</p>
                 <div className="mb-4">
-                  <div className="flex flex-wrap gap-3 mb-2 items-end bg-auto-tertiary/40 rounded-2xl p-4 border border-auto-tertiary shadow-sm">
+                  <div className="flex flex-wrap gap-3 mb-2 items-end bg-auto-primary rounded-xl p-4 border-2 border-auto shadow-sm">
                     <div className="flex-1 min-w-[140px]">
                       <label className="block text-xs font-semibold text-auto-primary mb-1">Medicamento</label>
                       <input
-                        className="w-full border-2 border-auto-tertiary focus:border-sky-500 rounded-xl bg-auto-tertiary/80 text-auto-primary px-2 py-2 transition-colors outline-none"
+                        className="w-full border-2 border-auto focus:border-sky-500 rounded-lg bg-auto-secondary text-auto-primary px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-sky-500/20"
                         list="medicamentos-list"
                         placeholder="Selecciona medicamento"
                         value={medicamentoSeleccionado}
@@ -383,7 +432,7 @@ function RegistrarPacientes() {
                       <label className="block text-xs font-semibold text-auto-primary mb-1">Dosis</label>
                       <input
                         type="text"
-                        className="w-full border-2 border-auto-tertiary focus:border-sky-500 rounded-xl bg-auto-tertiary/80 text-auto-primary px-2 py-2 transition-colors outline-none"
+                        className="w-full border-2 border-auto focus:border-sky-500 rounded-lg bg-auto-secondary text-auto-primary px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-sky-500/20"
                         placeholder="Dosis"
                         value={dosis}
                         onChange={e => setDosis(e.target.value)}
@@ -393,7 +442,7 @@ function RegistrarPacientes() {
                       <label className="block text-xs font-semibold text-auto-primary mb-1">Frecuencia</label>
                       <input
                         type="text"
-                        className="w-full border-2 border-auto-tertiary focus:border-sky-500 rounded-xl bg-auto-tertiary/80 text-auto-primary px-2 py-2 transition-colors outline-none"
+                        className="w-full border-2 border-auto focus:border-sky-500 rounded-lg bg-auto-secondary text-auto-primary px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-sky-500/20"
                         placeholder="Frecuencia"
                         value={frecuencia}
                         onChange={e => setFrecuencia(e.target.value)}
@@ -402,7 +451,7 @@ function RegistrarPacientes() {
                     <div className="flex items-end">
                       <button
                         type="button"
-                        className={`bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition-colors ${(!medicamentoSeleccionado || !dosis || !frecuencia) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        className={`bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition-all ${(!medicamentoSeleccionado || !dosis || !frecuencia) ? 'opacity-60 cursor-not-allowed' : ''}`}
                         onClick={handleAgregarMedicamento}
                         disabled={!medicamentoSeleccionado || !dosis || !frecuencia}
                       >
@@ -411,20 +460,19 @@ function RegistrarPacientes() {
                     </div>
                   </div>
                 </div>
-                <div className="max-h-60 overflow-y-auto divide-y divide-auto-tertiary">
+                <div className="max-h-60 overflow-y-auto divide-y divide-auto">
                   {medicamentosAsignados.length === 0 ? (
-                    <div className="text-auto-tertiary text-sm py-4">No hay medicamentos asignados.</div>
+                    <div className="text-auto-secondary text-sm py-4 text-center italic">No hay medicamentos asignados.</div>
                   ) : (
                     medicamentosAsignados.map((m: MedicamentoAsignado) => (
-                      <div key={m.medicamentoId} className="flex items-center py-2">
+                      <div key={m.medicamentoId} className="flex items-center py-3 hover:bg-auto-primary/50 px-2 rounded-lg transition-colors">
                         <span className="flex-1">
-                          <span className="font-medium text-auto-primary">{m.nombre}</span>
-                          <span className="ml-2 text-xs text-auto-secondary">Dosis: {m.dosis}</span>
-                          <span className="ml-2 text-xs text-auto-secondary">Cada: {m.frecuencia}</span>
+                          <span className="font-semibold text-auto-primary block">{m.nombre}</span>
+                          <span className="text-xs text-auto-secondary">💉 Dosis: {m.dosis} • ⏰ Cada: {m.frecuencia}</span>
                         </span>
                         <button
                           type="button"
-                          className="ml-2 text-red-600 hover:text-red-800 text-xs font-bold"
+                          className="ml-2 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-200"
                           onClick={() => handleEliminarAsignado(m.medicamentoId)}
                         >
                           Quitar
@@ -435,15 +483,15 @@ function RegistrarPacientes() {
                 </div>
               </div>
               {/* Tarjeta insumos */}
-              <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl p-6 shadow-lg">
-                <h3 className="text-lg font-semibold text-auto-primary mb-3">Asignar Insumos</h3>
+              <div className="bg-auto-secondary rounded-2xl shadow-xl p-6 border border-auto backdrop-blur-sm">
+                <h3 className="text-lg font-semibold text-auto-primary mb-2">🏥 Asignar Insumos</h3>
                 <p className="text-auto-secondary text-sm mb-4">Selecciona un insumo, especifica la cantidad y agrégalo a la lista.</p>
                 <div className="mb-4">
-                  <div className="flex flex-wrap gap-3 mb-2 items-end bg-auto-tertiary/40 rounded-2xl p-4 border border-auto-tertiary shadow-sm">
+                  <div className="flex flex-wrap gap-3 mb-2 items-end bg-auto-primary rounded-xl p-4 border-2 border-auto shadow-sm">
                     <div className="flex-1 min-w-[140px]">
                       <label className="block text-xs font-semibold text-auto-primary mb-1">Insumo</label>
                       <input
-                        className="w-full border-2 border-auto-tertiary focus:border-sky-500 rounded-xl bg-auto-tertiary/80 text-auto-primary px-2 py-2 transition-colors outline-none"
+                        className="w-full border-2 border-auto focus:border-sky-500 rounded-lg bg-auto-secondary text-auto-primary px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-sky-500/20"
                         list="insumos-list"
                         placeholder="Selecciona insumo"
                         value={insumoSeleccionado}
@@ -465,7 +513,7 @@ function RegistrarPacientes() {
                       <input
                         type="number"
                         min="1"
-                        className="w-full border-2 border-auto-tertiary focus:border-sky-500 rounded-xl bg-auto-tertiary/80 text-auto-primary px-2 py-2 transition-colors outline-none"
+                        className="w-full border-2 border-auto focus:border-sky-500 rounded-lg bg-auto-secondary text-auto-primary px-3 py-2 transition-colors outline-none focus:ring-2 focus:ring-sky-500/20"
                         placeholder="Cantidad"
                         value={cantidadInsumo}
                         onChange={e => setCantidadInsumo(e.target.value)}
@@ -474,7 +522,7 @@ function RegistrarPacientes() {
                     <div className="flex items-end">
                       <button
                         type="button"
-                        className={`bg-sky-600 hover:bg-sky-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-md transition-colors ${(!insumoSeleccionado || !cantidadInsumo) ? 'opacity-60 cursor-not-allowed' : ''}`}
+                        className={`bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-md transition-all ${(!insumoSeleccionado || !cantidadInsumo) ? 'opacity-60 cursor-not-allowed' : ''}`}
                         onClick={handleAgregarInsumo}
                         disabled={!insumoSeleccionado || !cantidadInsumo}
                       >
@@ -483,19 +531,19 @@ function RegistrarPacientes() {
                     </div>
                   </div>
                 </div>
-                <div className="max-h-60 overflow-y-auto divide-y divide-auto-tertiary">
+                <div className="max-h-60 overflow-y-auto divide-y divide-auto">
                   {insumosAsignados.length === 0 ? (
-                    <div className="text-auto-tertiary text-sm py-4">No hay insumos asignados.</div>
+                    <div className="text-auto-secondary text-sm py-4 text-center italic">No hay insumos asignados.</div>
                   ) : (
                     insumosAsignados.map((i: InsumoAsignado) => (
-                      <div key={i.insumoId} className="flex items-center py-2">
+                      <div key={i.insumoId} className="flex items-center py-3 hover:bg-auto-primary/50 px-2 rounded-lg transition-colors">
                         <span className="flex-1">
-                          <span className="font-medium text-auto-primary">{i.nombre}</span>
-                          <span className="ml-2 text-xs text-auto-secondary">Cantidad: {i.cantidad}</span>
+                          <span className="font-semibold text-auto-primary block">{i.nombre}</span>
+                          <span className="text-xs text-auto-secondary">📦 Cantidad: {i.cantidad}</span>
                         </span>
                         <button
                           type="button"
-                          className="ml-2 text-red-600 hover:text-red-800 text-xs font-bold"
+                          className="ml-2 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-lg text-xs font-bold transition-colors dark:bg-red-900/40 dark:hover:bg-red-900/60 dark:text-red-200"
                           onClick={() => handleEliminarInsumo(i.insumoId)}
                         >
                           Quitar

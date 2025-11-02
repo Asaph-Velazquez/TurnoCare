@@ -228,7 +228,7 @@ function Detalles() {
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20 pb-10">
-      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-127 w-full absolute top-0 left-0"></div>
+      <div className="bg-gradient-to-br from-sky-400/15 via-cyan-300/10 to-sky-400/15 h-full w-full absolute top-0 left-0"></div>
       <div className="relative min-h-screen">
         <div className="bg-auto-secondary backdrop-blur-sm border-b border-auto shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -254,22 +254,22 @@ function Detalles() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
                 <p className="text-auto-tertiary text-lg font-semibold mb-2">No hay pacientes asignados a este servicio</p>
-                <div className="bg-sky-50 border border-sky-200 rounded-lg p-4 mb-4 max-w-md">
-                  <p className="text-sm text-sky-800">
+                <div className="bg-sky-100 border-2 border-sky-300 rounded-xl p-4 mb-4 max-w-md dark:bg-sky-900/40 dark:border-sky-700">
+                  <p className="text-sm text-sky-800 dark:text-sky-200">
                     <span className="font-semibold">Servicio actual:</span> {servicioId ? `ID ${servicioId}` : 'Sin servicio'}
                   </p>
                 </div>
-                <div className="bg-blue-50 rounded-lg p-4 max-w-md">
-                  <p className="text-sm text-blue-800 mb-3">
+                <div className="bg-blue-100 border-2 border-blue-300 rounded-xl p-4 max-w-md dark:bg-blue-900/40 dark:border-blue-700">
+                  <p className="text-sm text-blue-800 mb-3 dark:text-blue-200">
                     💡 <span className="font-semibold">Para asignar pacientes a este servicio:</span>
                   </p>
-                  <ol className="text-sm text-blue-800 list-decimal list-inside space-y-2">
+                  <ol className="text-sm text-blue-800 list-decimal list-inside space-y-2 dark:text-blue-300">
                     <li>Ve a <span className="font-semibold">"Asignar Paciente"</span> en el menú de Enfermeros</li>
                     <li>Selecciona un paciente de la lista</li>
                     <li>Selecciona el servicio correspondiente</li>
                     <li>Haz clic en "Asignar Paciente"</li>
                   </ol>
-                  <p className="text-xs text-blue-700 mt-3 italic">
+                  <p className="text-xs text-blue-700 mt-3 italic dark:text-blue-400">
                     O usa la opción "Actualizar Paciente" para reasignar pacientes existentes.
                   </p>
                 </div>
@@ -319,71 +319,83 @@ function Detalles() {
                               
                               {/* Medicamentos asignados */}
                               {medicamentosPorPaciente[paciente.pacienteId]?.length > 0 && (
-                                <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-3">
-                                  <h4 className="font-semibold text-purple-900 mb-2 flex items-center">
+                                <div className="mt-4 bg-purple-100 border-2 border-purple-300 rounded-xl p-4 dark:bg-purple-900/40 dark:border-purple-700">
+                                  <h4 className="font-semibold text-purple-900 mb-2 flex items-center dark:text-purple-200">
                                     💊 Medicamentos Asignados ({medicamentosPorPaciente[paciente.pacienteId].length})
                                   </h4>
-                                  <div className="space-y-3">
+                                  <div className="space-y-2 max-h-60 overflow-y-auto">
                                     {medicamentosPorPaciente[paciente.pacienteId].map((med) => (
-                                      <div key={med.pacienteMedicamentoId} className="bg-white border border-purple-100 rounded-lg p-3 shadow-sm">
+                                      <div key={med.pacienteMedicamentoId} className="bg-white border border-purple-100 rounded-lg p-3 shadow-sm dark:bg-purple-950/30">
                                         <div className="flex items-start justify-between mb-2">
-                                          <p className="font-semibold text-purple-900 text-base">{med.medicamento?.nombre || 'Sin nombre'}</p>
-                                          <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                                          <p className="font-semibold text-purple-900 text-base dark:text-purple-200">{med.medicamento?.nombre || 'Sin nombre'}</p>
+                                          <span className="text-xs bg-purple-200 text-purple-900 px-2 py-1 rounded-full font-medium dark:bg-purple-800 dark:text-purple-100">
                                             x{med.cantidadAsignada || 0}
                                           </span>
                                         </div>
                                         {med.medicamento?.descripcion && (
-                                          <p className="text-xs text-purple-600 mb-2 italic">{med.medicamento.descripcion}</p>
+                                          <p className="text-xs text-purple-700 mb-2 italic dark:text-purple-300">{med.medicamento.descripcion}</p>
                                         )}
                                         <div className="grid grid-cols-2 gap-2 text-xs">
                                           {med.dosis && med.dosis.trim() !== '' && (
-                                            <div className="bg-purple-50 rounded px-2 py-1">
-                                              <span className="font-semibold text-purple-800">Dosis:</span>
-                                              <span className="text-purple-700 ml-1">{med.dosis}</span>
+                                            <div className="bg-purple-50 rounded px-2 py-1 dark:bg-purple-900/50">
+                                              <span className="font-semibold text-purple-800 dark:text-purple-300">Dosis:</span>
+                                              <span className="text-purple-700 ml-1 dark:text-purple-400">{med.dosis}</span>
                                             </div>
                                           )}
                                           {med.frecuencia && med.frecuencia.trim() !== '' && (
-                                            <div className="bg-purple-50 rounded px-2 py-1">
-                                              <span className="font-semibold text-purple-800">Frecuencia:</span>
-                                              <span className="text-purple-700 ml-1">{med.frecuencia}</span>
+                                            <div className="bg-purple-50 rounded px-2 py-1 dark:bg-purple-900/50">
+                                              <span className="font-semibold text-purple-800 dark:text-purple-300">Frecuencia:</span>
+                                              <span className="text-purple-700 ml-1 dark:text-purple-400">{med.frecuencia}</span>
                                             </div>
                                           )}
                                           {med.viaAdministracion && med.viaAdministracion.trim() !== '' && (
-                                            <div className="bg-purple-50 rounded px-2 py-1">
-                                              <span className="font-semibold text-purple-800">Vía:</span>
-                                              <span className="text-purple-700 ml-1">{med.viaAdministracion}</span>
+                                            <div className="bg-purple-50 rounded px-2 py-1 dark:bg-purple-900/50">
+                                              <span className="font-semibold text-purple-800 dark:text-purple-300">Vía:</span>
+                                              <span className="text-purple-700 ml-1 dark:text-purple-400">{med.viaAdministracion}</span>
                                             </div>
                                           )}
-                                          <div className="bg-purple-50 rounded px-2 py-1">
-                                            <span className="font-semibold text-purple-800">Asignado:</span>
-                                            <span className="text-purple-700 ml-1">{new Date(med.asignadoEn).toLocaleDateString("es-MX")}</span>
+                                          <div className="bg-purple-50 rounded px-2 py-1 dark:bg-purple-900/50">
+                                            <span className="font-semibold text-purple-800 dark:text-purple-300">Asignado:</span>
+                                            <span className="text-purple-700 ml-1 dark:text-purple-400">{new Date(med.asignadoEn).toLocaleDateString("es-MX")}</span>
                                           </div>
                                         </div>
                                       </div>
                                     ))}
                                   </div>
+                                  <p className="text-xs text-purple-700 mt-2 dark:text-purple-400">
+                                    Administrar según prescripción médica.
+                                  </p>
                                 </div>
                               )}
                               
                               {/* Insumos asignados */}
                               {insumosPorPaciente[paciente.pacienteId]?.length > 0 && (
-                                <div className="mt-4 bg-cyan-50 border border-cyan-200 rounded-lg p-3">
-                                  <h4 className="font-semibold text-cyan-900 mb-2 flex items-center">
+                                <div className="mt-4 bg-cyan-100 border-2 border-cyan-300 rounded-xl p-4 dark:bg-cyan-900/40 dark:border-cyan-700">
+                                  <h4 className="font-semibold text-cyan-900 mb-2 flex items-center dark:text-cyan-200">
                                     🏥 Insumos Asignados ({insumosPorPaciente[paciente.pacienteId].length})
                                   </h4>
-                                  <div className="space-y-2">
+                                  <div className="space-y-2 max-h-60 overflow-y-auto">
                                     {insumosPorPaciente[paciente.pacienteId].map((ins) => (
-                                      <div key={ins.pacienteInsumoId} className="bg-white rounded-lg p-2 text-sm">
-                                        <p className="font-medium text-cyan-900">{ins.insumo.nombre}</p>
+                                      <div key={ins.pacienteInsumoId} className="bg-white border border-cyan-100 rounded-lg p-3 shadow-sm dark:bg-cyan-950/30">
+                                        <div className="flex items-start justify-between mb-1">
+                                          <p className="font-semibold text-cyan-900 text-sm dark:text-cyan-200">{ins.insumo.nombre}</p>
+                                          <span className="text-xs bg-cyan-200 text-cyan-900 px-2 py-1 rounded-full font-medium dark:bg-cyan-800 dark:text-cyan-100">
+                                            x{ins.cantidad}
+                                          </span>
+                                        </div>
                                         {ins.insumo.descripcion && (
-                                          <p className="text-xs text-cyan-700">{ins.insumo.descripcion}</p>
+                                          <p className="text-xs text-cyan-700 mb-1 dark:text-cyan-300">{ins.insumo.descripcion}</p>
                                         )}
-                                        <p className="text-xs text-cyan-600 mt-1">
-                                          Cantidad: {ins.cantidad} • Asignado: {new Date(ins.asignadoEn).toLocaleDateString("es-MX")}
-                                        </p>
+                                        <div className="bg-cyan-50 rounded px-2 py-1 text-xs dark:bg-cyan-900/50">
+                                          <span className="font-semibold text-cyan-800 dark:text-cyan-300">Asignado:</span>
+                                          <span className="text-cyan-700 ml-1 dark:text-cyan-400">{new Date(ins.asignadoEn).toLocaleDateString("es-MX")}</span>
+                                        </div>
                                       </div>
                                     ))}
                                   </div>
+                                  <p className="text-xs text-cyan-700 mt-2 dark:text-cyan-400">
+                                    Verificar disponibilidad antes de usar.
+                                  </p>
                                 </div>
                               )}
                             </div>
