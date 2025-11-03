@@ -9,9 +9,7 @@ const listTurnos = async (req, resp) => {
             }
         });
         resp.json({ success: true, data: turnos });
-    } catch (err) {
-        console.error('Error listando turnos:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
@@ -36,9 +34,7 @@ const getTurnoById = async (req, resp) => {
         }
 
         resp.json({ success: true, data: turno });
-    } catch (err) {
-        console.error('Error obteniendo turno:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor.' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor.' });
     }
 };
 
@@ -79,9 +75,7 @@ const createTurno = async (req, resp) => {
             data: turno, 
             message: 'Turno registrado exitosamente' 
         });
-    } catch (err) {
-        console.error('Error creando turno:', err);
-        resp.status(500).json({ 
+    } catch (err) {resp.status(500).json({ 
             success: false, 
             error: 'Error del servidor al intentar registrar el turno.' 
         });
@@ -131,9 +125,7 @@ const updateTurno = async (req, resp) => {
             data: turno, 
             message: 'Turno actualizado exitosamente' 
         });
-    } catch (err) {
-        console.error('Error actualizando turno:', err);
-        resp.status(500).json({ 
+    } catch (err) {resp.status(500).json({ 
             success: false, 
             error: 'Error del servidor al intentar actualizar el turno.' 
         });
@@ -166,9 +158,7 @@ const deleteTurno = async (req, resp) => {
             success: true, 
             message: 'Turno eliminado exitosamente' 
         });
-    } catch (err) {
-        console.error('Error eliminando turno:', err);
-        resp.status(500).json({ 
+    } catch (err) {resp.status(500).json({ 
             success: false, 
             error: 'Error del servidor al intentar eliminar el turno.' 
         });

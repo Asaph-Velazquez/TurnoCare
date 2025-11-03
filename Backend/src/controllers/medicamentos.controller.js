@@ -37,9 +37,7 @@ const createMedicamento = async (req, resp) => {
       },
     });
     resp.status(201).json({ success: true, data: medicamento });
-  } catch (err) {
-    console.error("Error al crear medicamento:", err);
-    resp.status(500).json({ error: "Error al crear medicamento" });
+  } catch (err) {resp.status(500).json({ error: "Error al crear medicamento" });
   }
 };
 
@@ -50,9 +48,7 @@ const getAllMedicamentos = async (req, resp) => {
       orderBy: { actualizadoEn: "desc" },
     });
     resp.json({ success: true, data: medicamentos });
-  } catch (err) {
-    console.error("Error al obtener medicamentos:", err);
-    resp.status(500).json({ error: "Error al obtener medicamentos" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener medicamentos" });
   }
 };
 
@@ -67,9 +63,7 @@ const getMedicamentoById = async (req, resp) => {
       return resp.status(404).json({ error: "Medicamento no encontrado" });
     }
     resp.json({ success: true, data: medicamento });
-  } catch (err) {
-    console.error("Error al obtener medicamento:", err);
-    resp.status(500).json({ error: "Error al obtener medicamento" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener medicamento" });
   }
 };
 
@@ -109,9 +103,7 @@ const updateMedicamento = async (req, resp) => {
       data,
     });
     resp.json({ success: true, data: medicamento });
-  } catch (err) {
-    console.error("Error al actualizar medicamento:", err);
-    resp.status(500).json({ error: "Error al actualizar medicamento" });
+  } catch (err) {resp.status(500).json({ error: "Error al actualizar medicamento" });
   }
 };
 
@@ -123,9 +115,7 @@ const deleteMedicamento = async (req, resp) => {
       where: { medicamentoId: Number(id) },
     });
     resp.json({ success: true, message: "Medicamento eliminado" });
-  } catch (err) {
-    console.error("Error al eliminar medicamento:", err);
-    resp.status(500).json({ error: "Error al eliminar medicamento" });
+  } catch (err) {resp.status(500).json({ error: "Error al eliminar medicamento" });
   }
 };
 
@@ -168,9 +158,7 @@ const asignarMedicamentosAPaciente = async (req, resp) => {
       })
     );
     resp.json({ success: true, data: asignaciones });
-  } catch (err) {
-    console.error("Error al asignar medicamentos a paciente:", err);
-    resp.status(500).json({ error: "Error al asignar medicamentos a paciente" });
+  } catch (err) {resp.status(500).json({ error: "Error al asignar medicamentos a paciente" });
   }
 };
 
@@ -187,9 +175,7 @@ const getMedicamentosAsignadosPaciente = async (req, resp) => {
       orderBy: { asignadoEn: "desc" },
     });
     resp.json({ success: true, data: asignados });
-  } catch (err) {
-    console.error("Error al consultar medicamentos asignados:", err);
-    resp.status(500).json({ error: "Error al consultar medicamentos asignados" });
+  } catch (err) {resp.status(500).json({ error: "Error al consultar medicamentos asignados" });
   }
 };
 
@@ -211,9 +197,7 @@ const desasignarMedicamentoDePaciente = async (req, resp) => {
       }
     });
     resp.json({ success: true, message: "Medicamento desasignado correctamente" });
-  } catch (err) {
-    console.error("Error al desasignar medicamento:", err);
-    resp.status(500).json({ error: "Error al desasignar medicamento" });
+  } catch (err) {resp.status(500).json({ error: "Error al desasignar medicamento" });
   }
 };
 

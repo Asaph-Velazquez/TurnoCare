@@ -63,9 +63,7 @@ const getMedicamentosPorServicio = async (req, resp) => {
     }));
 
     resp.json({ success: true, data: resultado });
-  } catch (err) {
-    console.error("Error al obtener medicamentos por servicio:", err);
-    resp.status(500).json({ error: "Error al obtener medicamentos por servicio" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener medicamentos por servicio" });
   }
 };
 
@@ -132,9 +130,7 @@ const getInsumosPorServicio = async (req, resp) => {
     }));
 
     resp.json({ success: true, data: resultado });
-  } catch (err) {
-    console.error("Error al obtener insumos por servicio:", err);
-    resp.status(500).json({ error: "Error al obtener insumos por servicio" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener insumos por servicio" });
   }
 };
 
@@ -190,9 +186,7 @@ const getResumenInventarioPorServicio = async (req, resp) => {
     });
 
     resp.json({ success: true, data: resumen });
-  } catch (err) {
-    console.error("Error al obtener resumen de inventario:", err);
-    resp.status(500).json({ error: "Error al obtener resumen de inventario" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener resumen de inventario" });
   }
 };
 

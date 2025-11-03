@@ -1,5 +1,5 @@
 # Script para limpiar console.log, console.error, console.warn
-$directorio = ".\src\Components"
+$directorio = ".\Backend\src\"
 
 # Extensiones que quieres revisar
 $extensiones = @("*.tsx", "*.ts", "*.jsx", "*.js")
@@ -14,11 +14,8 @@ foreach ($extension in $extensiones) {
         $archivo = $_.FullName
         $contenido = Get-Content $archivo -Raw
         
-        # Guardar contenido original para comparar
         $contenidoOriginal = $contenido
         
-        # Eliminar líneas con console.log, console.error, console.warn
-        # Incluye el salto de línea para no dejar líneas vacías
         $contenido = $contenido -replace '^\s*console\.(log|error|warn)\([^)]*\);?\s*[\r\n]+', '', 'Multiline'
         
         # También eliminar console en medio de líneas (menos común pero posible)
@@ -30,7 +27,7 @@ foreach ($extension in $extensiones) {
             Write-Host "✓ Limpiado: $($_.Name)" -ForegroundColor Green
             $archivosModificados++
         }
-    }
+    } 
 }
 
 Write-Host "`n✓ Limpieza completada" -ForegroundColor Green

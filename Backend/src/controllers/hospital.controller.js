@@ -5,9 +5,7 @@ const listHospitales = async (req, resp) => {
     try {
         const hospitales = await prisma.hospital.findMany();
         resp.json({ success: true, data: hospitales });
-    } catch (err) {
-        console.error('Error listando hospitales:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
@@ -29,9 +27,7 @@ const createHospital = async (req, resp) => {
         });
 
         resp.status(201).json({ success: true, data: hospital, message: 'Hospital registrado exitosamente' });
-    } catch (err) {
-        console.error('Error creando hospital:', err);
-        if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('nombre')) {
+    } catch (err) {if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('nombre')) {
              return resp.status(409).json({ success: false, error: 'Ya existe un hospital con ese nombre.' });
         }
         resp.status(500).json({ success: false, error: 'Error del servidor al intentar registrar el hospital.' });
@@ -66,9 +62,7 @@ const updateHospital = async (req, resp) => {
     });
 
     resp.json({ success: true, data: updated, message: "Hospital actualizado exitosamente." });
-  } catch (err) {
-    console.error("Error actualizando hospital:", err);
-    resp.status(500).json({ success: false, error: err.message || "Error interno del servidor." });
+  } catch (err) {resp.status(500).json({ success: false, error: err.message || "Error interno del servidor." });
   }
 };
 
@@ -94,9 +88,7 @@ const deleteHospital = async (req, resp) => {
     });
 
     resp.json({ success: true, message: "Hospital eliminado correctamente." });
-  } catch (err) {
-    console.error("Error eliminando hospital:", err);
-    if (err.code === "P2003") {
+  } catch (err) {if (err.code === "P2003") {
       return resp.status(409).json({
         success: false,
         error: "No se puede eliminar el hospital porque tiene registros relacionados.",

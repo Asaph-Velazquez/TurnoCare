@@ -7,9 +7,7 @@ const listServices = async (req, resp) => {
             include: { hospital: true },
         });
         resp.status(200).json(services);
-    } catch (error) {
-        console.error("Error listing services:", error);
-        resp.status(500).json({ error: "Error listing services" });
+    } catch (error) {resp.status(500).json({ error: "Error listing services" });
     }
 };
 
@@ -51,9 +49,7 @@ const registerService = async (req, resp) => {
             },
         });
         resp.status(201).json(newService);
-    } catch (error) {
-        console.error("Error creating service:", error);
-        resp.status(500).json({ error: "Error creating service" });
+    } catch (error) {resp.status(500).json({ error: "Error creating service" });
     }
 };
 
@@ -96,9 +92,7 @@ const updateService = async (req, resp) => {
             },
         });
         resp.status(200).json(updatedService);
-    } catch (error) {
-        console.error("Error updating service:", error);
-        resp.status(500).json({ error: "Error updating service" });
+    } catch (error) {resp.status(500).json({ error: "Error updating service" });
     }
 };
 
@@ -111,9 +105,7 @@ const deleteService = async (req, resp) => {
             where: { servicioId: parseInt(id) }
         });
         resp.status(200).json(deletedService);
-    } catch (error) {
-        console.error("Error deleting service:", error);
-        resp.status(500).json({ error: "Error deleting service" });
+    } catch (error) {resp.status(500).json({ error: "Error deleting service" });
     }
 };
 

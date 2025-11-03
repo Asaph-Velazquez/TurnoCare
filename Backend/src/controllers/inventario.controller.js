@@ -16,11 +16,7 @@ const parseMedicamentosDisponibles = (value) => {
   if (typeof value === "string") {
     try {
       return JSON.parse(value);
-    } catch (err) {
-      console.warn(
-        "Valor de medicamentosDisponibles no es JSON válido, se guardará como string."
-      );
-      return value;
+    } catch (err) {return value;
     }
   }
 
@@ -35,9 +31,7 @@ const getAllInventarios = async (_req, resp) => {
       orderBy: { inventarioId: "desc" },
     });
     resp.json({ success: true, data: inventarios });
-  } catch (err) {
-    console.error("Error al obtener inventarios:", err);
-    resp.status(500).json({ error: "Error al obtener inventarios" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener inventarios" });
   }
 };
 
@@ -56,9 +50,7 @@ const getInventarioById = async (req, resp) => {
     }
 
     resp.json({ success: true, data: inventario });
-  } catch (err) {
-    console.error("Error al obtener inventario:", err);
-    resp.status(500).json({ error: "Error al obtener inventario" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener inventario" });
   }
 };
 
@@ -84,9 +76,7 @@ const createInventario = async (req, resp) => {
     });
 
     resp.status(201).json({ success: true, data: inventario });
-  } catch (err) {
-    console.error("Error al crear inventario:", err);
-    resp.status(500).json({ error: "Error al crear inventario" });
+  } catch (err) {resp.status(500).json({ error: "Error al crear inventario" });
   }
 };
 
@@ -123,9 +113,7 @@ const updateInventario = async (req, resp) => {
       data,
     });
     resp.json({ success: true, data: inventario });
-  } catch (err) {
-    console.error("Error al actualizar inventario:", err);
-    resp.status(500).json({ error: "Error al actualizar inventario" });
+  } catch (err) {resp.status(500).json({ error: "Error al actualizar inventario" });
   }
 };
 
@@ -138,9 +126,7 @@ const deleteInventario = async (req, resp) => {
       where: { inventarioId: Number(id) },
     });
     resp.json({ success: true, message: "Inventario eliminado" });
-  } catch (err) {
-    console.error("Error al eliminar inventario:", err);
-    resp.status(500).json({ error: "Error al eliminar inventario" });
+  } catch (err) {resp.status(500).json({ error: "Error al eliminar inventario" });
   }
 };
 

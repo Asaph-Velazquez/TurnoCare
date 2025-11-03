@@ -43,9 +43,7 @@ const createInsumo = async (req, resp) => {
     });
 
     resp.status(201).json({ success: true, data: insumo });
-  } catch (err) {
-    console.error("Error al crear insumo:", err);
-    resp.status(500).json({ error: "Error al crear insumo" });
+  } catch (err) {resp.status(500).json({ error: "Error al crear insumo" });
   }
 };
 
@@ -57,9 +55,7 @@ const getAllInsumos = async (_req, resp) => {
       include: { responsable: true },
     });
     resp.json({ success: true, data: insumos });
-  } catch (err) {
-    console.error("Error al obtener insumos:", err);
-    resp.status(500).json({ error: "Error al obtener insumos" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener insumos" });
   }
 };
 
@@ -78,9 +74,7 @@ const getInsumoById = async (req, resp) => {
     }
 
     resp.json({ success: true, data: insumo });
-  } catch (err) {
-    console.error("Error al obtener insumo:", err);
-    resp.status(500).json({ error: "Error al obtener insumo" });
+  } catch (err) {resp.status(500).json({ error: "Error al obtener insumo" });
   }
 };
 
@@ -125,9 +119,7 @@ const updateInsumo = async (req, resp) => {
       data,
     });
     resp.json({ success: true, data: insumo });
-  } catch (err) {
-    console.error("Error al actualizar insumo:", err);
-    resp.status(500).json({ error: "Error al actualizar insumo" });
+  } catch (err) {resp.status(500).json({ error: "Error al actualizar insumo" });
   }
 };
 
@@ -138,9 +130,7 @@ const deleteInsumo = async (req, resp) => {
   try {
     await prisma.insumo.delete({ where: { insumoId: Number(id) } });
     resp.json({ success: true, message: "Insumo eliminado" });
-  } catch (err) {
-    console.error("Error al eliminar insumo:", err);
-    resp.status(500).json({ error: "Error al eliminar insumo" });
+  } catch (err) {resp.status(500).json({ error: "Error al eliminar insumo" });
   }
 };
 
@@ -176,9 +166,7 @@ const asignarInsumosAPaciente = async (req, resp) => {
       })
     );
     resp.json({ success: true, data: asignaciones });
-  } catch (err) {
-    console.error("Error al asignar insumos a paciente:", err);
-    resp.status(500).json({ error: "Error al asignar insumos a paciente" });
+  } catch (err) {resp.status(500).json({ error: "Error al asignar insumos a paciente" });
   }
 };
 
@@ -195,9 +183,7 @@ const getInsumosAsignadosPaciente = async (req, resp) => {
       orderBy: { asignadoEn: "desc" },
     });
     resp.json({ success: true, data: asignados });
-  } catch (err) {
-    console.error("Error al consultar insumos asignados:", err);
-    resp.status(500).json({ error: "Error al consultar insumos asignados" });
+  } catch (err) {resp.status(500).json({ error: "Error al consultar insumos asignados" });
   }
 };
 
@@ -219,9 +205,7 @@ const desasignarInsumoDePaciente = async (req, resp) => {
       }
     });
     resp.json({ success: true, message: "Insumo desasignado correctamente" });
-  } catch (err) {
-    console.error("Error al desasignar insumo:", err);
-    resp.status(500).json({ error: "Error al desasignar insumo" });
+  } catch (err) {resp.status(500).json({ error: "Error al desasignar insumo" });
   }
 };
 

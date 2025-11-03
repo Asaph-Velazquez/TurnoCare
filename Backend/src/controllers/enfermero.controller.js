@@ -47,9 +47,7 @@ const login = async (req, resp) => {
                 error: "Datos incorrectos"
             });
         }
-    }catch(err){
-        console.error("Error en login:", err);
-        resp.status(500).json({error: "Error del servidor"});
+    }catch(err){resp.status(500).json({error: "Error del servidor"});
     }
 };
 
@@ -60,9 +58,7 @@ const listEnfermeros = async (req, resp) => {
             include: { servicio: true, turno: true }
         });
         resp.json({ success: true, data: enfermeros });
-    } catch (err) {
-        console.error('Error listando enfermeros:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
@@ -138,9 +134,7 @@ const createEnfermero = async (req, resp) => {
         });
 
         resp.status(201).json({ success: true, data: enfermero });
-    } catch (err) {
-        console.error('Error creando enfermero:', err);
-        if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
+    } catch (err) {if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
             return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
         }
         resp.status(500).json({ success: false, error: 'Error del servidor' });
@@ -239,9 +233,7 @@ const updateEnfermero = async (req, resp) => {
         });
 
         resp.json({ success: true, data: updated });
-    } catch (err) {
-        console.error('Error actualizando enfermero:', err);
-        if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
+    } catch (err) {if (err.code === 'P2002' && err.meta && err.meta.target && err.meta.target.includes('numeroEmpleado')) {
             return resp.status(409).json({ success: false, error: 'Número de empleado ya existe' });
         }
         resp.status(500).json({ success: false, error: 'Error del servidor' });
@@ -270,9 +262,7 @@ const deleteEnfermero = async (req, resp) => {
         });
 
         resp.json({ success: true, message: 'Enfermero eliminado exitosamente' });
-    } catch (err) {
-        console.error('Error eliminando enfermero:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 

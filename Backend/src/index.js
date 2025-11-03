@@ -8,17 +8,11 @@ const port = process.env.PORT || 5000;
 (async () => {
     await connectionDB();
 
-    app.listen(port, () => {
-        console.log(`🚀 Servidor corriendo en http://localhost:${port}`);
-    });
+    app.listen(port, () => {});
 
-    const shutdown = async () => {
-        console.log('🔌 Cerrando conexión a base de datos...');
-        try {
+    const shutdown = async () => {try {
             await prisma.$disconnect();
-        } catch (err) {
-            console.error('Error al desconectar prisma:', err);
-        }
+        } catch (err) {}
         process.exit(0);
     };
 

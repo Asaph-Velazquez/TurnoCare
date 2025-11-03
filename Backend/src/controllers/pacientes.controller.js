@@ -5,9 +5,7 @@ const listPacientes = async (req, resp) => {
     try {
         const pacientes = await prisma.paciente.findMany();
         resp.json({ success: true, data: pacientes });
-    } catch (err) {
-        console.error('Error listando pacientes:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
@@ -22,9 +20,7 @@ const getPacienteById = async (req, resp) => {
             return resp.status(404).json({ success: false, error: 'Paciente no encontrado' });
         }
         resp.json({ success: true, data: paciente });
-    } catch (err) {
-        console.error('Error obteniendo paciente por ID:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
@@ -60,9 +56,7 @@ const createPaciente = async (req, resp) => {
         });
 
         resp.status(201).json({ success: true, data: paciente });
-    } catch (err) {
-        console.error('Error creando paciente:', err);
-        if (err.code === 'P2002') {
+    } catch (err) {if (err.code === 'P2002') {
             return resp.status(409).json({ success: false, error: 'Número de expediente ya existe' });
         }
         resp.status(500).json({ success: false, error: 'Error del servidor' });
@@ -114,9 +108,7 @@ const updatePaciente = async (req, resp) => {
         });
 
         resp.json({ success: true, data: paciente });
-    } catch (err) {
-        console.error('Error actualizando paciente:', err);
-        if (err.code === 'P2002') {
+    } catch (err) {if (err.code === 'P2002') {
             return resp.status(409).json({ success: false, error: 'Número de expediente ya existe' });
         }
         if (err.code === 'P2025') {
@@ -135,9 +127,7 @@ const deletePaciente = async (req, resp) => {
             where: { pacienteId: parseInt(id) }
         });
         resp.json({ success: true, message: 'Paciente eliminado' });
-    } catch (err) {
-        console.error('Error eliminando paciente:', err);
-        resp.status(500).json({ success: false, error: 'Error del servidor' });
+    } catch (err) {resp.status(500).json({ success: false, error: 'Error del servidor' });
     }
 };
 
