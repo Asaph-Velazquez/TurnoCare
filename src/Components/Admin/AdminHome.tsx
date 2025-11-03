@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function AdminHome() {
-  // Estados para los conteos
   const [enfermerosCount, setEnfermerosCount] = useState<number | null>(null);
   const [serviciosCount, setServiciosCount] = useState<number | null>(null);
   const [turnosCount, setTurnosCount] = useState<number | null>(null);
   const [pacientesCount, setPacientesCount] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,6 +57,14 @@ function AdminHome() {
       .catch(() => setPacientesCount(0));
   }, []);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   let userInfo = {
     nombre: "Usuario",
     apellidoPaterno: "",
@@ -66,36 +74,34 @@ function AdminHome() {
 
   try {
     const raw = localStorage.getItem("user");
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      userInfo = {
-        nombre: parsed.nombre || localStorage.getItem("nombre") || "Usuario",
-        apellidoPaterno:
-          parsed.apellidoPaterno ||
-          localStorage.getItem("apellidoPaterno") ||
-          "",
-        numeroEmpleado:
-          parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
-        especialidad:
-          parsed.especialidad ||
-          localStorage.getItem("especialidad") ||
-          "Sin especialidad",
-      };
+    if (raw && raw !== "undefined" && raw !== "null") {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          userInfo = {
+            nombre: parsed.nombre || localStorage.getItem("nombre") || "Usuario",
+            apellidoPaterno: parsed.apellidoPaterno || localStorage.getItem("apellidoPaterno") || "",
+            numeroEmpleado: parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
+            especialidad: parsed.especialidad || localStorage.getItem("especialidad") || "Sin especialidad",
+          };
+        }
+      } catch (parseError) {
+        userInfo = {
+          nombre: localStorage.getItem("nombre") || "Usuario",
+          apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+          numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+          especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+        };
+      }
     } else {
-      // Fallback si no existe 'user'
       userInfo = {
         nombre: localStorage.getItem("nombre") || "Usuario",
         apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
         numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-        especialidad:
-          localStorage.getItem("especialidad") || "Sin especialidad",
+        especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
       };
     }
   } catch (err) {
-    console.warn(
-      "Error parseando user desde localStorage, usando valores individuales",
-      err
-    );
     userInfo = {
       nombre: localStorage.getItem("nombre") || "Usuario",
       apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
@@ -232,17 +238,14 @@ function AdminHome() {
   ];
 
   const handleOptionClick = (optionId: string) => {
-    console.log(`Navegando a: ${optionId}`);
     switch (optionId) {
       case "enfermeros":
         navigate("/Enfermero");
         break;
       case "hospital":
-        // navigate("LO MISMO QUE EL ANTERIOR");
         navigate("/Hospital");
         break;
       case "servicios":
-        // navigate("X3 XD");
         navigate("/Servicios");
         break;
       case "pacientes":
@@ -290,31 +293,68 @@ function AdminHome() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Welcome Card */}
           <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-semibold text-auto-primary">
+                    ¡Sesión iniciada correctamente!
+                  </h2>
+                  <p className="text-auto-secondary">
+                    Selecciona una opción para comenzar a administrar el sistema
+                  </p>
                 </div>
               </div>
-              <div className="ml-4">
-                <h2 className="text-xl font-semibold text-auto-primary">
-                  ¡Sesión iniciada correctamente!
-                </h2>
-                <p className="text-auto-secondary">
-                  Selecciona una opción para comenzar a administrar el sistema
-                </p>
+              
+              {/* Reloj */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl shadow-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-6 h-6 text-white"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                <div>
+                  <div className="text-lg font-bold tabular-nums text-white">
+                    {currentTime.toLocaleTimeString('es-MX', { 
+                      hour: '2-digit', 
+                      minute: '2-digit', 
+                      second: '2-digit',
+                      hour12: false 
+                    })}
+                  </div>
+                  <div className="text-xs text-white/90">
+                    {currentTime.toLocaleDateString('es-MX', { 
+                      weekday: 'long', 
+                      day: 'numeric', 
+                      month: 'short'
+                    })}
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -33,7 +33,6 @@ function RegistrarTurno() {
       };
 
       const response = await axios.post("http://localhost:5000/api/turnos", dataToSend);
-      console.log("Turno registrado:", response.data);
       
       setAlert({
         type: "success",
@@ -47,8 +46,6 @@ function RegistrarTurno() {
         observaciones: "",
       });
     } catch (error: any) {
-      console.error("Error al registrar turno:", error);
-      
       let errorMessage = "Error al registrar turno";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;

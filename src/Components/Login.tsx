@@ -11,7 +11,6 @@ function Login() {
   const apellidoMaternoInfo = useRef<HTMLInputElement>(null);
   const NumEmpleadoInfo = useRef<HTMLInputElement>(null);
 
-  //alert para mostrar mensajes de error o éxito
   const [alert, setAlert] = useState<{type: string, message: string}|null>(null);
 
   const LoginRequest  = async () => {
@@ -20,7 +19,6 @@ function Login() {
     const apellidoPaterno = apellidoPaternoInfo.current?.value || '';
     const apellidoMaterno = apellidoMaternoInfo.current?.value || '';
     
-    // Validación frontend
     if (!numeroEmpleado || !nombre || !apellidoPaterno || !apellidoMaterno) {
       setAlert({
         type: "danger",
@@ -35,15 +33,11 @@ function Login() {
       apellidoPaterno,
       apellidoMaterno
     }
-    console.log("Enviando datos:", FormData);
 
     try{
       const response = await axios.post("http://localhost:5000/api/enfermeros/login", FormData);
-      console.log("Respuesta del servidor:", response.data);
       return response.data;
     }catch(error: any){
-      console.error("❌ ERROR DE LOGIN:", error);
-      
       if (error.response) {
         const errorMessage = error.response.data.error || "Error desconocido";
         setAlert({
@@ -62,23 +56,23 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Limpiar alertas previas
     setAlert(null);
     
     const userData = await LoginRequest();
     
     if (userData && userData.success) {
-      console.log("✅ Login exitoso", userData);
       setIsLoggedIn(true);
       try {
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(userData.user));
-        localStorage.setItem("userID", String(userData.user.userid));
-        localStorage.setItem("numeroEmpleado", String(userData.user.numeroEmpleado || ""));
-        localStorage.setItem("nombre", String(userData.user.nombre || ""));
+        if (userData.user && typeof userData.user === 'object') {
+          localStorage.setItem("isLoggedIn", "true");
+          localStorage.setItem("user", JSON.stringify(userData.user));
+          localStorage.setItem("userID", String(userData.user.userid || ""));
+          localStorage.setItem("numeroEmpleado", String(userData.user.numeroEmpleado || ""));
+          localStorage.setItem("nombre", String(userData.user.nombre || ""));
+          localStorage.setItem("token", userData.token || "");
+        }
       } catch (err) {
-        console.warn('No se pudo escribir en localStorage:', err);
+        console.error('Error al guardar en localStorage:', err);
       }
       
       setAlert({
@@ -88,8 +82,6 @@ function Login() {
       setTimeout(() => {
         navigate("/AdminHome");
       }, 1000);
-    } else {
-      console.log("❌ Login fallido");
     }
   }
 

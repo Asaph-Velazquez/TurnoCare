@@ -40,18 +40,15 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:5000/api/enfermeros/");
-      console.log("Enfermeros cargados:", response.data);
       if (response.data.success && response.data.data) {
         setEnfermeros(response.data.data);
       }
     } catch (error) {
-      console.error("Error al cargar enfermeros:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Helper para formatear hora en formato 24 horas
   const formatHora = (hora: string) => {
     const date = new Date(hora);
     const hours = date.getUTCHours().toString().padStart(2, '0');

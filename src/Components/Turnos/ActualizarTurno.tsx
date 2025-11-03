@@ -33,7 +33,6 @@ function ActualizarTurno() {
     horaFin: "",
   });
 
-  // Cargar turnos
   useEffect(() => {
     fetchTurnos();
   }, []);
@@ -46,7 +45,6 @@ function ActualizarTurno() {
       setTurnos(data || []);
       setFilteredTurnos(data || []);
     } catch (error) {
-      console.error("Error al cargar turnos:", error);
       setAlert({
         type: "danger",
         message: "Error al cargar los turnos"
@@ -56,7 +54,6 @@ function ActualizarTurno() {
     }
   };
 
-  // Helper functions - Formato 24 horas (13:00, 14:00, etc.)
   const formatHora = (hora: string) => {
     const date = new Date(hora);
     const hours = date.getUTCHours().toString().padStart(2, '0');
@@ -72,7 +69,6 @@ function ActualizarTurno() {
     return 'Nocturno';
   };
 
-  // Filtrar turnos
   useEffect(() => {
     const filtered = turnos.filter((turno) => {
       const searchLower = searchTerm.toLowerCase();
@@ -111,7 +107,6 @@ function ActualizarTurno() {
     if (!selectedTurno) return;
 
     try {
-      // Validar que los campos requeridos estén completos
       if (!formData.nombre || !formData.horaInicio || !formData.horaFin) {
         setAlert({
           type: "danger",
@@ -137,8 +132,6 @@ function ActualizarTurno() {
       setShowUpdateModal(false);
       setSelectedTurno(null);
     } catch (error: any) {
-      console.error("Error al actualizar turno:", error);
-      
       let errorMessage = "Error al actualizar turno";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;

@@ -30,13 +30,10 @@ function TurnosList() {
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:5000/api/turnos");
-      console.log("Respuesta de turnos:", response.data);
       
-      // El backend devuelve { success: true, data: [...] }
       const data = response.data?.data || response.data || [];
       setTurnos(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error al cargar los turnos:", error);
       setTurnos([]);
     } finally {
       setLoading(false);
@@ -47,7 +44,6 @@ function TurnosList() {
     fetchTurnos();
   }, []);
 
-  // Función para formatear hora en formato 24 horas (13:00, 14:30, etc.)
   const formatHora = (horaISO: string): string => {
     try {
       const fecha = new Date(horaISO);
@@ -59,7 +55,6 @@ function TurnosList() {
     }
   };
 
-  // Función para obtener el tipo de turno basado en el nombre
   const getTipoTurno = (nombre: string): { tipo: string; icono: string; color: string } => {
     const nombreLower = nombre.toLowerCase();
     if (nombreLower.includes('matutino')) {

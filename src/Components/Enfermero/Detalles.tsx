@@ -55,7 +55,6 @@ function Detalles() {
   const [nombreServicio, setNombreServicio] = useState<string>("");
   const [enfermeroNombre, setEnfermeroNombre] = useState<string>("");
 
-  // Carga datos de navegación o localStorage
   useEffect(() => {
     if (location.state?.servicioActualId) {
       setServicioId(location.state.servicioActualId);
@@ -104,7 +103,6 @@ function Detalles() {
     }
   }, [location.state]);
 
-  // Carga pacientes filtrados por servicio y habitaciones asignadas
   useEffect(() => {
     if (servicioId === null) {
       if (!error) {
@@ -120,7 +118,6 @@ function Detalles() {
         const res = await axios.get("http://localhost:5000/api/pacientes");
         const data = res.data?.data ?? res.data;
         const allPacientes: Paciente[] = Array.isArray(data) ? data : [];
-        // Filtrar pacientes SOLO si hay habitaciones asignadas, si no, no mostrar ninguno
         let filtered: Paciente[] = [];
         if (habitacionesAsignadas.length > 0) {
           filtered = allPacientes.filter((p) => {
@@ -131,7 +128,6 @@ function Detalles() {
         }
         setPacientes(filtered);
         
-        // Cargar medicamentos e insumos para cada paciente
         if (filtered.length > 0) {
           const medicamentosMap: { [key: number]: MedicamentoAsignado[] } = {};
           const insumosMap: { [key: number]: InsumoAsignado[] } = {};
@@ -139,22 +135,17 @@ function Detalles() {
           await Promise.all(
             filtered.map(async (paciente) => {
               try {
-                // Obtener medicamentos asignados
                 const medRes = await axios.get(`http://localhost:5000/api/medicamentos/asignados/${paciente.pacienteId}`);
                 const medicamentosData = medRes.data?.data || [];
-                console.log(`📋 Medicamentos del paciente ${paciente.pacienteId}:`, medicamentosData);
                 medicamentosMap[paciente.pacienteId] = medicamentosData;
               } catch (err) {
-                console.error(`Error al cargar medicamentos del paciente ${paciente.pacienteId}:`, err);
                 medicamentosMap[paciente.pacienteId] = [];
               }
               
               try {
-                // Obtener insumos asignados
                 const insRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${paciente.pacienteId}`);
                 insumosMap[paciente.pacienteId] = insRes.data?.data || [];
               } catch (err) {
-                console.error(`Error al cargar insumos del paciente ${paciente.pacienteId}:`, err);
                 insumosMap[paciente.pacienteId] = [];
               }
             })

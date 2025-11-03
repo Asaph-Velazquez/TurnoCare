@@ -29,44 +29,24 @@ function ListarTurnos() {
   const fetchTurnos = async () => {
     try {
       setLoading(true);
-      console.log("Fetching turnos from API...");
       const res = await axios.get("http://localhost:5000/api/turnos");
-      console.log("Respuesta completa:", res);
-      console.log("Respuesta de turnos:", res.data);
-      console.log("Tipo de res.data:", typeof res.data);
-      console.log("¿Es array res.data?:", Array.isArray(res.data));
-      console.log("¿Tiene propiedad data?:", res.data?.data);
       
       let data: Turno[] = [];
       
       if (Array.isArray(res.data)) {
         data = res.data;
-        console.log("Usando res.data directamente");
       } else if (res.data?.success && Array.isArray(res.data.data)) {
         data = res.data.data;
-        console.log("Usando res.data.data");
-      } else {
-        console.log("Formato de respuesta no reconocido");
       }
       
-      console.log("Turnos procesados:", data);
-      console.log("Cantidad de turnos:", data.length);
       setTurnos(data);
     } catch (err: any) {
-      console.error("Error al obtener turnos:", err);
-      console.error("Error completo:", {
-        message: err.message,
-        response: err.response,
-        status: err.response?.status,
-        data: err.response?.data
-      });
       setTurnos([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Función para formatear hora en formato 24 horas (13:00, 14:30, etc.)
   const formatHora = (horaISO: string): string => {
     try {
       const fecha = new Date(horaISO);

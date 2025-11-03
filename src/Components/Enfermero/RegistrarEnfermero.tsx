@@ -45,7 +45,6 @@ function RegistrarEnfermero() {
         const data = response.data.success ? response.data.data : response.data;
         setServicios(data || []);
       } catch (error) {
-        console.error("❌ Error al cargar servicios:", error);
         setAlert({
           type: "danger",
           message: "Error al cargar la lista de servicios"
@@ -62,7 +61,6 @@ function RegistrarEnfermero() {
         const data = response.data?.data || response.data || [];
         setTurnos(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("❌ Error al cargar turnos:", error);
         setAlert({
           type: "danger",
           message: "Error al cargar la lista de turnos"
@@ -76,7 +74,6 @@ function RegistrarEnfermero() {
     fetchTurnos();
   }, []);
 
-  // Función auxiliar para formatear hora
   const formatHora = (horaISO: string): string => {
     try {
       const fecha = new Date(horaISO);
@@ -101,7 +98,6 @@ function RegistrarEnfermero() {
     setLoading(true);
 
     try {
-      // Preparar datos para enviar
       const dataToSend = {
         ...form,
         esCoordinador: form.esCoordinador === "true",
@@ -111,7 +107,6 @@ function RegistrarEnfermero() {
       };
 
       const response = await axios.post("http://localhost:5000/api/enfermeros/", dataToSend);
-      console.log("✅ Enfermero registrado:", response.data);
       
       setAlert({
         type: "success",
@@ -130,8 +125,6 @@ function RegistrarEnfermero() {
         turno: "",
       });
     } catch (error: any) {
-      console.error("❌ Error al registrar enfermero:", error);
-      
       let errorMessage = "Error al registrar enfermero";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;

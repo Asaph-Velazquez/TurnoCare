@@ -25,7 +25,6 @@ function EliminarTurno() {
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{type: string, message: string} | null>(null);
 
-  // Cargar turnos
   useEffect(() => {
     fetchTurnos();
   }, []);
@@ -38,7 +37,6 @@ function EliminarTurno() {
       setTurnos(data || []);
       setFilteredTurnos(data || []);
     } catch (error) {
-      console.error("Error al cargar turnos:", error);
       setAlert({
         type: "danger",
         message: "Error al cargar los turnos"
@@ -48,14 +46,12 @@ function EliminarTurno() {
     }
   };
 
-  // Filtrar turnos
   useEffect(() => {
     const filtered = turnos.filter((turno) => {
       const searchLower = searchTerm.toLowerCase();
       const nombreTurno = turno.nombre.toLowerCase();
       const horario = `${formatHora(turno.horaInicio)} ${formatHora(turno.horaFin)}`.toLowerCase();
       
-      // Buscar en nombres de enfermeros asignados
       const enfermerosNombres = turno.enfermeros
         ?.map(e => `${e.nombre} ${e.apellidoPaterno} ${e.apellidoMaterno}`.toLowerCase())
         .join(" ") || "";
@@ -69,7 +65,6 @@ function EliminarTurno() {
     setFilteredTurnos(filtered);
   }, [searchTerm, turnos]);
 
-  // Función para formatear hora en formato 24 horas (13:00, 14:30, etc.)
   const formatHora = (horaISO: string): string => {
     try {
       const fecha = new Date(horaISO);
@@ -81,7 +76,6 @@ function EliminarTurno() {
     }
   };
 
-  // Función para obtener el tipo de turno basado en el nombre
   const getTipoTurno = (nombre: string): { tipo: string; icono: string } => {
     const nombreLower = nombre.toLowerCase();
     if (nombreLower.includes('matutino')) {
@@ -112,8 +106,6 @@ function EliminarTurno() {
       
       fetchTurnos();
     } catch (error: any) {
-      console.error("Error al eliminar turno:", error);
-      
       let errorMessage = "Error al eliminar turno";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
