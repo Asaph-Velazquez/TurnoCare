@@ -66,9 +66,7 @@ export default function ActualizarInsumo() {
         : [];
       setInsumos(data);
       setFiltered(data);
-    } catch (error) {
-      console.error("Error al cargar insumos:", error);
-      setInsumos([]);
+    } catch (error) {setInsumos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -357,9 +355,7 @@ export default function ActualizarInsumo() {
                       message: "Insumo actualizado correctamente",
                     });
                     await fetchInsumos();
-                  } catch (error: any) {
-                    console.error("Error al actualizar insumo:", error);
-                    const message =
+                  } catch (error: any) {const message =
                       error?.response?.data?.error ||
                       error?.message ||
                       "Error al actualizar insumo";

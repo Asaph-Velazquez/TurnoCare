@@ -71,9 +71,7 @@ function Login() {
           localStorage.setItem("nombre", String(userData.user.nombre || ""));
           localStorage.setItem("token", userData.token || "");
         }
-      } catch (err) {
-        console.error('Error al guardar en localStorage:', err);
-      }
+      } catch (err) {}
       
       setAlert({
         type: "success",

@@ -52,9 +52,7 @@ function EliminarEnfermero() {
         setEnfermeros(response.data.data);
         setFilteredEnfermeros(response.data.data);
       }
-    } catch (error) {
-      console.error("Error al cargar enfermeros:", error);
-    } finally {
+    } catch (error) {} finally {
       setLoadingList(false);
     }
   };
@@ -70,14 +68,10 @@ function EliminarEnfermero() {
     setLoading(true);
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/enfermeros/${enfermero.enfermeroId}`);
-      console.log("✅ Enfermero eliminado:", response.data);
-      setAlert({ type: "success", message: `Enfermero ${enfermero.nombre} ${enfermero.apellidoPaterno} eliminado exitosamente` });
+      const response = await axios.delete(`http://localhost:5000/api/enfermeros/${enfermero.enfermeroId}`);setAlert({ type: "success", message: `Enfermero ${enfermero.nombre} ${enfermero.apellidoPaterno} eliminado exitosamente` });
       // Recargar lista
       await fetchEnfermeros();
-    } catch (error: any) {
-      console.error("❌ Error al eliminar enfermero:", error);
-      let errorMessage = "Error al eliminar enfermero";
+    } catch (error: any) {let errorMessage = "Error al eliminar enfermero";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

@@ -54,10 +54,7 @@ function RegistrarMedicamento() {
       const response = await axios.post(
         "http://localhost:5000/api/medicamentos/",
         payload
-      );
-      console.log("✅ Medicamento registrado en inventario:", response.data);
-
-      setAlert({
+      );setAlert({
         type: "success",
         message: "Medicamento agregado al inventario exitosamente",
       });
@@ -69,9 +66,7 @@ function RegistrarMedicamento() {
         fechaCaducidad: "",
         ubicacion: "",
       });
-    } catch (error: any) {
-      console.error("❌ Error al registrar medicamento:", error);
-      let errorMessage = "Error al registrar medicamento";
+    } catch (error: any) {let errorMessage = "Error al registrar medicamento";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

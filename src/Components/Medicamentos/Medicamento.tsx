@@ -95,9 +95,7 @@ function Medicamento() {
       case "EliminarMedicamento":
         navigate("/EliminarMedicamento");
         break;
-      default:
-        console.log(`Acción pendiente: ${optionId}`);
-        break;
+      default:break;
     }
   };
 
@@ -150,9 +148,6 @@ function Medicamento() {
 
           <div className="mt-8">
             <MedicamentoList
-              onMedicamentoSelect={(m) =>
-                console.log("Medicamento seleccionado:", m)
-              }
             />
           </div>
         </main>

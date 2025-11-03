@@ -92,9 +92,7 @@ export default function ActualizarEnfermero() {
       const response = await axios.get("http://localhost:5000/api/servicios/listServices");
       const data = response.data.success ? response.data.data : response.data;
       setServicios(data || []);
-    } catch (error) {
-      console.error("❌ Error al cargar servicios:", error);
-      setServicios([]);
+    } catch (error) {setServicios([]);
     } finally {
       setLoadingServicios(false);
     }
@@ -106,9 +104,7 @@ export default function ActualizarEnfermero() {
       const response = await axios.get("http://localhost:5000/api/turnos");
       const data = response.data?.data || response.data || [];
       setTurnos(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("❌ Error al cargar turnos:", error);
-      setTurnos([]);
+    } catch (error) {setTurnos([]);
     } finally {
       setLoadingTurnos(false);
     }

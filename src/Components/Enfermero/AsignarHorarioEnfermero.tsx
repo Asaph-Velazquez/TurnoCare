@@ -64,9 +64,7 @@ function AsignarHorarioEnfermero() {
         const response = await axios.get("http://localhost:5000/api/turnos");
         const data = response.data.success ? response.data.data : response.data;
         setTurnos(data || []);
-      } catch (error) {
-        console.error("Error al cargar turnos:", error);
-        setAlert({
+      } catch (error) {setAlert({
           type: "danger",
           message: "Error al cargar la lista de turnos"
         });
@@ -85,9 +83,7 @@ function AsignarHorarioEnfermero() {
         const response = await axios.get("http://localhost:5000/api/enfermeros");
         const data = response.data.success ? response.data.data : response.data;
         setEnfermeros(data || []);
-      } catch (error) {
-        console.error("Error al cargar enfermeros:", error);
-        setAlert({
+      } catch (error) {setAlert({
           type: "danger",
           message: "Error al cargar la lista de enfermeros"
         });
@@ -145,10 +141,7 @@ function AsignarHorarioEnfermero() {
         enfermeroId: "",
       });
       setSelectedTurno(null);
-    } catch (error: any) {
-      console.error("Error al asignar enfermero:", error);
-      
-      let errorMessage = "Error al asignar enfermero al turno";
+    } catch (error: any) {let errorMessage = "Error al asignar enfermero al turno";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

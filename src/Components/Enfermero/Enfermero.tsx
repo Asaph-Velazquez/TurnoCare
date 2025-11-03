@@ -90,9 +90,7 @@ function Enfermero() {
       ),
     }
   ];
-  const handleOptionClick = (optionId: string) => {
-    console.log(`Navegando a: ${optionId}`);
-    switch (optionId) {
+  const handleOptionClick = (optionId: string) => {switch (optionId) {
       case "RegistrarEnfermero":
         navigate("/RegistrarEnfermero");
         break;
@@ -160,9 +158,7 @@ function Enfermero() {
           {/* Sección de listado de enfermeros */}
           <div className="mt-8">
             <EnfermeroList
-              onEnfermeroSelect={(enfermero) => {
-                console.log("Enfermero seleccionado:", enfermero);
-                // TODO: agregar detalles
+              onEnfermeroSelect={(enfermero) => {// TODO: agregar detalles
               }}
             />
           </div>

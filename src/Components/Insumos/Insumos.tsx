@@ -95,9 +95,7 @@ function Insumos() {
       case "EliminarInsumo":
         navigate("/EliminarInsumo");
         break;
-      default:
-        console.log(`Acción pendiente: ${optionId}`);
-    }
+      default:}
   };
 
   return (
@@ -148,9 +146,7 @@ function Insumos() {
           </div>
 
           <div className="mt-8">
-            <InsumoList
-              onInsumoSelect={(ins) => console.log("Insumo seleccionado:", ins)}
-            />
+            <InsumoList/>
           </div>
         </main>
       </div>

@@ -60,9 +60,7 @@ export default function EliminarInsumo() {
         : [];
       setInsumos(data);
       setFiltered(data);
-    } catch (error) {
-      console.error("Error al cargar insumos:", error);
-      setInsumos([]);
+    } catch (error) {setInsumos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -92,9 +90,7 @@ export default function EliminarInsumo() {
         message: `Insumo ${insumo.nombre} eliminado correctamente`,
       });
       await fetchInsumos();
-    } catch (error: any) {
-      console.error("Error al eliminar insumo:", error);
-      const message =
+    } catch (error: any) {const message =
         error?.response?.data?.error ||
         error?.message ||
         "Error al eliminar insumo";

@@ -87,9 +87,7 @@ function Hospital() {
     },
   ];
 
-  const handleOptionClick = (optionId: string) => {
-    console.log(`Navegando a: ${optionId}`);
-    switch (optionId) {
+  const handleOptionClick = (optionId: string) => {switch (optionId) {
       case "RegistrarHospital":
         navigate("/RegistrarHospital");
         break;

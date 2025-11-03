@@ -41,10 +41,7 @@ function RegistrarInsumo() {
       const response = await axios.post(
         "http://localhost:5000/api/insumos/",
         payload
-      );
-      console.log("✅ Insumo registrado:", response.data);
-
-      setAlert({ type: "success", message: "Insumo registrado exitosamente" });
+      );setAlert({ type: "success", message: "Insumo registrado exitosamente" });
       setForm({
         nombre: "",
         descripcion: "",
@@ -54,9 +51,7 @@ function RegistrarInsumo() {
         ubicacion: "",
         responsableId: "",
       });
-    } catch (error: any) {
-      console.error("❌ Error al registrar insumo:", error);
-      let errorMessage = "Error al registrar insumo";
+    } catch (error: any) {let errorMessage = "Error al registrar insumo";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

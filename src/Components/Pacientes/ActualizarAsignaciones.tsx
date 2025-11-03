@@ -56,9 +56,7 @@ function ActualizarAsignaciones() {
         const response = await axios.get("http://localhost:5000/api/pacientes");
         const data = Array.isArray(response.data) ? response.data : response.data.data || [];
         setPacientes(data);
-      } catch (error) {
-        console.error("Error al cargar pacientes:", error);
-      } finally {
+      } catch (error) {} finally {
         setLoadingPacientes(false);
       }
     };
@@ -102,9 +100,7 @@ function ActualizarAsignaciones() {
         const insRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${selectedPacienteId}`);
         const ins = Array.isArray(insRes.data?.data) ? insRes.data.data : [];
         setInsumosAsignados(ins);
-      } catch (error) {
-        console.error("Error al cargar asignaciones:", error);
-        setAlert({ type: "danger", message: "Error al cargar las asignaciones del paciente" });
+      } catch (error) {setAlert({ type: "danger", message: "Error al cargar las asignaciones del paciente" });
       }
     };
 

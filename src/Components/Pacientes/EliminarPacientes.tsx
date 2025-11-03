@@ -62,9 +62,7 @@ function EliminarPacientes() {
       const data = Array.isArray(response.data?.data) ? response.data.data : [];
       setPacientes(data);
       setFilteredPacientes(data);
-    } catch (error) {
-      console.error("Error al cargar pacientes:", error);
-      setAlert({ type: "danger", message: "Error al cargar pacientes" });
+    } catch (error) {setAlert({ type: "danger", message: "Error al cargar pacientes" });
     } finally {
       setLoadingList(false);
     }
@@ -85,9 +83,7 @@ function EliminarPacientes() {
       await axios.delete(`http://localhost:5000/api/pacientes/${paciente.pacienteId}`);
       setAlert({ type: "success", message: `Paciente ${paciente.nombre} ${paciente.apellidop} eliminado exitosamente` });
       await fetchPacientes();
-    } catch (error: any) {
-      console.error("Error al eliminar paciente:", error);
-      const errorMessage = error.response?.data?.error || error.message || "Error al eliminar paciente";
+    } catch (error: any) {const errorMessage = error.response?.data?.error || error.message || "Error al eliminar paciente";
       setAlert({ type: "danger", message: errorMessage });
     } finally {
       setLoading(false);

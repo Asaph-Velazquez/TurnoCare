@@ -30,9 +30,7 @@ function ListarServicios() {
       const res = await axios.get("http://localhost:5000/api/servicios/listServices");
       const data: Service[] = Array.isArray(res.data) ? res.data : Array.isArray(res.data?.data) ? res.data.data : [];
       setServices(data);
-    } catch (err) {
-      console.error(err);
-      setServices([]);
+    } catch (err) {setServices([]);
     } finally {
       setLoading(false);
     }

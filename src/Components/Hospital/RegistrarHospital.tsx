@@ -23,13 +23,9 @@ function RegistrarHospital() {
     setAlert(null);
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/hospital/", form);
-      console.log("✅ Hospital registrado:", response.data);
-      setAlert({ type: "success", message: "Hospital registrado exitosamente" });
+      const response = await axios.post("http://localhost:5000/api/hospital/", form);setAlert({ type: "success", message: "Hospital registrado exitosamente" });
       setForm({ nombre: "", direccion: "", telefono: "" });
-    } catch (error: any) {
-      console.error("❌ Error al registrar hospital:", error);
-      let errorMessage = "Error al registrar hospital";
+    } catch (error: any) {let errorMessage = "Error al registrar hospital";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {

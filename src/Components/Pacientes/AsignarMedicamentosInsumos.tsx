@@ -65,9 +65,7 @@ function AsignarMedicamentosInsumos() {
         const response = await axios.get("http://localhost:5000/api/pacientes");
         const data = Array.isArray(response.data) ? response.data : response.data.data || [];
         setPacientes(data);
-      } catch (error) {
-        console.error("Error al cargar pacientes:", error);
-      } finally {
+      } catch (error) {} finally {
         setLoadingPacientes(false);
       }
 
@@ -76,9 +74,7 @@ function AsignarMedicamentosInsumos() {
         const response = await axios.get("http://localhost:5000/api/medicamentos");
         const data = response.data.success ? response.data.data : response.data;
         setMedicamentos(data || []);
-      } catch (error) {
-        console.error("Error al cargar medicamentos:", error);
-      } finally {
+      } catch (error) {} finally {
         setLoadingMedicamentos(false);
       }
 
@@ -87,9 +83,7 @@ function AsignarMedicamentosInsumos() {
         const response = await axios.get("http://localhost:5000/api/insumos");
         const data = response.data.success ? response.data.data : response.data;
         setInsumos(data || []);
-      } catch (error) {
-        console.error("Error al cargar insumos:", error);
-      } finally {
+      } catch (error) {} finally {
         setLoadingInsumos(false);
       }
     };

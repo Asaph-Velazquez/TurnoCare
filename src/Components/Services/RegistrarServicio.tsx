@@ -44,9 +44,7 @@ function RegistrarServicio({ onBack }: { onBack?: () => void }) {
         const resp = await axios.get("http://localhost:5000/api/hospital");
         const data = resp.data?.data ?? resp.data;
         setHospitals(Array.isArray(data) ? data : []);
-      } catch (err: any) {
-        console.error("Error fetching hospitals:", err?.message || err);
-        setHospitalsError("No se pudieron cargar los hospitales");
+      } catch (err: any) {setHospitalsError("No se pudieron cargar los hospitales");
       } finally {
         setHospitalsLoading(false);
       }

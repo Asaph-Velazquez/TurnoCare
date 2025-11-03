@@ -78,9 +78,7 @@ export default function ActualizarPacientes() {
       const response = await axios.get("http://localhost:5000/api/servicios/listServices");
       const data = response.data.success ? response.data.data : response.data;
       setServicios(data || []);
-    } catch (error) {
-      console.error("❌ Error al cargar servicios:", error);
-      setServicios([]);
+    } catch (error) {setServicios([]);
     } finally {
       setLoadingServicios(false);
     }

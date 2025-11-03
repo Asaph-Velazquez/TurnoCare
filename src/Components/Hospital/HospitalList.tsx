@@ -30,9 +30,7 @@ function HospitalList({ refreshTrigger = 0 }: HospitalListProps) {
       } else {
         setHospitales([]);
       }
-    } catch (err) {
-      console.error("Error al cargar hospitales:", err);
-      setHospitales([]);
+    } catch (err) {setHospitales([]);
     } finally {
       setLoading(false);
     }

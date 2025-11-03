@@ -160,9 +160,7 @@ function RegistrarPacientes() {
         } else if (Array.isArray(resp.data)) {
           setServicios(resp.data as ServicioResumen[]);
         }
-      } catch (err) {
-        console.warn("No se pudieron cargar servicios:", err);
-      }
+      } catch (err) {}
     };
 
     fetchServicios();
@@ -223,9 +221,7 @@ function RegistrarPacientes() {
               viaAdministracion: null,
             }))
           });
-        } catch (medError: any) {
-          console.error("Error al asignar medicamentos:", medError.response?.data || medError.message);
-        }
+        } catch (medError: any) {}
       }
       
       // Asignar insumos si existen
@@ -238,9 +234,7 @@ function RegistrarPacientes() {
               cantidad: Number(i.cantidad),
             }))
           });
-        } catch (insError: any) {
-          console.error("Error al asignar insumos:", insError.response?.data || insError.message);
-        }
+        } catch (insError: any) {}
       }
 
       setAlert({
@@ -251,9 +245,7 @@ function RegistrarPacientes() {
       resetForm();
       setMedicamentosAsignados([]);
       setInsumosAsignados([]);
-    } catch (error: any) {
-      console.error("Error al registrar paciente:", error);
-      const message = error.response?.data?.error || error.message || "Error al registrar paciente";
+    } catch (error: any) {const message = error.response?.data?.error || error.message || "Error al registrar paciente";
       setAlert({ type: "danger", message });
     } finally {
       setLoading(false);

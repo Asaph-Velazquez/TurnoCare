@@ -32,9 +32,7 @@ function PacientesList({ refreshTrigger = 0, onPacienteSelect }: PacientesListPr
       const response = await axios.get("http://localhost:5000/api/pacientes/");
       const data = Array.isArray(response.data?.data) ? (response.data.data as Paciente[]) : [];
       setPacientes(data);
-    } catch (error) {
-      console.error("Error al cargar pacientes:", error);
-    } finally {
+    } catch (error) {} finally {
       setLoading(false);
     }
   };

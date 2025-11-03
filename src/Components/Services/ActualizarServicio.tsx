@@ -46,9 +46,7 @@ export default function ActualizarServicio() {
       const res = await axios.get("http://localhost:5000/api/hospital");
       const data = res.data?.data ?? res.data;
       setHospitals(Array.isArray(data) ? data : []);
-    } catch (e) {
-      console.error("Error fetching hospitals:", e);
-      setHospitals([]);
+    } catch (e) {setHospitals([]);
     }
   };
 

@@ -30,14 +30,10 @@ function InsumoList({ refreshTrigger = 0, onInsumoSelect }: InsumoListProps) {
   const fetchInsumos = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/api/insumos/");
-      console.log("Insumos cargados:", response.data);
-      if (response.data.success && response.data.data) {
+      const response = await axios.get("http://localhost:5000/api/insumos/");if (response.data.success && response.data.data) {
         setInsumos(response.data.data);
       }
-    } catch (error) {
-      console.error("Error al cargar insumos:", error);
-    } finally {
+    } catch (error) {} finally {
       setLoading(false);
     }
   };

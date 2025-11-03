@@ -60,9 +60,7 @@ export default function EliminarMedicamento() {
         : [];
       setMedicamentos(data);
       setFiltered(data);
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-      setMedicamentos([]);
+    } catch (error) {setMedicamentos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -94,9 +92,7 @@ export default function EliminarMedicamento() {
         message: `Medicamento ${medicamento.nombre} eliminado del inventario correctamente`,
       });
       await fetchMedicamentos();
-    } catch (error: any) {
-      console.error("Error al eliminar medicamento:", error);
-      const message =
+    } catch (error: any) {const message =
         error?.response?.data?.error ||
         error?.message ||
         "Error al eliminar medicamento";

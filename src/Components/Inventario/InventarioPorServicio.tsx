@@ -54,9 +54,7 @@ function InventarioPorServicio() {
       setLoading(true);
       const response = await axios.get("http://localhost:5000/api/estadisticas/resumen-inventario");
       setResumen(response.data.data || []);
-    } catch (error) {
-      console.error("Error al cargar resumen:", error);
-    } finally {
+    } catch (error) {} finally {
       setLoading(false);
     }
   };
@@ -65,18 +63,14 @@ function InventarioPorServicio() {
     try {
       const response = await axios.get(`http://localhost:5000/api/estadisticas/medicamentos-por-servicio/${servicioId}`);
       setMedicamentosPorServicio(response.data.data || []);
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-    }
+    } catch (error) {}
   };
 
   const fetchInsumos = async (servicioId: number) => {
     try {
       const response = await axios.get(`http://localhost:5000/api/estadisticas/insumos-por-servicio/${servicioId}`);
       setInsumosPorServicio(response.data.data || []);
-    } catch (error) {
-      console.error("Error al cargar insumos:", error);
-    }
+    } catch (error) {}
   };
 
   const servicioSeleccionado = resumen.find(s => s.servicioId === selectedServicio);

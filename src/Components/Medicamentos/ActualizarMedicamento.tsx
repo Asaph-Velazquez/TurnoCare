@@ -61,9 +61,7 @@ export default function ActualizarMedicamento() {
         : [];
       setMedicamentos(data);
       setFiltered(data);
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-      setMedicamentos([]);
+    } catch (error) {setMedicamentos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -321,9 +319,7 @@ export default function ActualizarMedicamento() {
                       message: "Medicamento actualizado correctamente en inventario",
                     });
                     await fetchMedicamentos();
-                  } catch (error: any) {
-                    console.error("Error al actualizar medicamento:", error);
-                    const message =
+                  } catch (error: any) {const message =
                       error?.response?.data?.error ||
                       error?.message ||
                       "Error al actualizar medicamento";

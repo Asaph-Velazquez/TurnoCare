@@ -58,9 +58,7 @@ function EliminarAsignaciones() {
         const response = await axios.get("http://localhost:5000/api/pacientes");
         const data = Array.isArray(response.data) ? response.data : response.data.data || [];
         setPacientes(data);
-      } catch (error) {
-        console.error("Error al cargar pacientes:", error);
-      } finally {
+      } catch (error) {} finally {
         setLoadingPacientes(false);
       }
     };
@@ -104,9 +102,7 @@ function EliminarAsignaciones() {
         const insRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${selectedPacienteId}`);
         const ins = Array.isArray(insRes.data?.data) ? insRes.data.data : [];
         setInsumosAsignados(ins);
-      } catch (error) {
-        console.error("Error al cargar asignaciones:", error);
-        setAlert({ type: "danger", message: "Error al cargar las asignaciones del paciente" });
+      } catch (error) {setAlert({ type: "danger", message: "Error al cargar las asignaciones del paciente" });
       }
     };
 
@@ -211,9 +207,7 @@ function EliminarAsignaciones() {
       const meds = Array.isArray(medsRes.data?.data) ? medsRes.data.data : [];
       setMedicamentosAsignados(meds);
       setSelectedMedicamentos(new Set());
-    } catch (error) {
-      console.error("Error al recargar medicamentos:", error);
-    }
+    } catch (error) {}
 
     if (errorCount === 0) {
       setAlert({ type: "success", message: `${successCount} medicamento(s) eliminado(s) exitosamente` });
@@ -250,9 +244,7 @@ function EliminarAsignaciones() {
       const ins = Array.isArray(insRes.data?.data) ? insRes.data.data : [];
       setInsumosAsignados(ins);
       setSelectedInsumos(new Set());
-    } catch (error) {
-      console.error("Error al recargar insumos:", error);
-    }
+    } catch (error) {}
 
     if (errorCount === 0) {
       setAlert({ type: "success", message: `${successCount} insumo(s) eliminado(s) exitosamente` });

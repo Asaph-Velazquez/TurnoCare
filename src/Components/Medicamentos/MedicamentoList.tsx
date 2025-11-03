@@ -38,9 +38,7 @@ function MedicamentoList({
       if (response.data.success && response.data.data) {
         setMedicamentos(response.data.data);
       }
-    } catch (error) {
-      console.error("Error al cargar medicamentos:", error);
-    } finally {
+    } catch (error) {} finally {
       setLoading(false);
     }
   };
