@@ -2,6 +2,7 @@ import "./App.css";
 import { Routes, Route } from "react-router-dom";
 
 import AdminNav from "./Components/Admin/AdminNav";
+import EnfermeroNav from "./Components/NoCoordinador/EnfermeroNav";
 import Login from "./Components/Login";
 import AdminHome from "./Components/Admin/AdminHome";
 import RegistrarEnfermero from "./Components/Enfermero/RegistrarEnfermero";
@@ -47,10 +48,14 @@ import AsignarHorarioEnfermero from "./Components/Enfermero/AsignarHorarioEnferm
 import ListarTurnos from "./Components/Turnos/ListarTurnos";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
+//No Coordniador
+import Home from "./Components/NoCoordinador/Home";
+
 function App() {
   return (
     <div>
       <AdminNav />
+      <EnfermeroNav />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/AdminHome" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
@@ -94,6 +99,7 @@ function App() {
         <Route path="/turnos/actualizar" element={<ProtectedRoute><ActualizarTurno /></ProtectedRoute>} />
         <Route path="/turnos/asignar-enfermero" element={<ProtectedRoute><AsignarHorarioEnfermero /></ProtectedRoute>} />
         <Route path="/turnos/listar" element={<ProtectedRoute><ListarTurnos /></ProtectedRoute>} />
+        <Route path="/NoCoordinador/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       </Routes>
       <Footer />
     </div>

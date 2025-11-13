@@ -31,7 +31,7 @@ dist-ssr
 *.sw?
 
 #scrips de ayuda
-
+*.ps1
 
 /Backend/.env
 /Backend/node_modules

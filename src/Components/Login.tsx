@@ -70,6 +70,12 @@ function Login() {
           localStorage.setItem("numeroEmpleado", String(userData.user.numeroEmpleado || ""));
           localStorage.setItem("nombre", String(userData.user.nombre || ""));
           localStorage.setItem("token", userData.token || "");
+          try {
+            const isCoord = !!userData.user.esCoordinador;
+            localStorage.setItem("esCoordinador", String(isCoord));
+          } catch (e) {
+            localStorage.setItem("esCoordinador", "false");
+          }
         }
       } catch (err) {}
       
@@ -78,8 +84,18 @@ function Login() {
         message: userData.message || "Login exitoso"
       });
       setTimeout(() => {
-        navigate("/AdminHome");
-      }, 1000);
+        try {
+          const isCoord = userData.user && !!userData.user.esCoordinador;
+          window.dispatchEvent(new Event('authChanged'));
+          if (isCoord) {
+            navigate("/AdminHome");
+          } else {
+            navigate("/NoCoordinador/home");
+          }
+        } catch (e) {
+          navigate("/NoCoordinador/home");
+        }
+      }, 800);
     }
   }
 

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import MedicamentoList from "./MedicamentoList";
+import { Network } from "lucide-react";
 
 function Medicamento() {
   const navigate = useNavigate();
