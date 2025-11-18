@@ -129,7 +129,8 @@ model RegistroMedico {
   // Relaciones
   paciente       Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
   enfermero      Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Restrict)
-  
+
+  medicamentos   Medicamento[]   // CORRECTO: nombre del modelo  
   @@map("registromedico")
 }
 
@@ -142,6 +143,9 @@ model Medicamento {
   fechaCaducidad    DateTime?
   ubicacion         String?  @db.VarChar(100)
   actualizadoEn     DateTime @default(now())
+
+  registroMedicoId  Int?         // FK
+  registroMedico    RegistroMedico? @relation(fields: [registroMedicoId], references: [registroId])
 
   asignaciones      PacienteMedicamento[]
 

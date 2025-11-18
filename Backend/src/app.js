@@ -9,6 +9,7 @@ const medicamentosRoutes = require("./routes/medicamentos.routes");
 const insumosRoutes = require("./routes/insumos.routes");
 const inventarioRoutes = require("./routes/inventario.routes");
 const estadisticasRoutes = require("./routes/estadisticas.routes");
+const notasMedicasRoutes = require("./routes/notaMedica.routes");
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use("/api/medicamentos", medicamentosRoutes);
 app.use("/api/insumos", insumosRoutes);
 app.use("/api/inventarios", inventarioRoutes);
 app.use("/api/estadisticas", estadisticasRoutes);
+app.use("/api/notasMedicas", notasMedicasRoutes);
 
 module.exports = app;
