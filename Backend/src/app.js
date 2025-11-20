@@ -26,6 +26,6 @@ app.use("/api/medicamentos", medicamentosRoutes);
 app.use("/api/insumos", insumosRoutes);
 app.use("/api/inventarios", inventarioRoutes);
 app.use("/api/estadisticas", estadisticasRoutes);
-app.use("/api/notasMedicas", notasMedicasRoutes);
+app.use("/api/notas-medicas", notasMedicasRoutes);
 
 module.exports = app;

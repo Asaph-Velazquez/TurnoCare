@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import MedicamentoList from "./MedicamentoList";
-import { Network } from "lucide-react";
 
 function Medicamento() {
   const navigate = useNavigate();
@@ -96,7 +95,8 @@ function Medicamento() {
       case "EliminarMedicamento":
         navigate("/EliminarMedicamento");
         break;
-      default:break;
+      default:
+        break;
     }
   };
 
@@ -148,8 +148,7 @@ function Medicamento() {
           </div>
 
           <div className="mt-8">
-            <MedicamentoList
-            />
+            <MedicamentoList />
           </div>
         </main>
       </div>

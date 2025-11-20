@@ -14,7 +14,12 @@ function Home() {
     axios
       .get("http://localhost:5000/api/turnos")
       .then((res) => {
-        const data = res.data && Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+        const data =
+          res.data && Array.isArray(res.data.data)
+            ? res.data.data
+            : Array.isArray(res.data)
+            ? res.data
+            : [];
         setTurnosData(data);
         setTurnosCount(data.length);
       })
@@ -26,7 +31,12 @@ function Home() {
     axios
       .get("http://localhost:5000/api/pacientes")
       .then((res) => {
-        const data = res.data && Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+        const data =
+          res.data && Array.isArray(res.data.data)
+            ? res.data.data
+            : Array.isArray(res.data)
+            ? res.data
+            : [];
         setPacientesCount(data.length);
       })
       .catch(() => setPacientesCount(0));
@@ -42,7 +52,14 @@ function Home() {
       const now = new Date();
       const candidateDates: Date[] = [];
       for (const t of turnosData) {
-        const possibleKeys = ["fecha", "fechaHora", "date", "datetime", "horario", "start"];
+        const possibleKeys = [
+          "fecha",
+          "fechaHora",
+          "date",
+          "datetime",
+          "horario",
+          "start",
+        ];
         for (const k of possibleKeys) {
           if (t && t[k]) {
             const d = new Date(t[k]);
@@ -76,10 +93,20 @@ function Home() {
         const parsed = JSON.parse(raw);
         if (parsed && typeof parsed === "object") {
           userInfo = {
-            nombre: parsed.nombre || localStorage.getItem("nombre") || "Usuario",
-            apellidoPaterno: parsed.apellidoPaterno || localStorage.getItem("apellidoPaterno") || "",
-            numeroEmpleado: parsed.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "",
-            especialidad: parsed.especialidad || localStorage.getItem("especialidad") || "Sin especialidad",
+            nombre:
+              parsed.nombre || localStorage.getItem("nombre") || "Usuario",
+            apellidoPaterno:
+              parsed.apellidoPaterno ||
+              localStorage.getItem("apellidoPaterno") ||
+              "",
+            numeroEmpleado:
+              parsed.numeroEmpleado ||
+              localStorage.getItem("numeroEmpleado") ||
+              "",
+            especialidad:
+              parsed.especialidad ||
+              localStorage.getItem("especialidad") ||
+              "Sin especialidad",
           };
         }
       } catch (parseError) {
@@ -87,7 +114,8 @@ function Home() {
           nombre: localStorage.getItem("nombre") || "Usuario",
           apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
           numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-          especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+          especialidad:
+            localStorage.getItem("especialidad") || "Sin especialidad",
         };
       }
     } else {
@@ -95,7 +123,8 @@ function Home() {
         nombre: localStorage.getItem("nombre") || "Usuario",
         apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
         numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-        especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+        especialidad:
+          localStorage.getItem("especialidad") || "Sin especialidad",
       };
     }
   } catch (err) {
@@ -113,8 +142,18 @@ function Home() {
       title: "Mis Turnos",
       description: "Ver y gestionar mis turnos asignados",
       icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
         </svg>
       ),
     },
@@ -144,8 +183,18 @@ function Home() {
       title: "Nota Medica",
       description: "Realiza una nota medica al paciente",
       icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-3-3v6M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+        <svg
+          className="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 12h6m-3-3v6M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
+          />
         </svg>
       ),
     },
@@ -181,7 +230,7 @@ function Home() {
         navigate("");
         break;
       case "asignaciones":
-        navigate("");
+        navigate("/NoCoordinador//NotaMedicaForm");
         break;
       case "inventario":
         navigate("");
@@ -201,13 +250,21 @@ function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-3xl font-bold text-auto-primary">Panel Enfermero</h1>
-                <p className="text-auto-secondary mt-1">Sistema TurnoCare - Área Clínica</p>
+                <h1 className="text-3xl font-bold text-auto-primary">
+                  Panel Enfermero
+                </h1>
+                <p className="text-auto-secondary mt-1">
+                  Sistema TurnoCare - Área Clínica
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-auto-tertiary">Bienvenido/a</p>
-                <p className="font-semibold text-auto-primary">{userInfo.nombre} {userInfo.apellidoPaterno}</p>
-                <p className="text-xs text-auto-tertiary">ID: {userInfo.numeroEmpleado} | {userInfo.especialidad}</p>
+                <p className="font-semibold text-auto-primary">
+                  {userInfo.nombre} {userInfo.apellidoPaterno}
+                </p>
+                <p className="text-xs text-auto-tertiary">
+                  ID: {userInfo.numeroEmpleado} | {userInfo.especialidad}
+                </p>
               </div>
             </div>
           </div>
@@ -221,25 +278,63 @@ function Home() {
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-4">
-                  <h2 className="text-xl font-semibold text-auto-primary">¡Sesión iniciada correctamente!</h2>
-                  <p className="text-auto-secondary">Selecciona una opción para empezar a trabajar</p>
+                  <h2 className="text-xl font-semibold text-auto-primary">
+                    ¡Sesión iniciada correctamente!
+                  </h2>
+                  <p className="text-auto-secondary">
+                    Selecciona una opción para empezar a trabajar
+                  </p>
                 </div>
               </div>
 
               {/* Reloj */}
               <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6 text-white">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-6 h-6 text-white"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
                 </svg>
                 <div>
-                  <div className="text-lg font-bold tabular-nums text-white">{currentTime.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</div>
-                  <div className="text-xs text-white/90">{currentTime.toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'short' })}</div>
+                  <div className="text-lg font-bold tabular-nums text-white">
+                    {currentTime.toLocaleTimeString("es-MX", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    })}
+                  </div>
+                  <div className="text-xs text-white/90">
+                    {currentTime.toLocaleDateString("es-MX", {
+                      weekday: "long",
+                      day: "numeric",
+                      month: "short",
+                    })}
+                  </div>
                 </div>
               </div>
             </div>
@@ -248,13 +343,27 @@ function Home() {
           {/* Options Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {nurseOptions.map((option) => (
-              <div key={option.id} onClick={() => handleOptionClick(option.id)} className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:border-opacity-80 group">
+              <div
+                key={option.id}
+                onClick={() => handleOptionClick(option.id)}
+                className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl p-6 cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-105 hover:border-opacity-80 group"
+              >
                 <div className="flex items-center justify-center mb-4">
-                  <div className="w-16 h-16 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">{option.icon}</div>
+                  <div className="w-16 h-16 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center text-white group-hover:scale-110 transition-transform duration-300">
+                    {option.icon}
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-auto-primary text-center mb-2">{option.title}</h3>
-                <p className="text-auto-secondary text-center text-sm leading-relaxed">{option.description}</p>
-                <div className="mt-4 flex justify-center"><span className="text-sm font-medium text-auto-tertiary group-hover:text-auto-secondary transition-colors duration-300">Clic para acceder →</span></div>
+                <h3 className="text-xl font-bold text-auto-primary text-center mb-2">
+                  {option.title}
+                </h3>
+                <p className="text-auto-secondary text-center text-sm leading-relaxed">
+                  {option.description}
+                </p>
+                <div className="mt-4 flex justify-center">
+                  <span className="text-sm font-medium text-auto-tertiary group-hover:text-auto-secondary transition-colors duration-300">
+                    Clic para acceder →
+                  </span>
+                </div>
               </div>
             ))}
           </div>
@@ -264,22 +373,99 @@ function Home() {
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Mis Turnos</p><p className="text-2xl font-semibold text-auto-primary">{turnosCount !== null ? turnosCount : "--"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">
+                    Mis Turnos
+                  </p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {turnosCount !== null ? turnosCount : "--"}
+                  </p>
+                </div>
               </div>
             </div>
 
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Pacientes Asignados</p><p className="text-2xl font-semibold text-auto-primary">{pacientesCount !== null ? pacientesCount : "--"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">
+                    Pacientes Asignados
+                  </p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {pacientesCount !== null ? pacientesCount : "--"}
+                  </p>
+                </div>
               </div>
             </div>
 
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Próximo Turno</p><p className="text-2xl font-semibold text-auto-primary">{nextTurno ? nextTurno.toLocaleString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : "Ninguno"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">
+                    Próximo Turno
+                  </p>
+                  <p className="text-2xl font-semibold text-auto-primary">
+                    {nextTurno
+                      ? nextTurno.toLocaleString("es-MX", {
+                          weekday: "short",
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
+                      : "Ninguno"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
