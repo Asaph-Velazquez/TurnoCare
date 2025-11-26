@@ -2,41 +2,41 @@ import axios from "axios";
 import { useState } from "react";
 import EnfermeroNav from "./EnfermeroNav";
 
-type SignosVitales = {
-  temperatura: string;
-  presion: string;
-  frecuenciaCardiaca: string;
-  frecuenciaRespiratoria: string;
-};
-
 type Medicamento = {
   nombre: string;
   dosis: string;
   frecuencia: string;
+  cantidad: string;
+};
+
+type Insumo = {
+  nombre: string;
+  cantidad: string;
+  notas: string;
 };
 
 function NotaMedicaForm() {
   const [pacienteId, setPacienteId] = useState("");
   const [enfermeroId, setEnfermeroId] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [signosVitales, setSignosVitales] = useState<SignosVitales>({
-    temperatura: "Hola amir",
-    presion: "Como estas",
-    frecuenciaCardiaca: "",
-    frecuenciaRespiratoria: "",
-  });
+  const [nombrePaciente, setNombrePaciente] = useState("");
+  const [nombreHospital, setNombreHospital] = useState("");
+  const [servicio, setServicio] = useState("");
+  const [habitacion, setHabitacion] = useState("");
+  const [cama, setCama] = useState("");
+  const [nombreEnfermeroAlta, setNombreEnfermeroAlta] = useState("");
+  const [nombreEnfermeroAsignado, setNombreEnfermeroAsignado] = useState("");
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([
-    { nombre: "", dosis: "", frecuencia: "" },
+    { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
+  ]);
+  const [insumos, setInsumos] = useState<Insumo[]>([
+    { nombre: "", cantidad: "", notas: "" },
   ]);
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSignoChange = (field: keyof SignosVitales, value: string) => {
-    setSignosVitales((prev) => ({ ...prev, [field]: value }));
-  };
 
   const handleMedicamentoChange = (
     index: number,
@@ -50,10 +50,22 @@ function NotaMedicaForm() {
     });
   };
 
+  const handleInsumoChange = (
+    index: number,
+    field: keyof Insumo,
+    value: string
+  ) => {
+    setInsumos((prev) => {
+      const next = [...prev];
+      next[index] = { ...next[index], [field]: value };
+      return next;
+    });
+  };
+
   const addMedicamento = () => {
     setMedicamentos((prev) => [
       ...prev,
-      { nombre: "", dosis: "", frecuencia: "" },
+      { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
     ]);
   };
 
@@ -61,16 +73,29 @@ function NotaMedicaForm() {
     setMedicamentos((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const addInsumo = () => {
+    setInsumos((prev) => [...prev, { nombre: "", cantidad: "", notas: "" }]);
+  };
+
+  const removeInsumo = (index: number) => {
+    setInsumos((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const isFormValid = () => {
-    return (
-      pacienteId.trim() &&
-      enfermeroId.trim() &&
-      observaciones.trim() &&
-      signosVitales.temperatura.trim() &&
-      signosVitales.presion.trim() &&
-      signosVitales.frecuenciaCardiaca.trim() &&
-      signosVitales.frecuenciaRespiratoria.trim()
-    );
+    const datosBasicos = [
+      pacienteId,
+      nombrePaciente,
+      enfermeroId,
+      nombreEnfermeroAlta,
+      nombreEnfermeroAsignado,
+      servicio,
+      nombreHospital,
+      cama,
+      habitacion,
+      observaciones,
+    ];
+
+    return datosBasicos.every((value) => value.trim());
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -89,10 +114,24 @@ function NotaMedicaForm() {
     try {
       await axios.post("http://localhost:5000/api/notas-medicas", {
         pacienteId,
+        nombrePaciente,
         enfermeroId,
+        nombreEnfermeroAlta,
+        nombreEnfermeroAsignado,
+        servicio,
+        nombreHospital,
+        habitacion,
+        cama,
         observaciones,
-        signosVitales,
-        medicamentos: medicamentos.filter((med) => med.nombre.trim()),
+        medicamentos: medicamentos
+          .filter((med) => med.nombre.trim())
+          .map((med) => ({
+            nombre: med.nombre,
+            dosis: med.dosis,
+            frecuencia: med.frecuencia,
+            cantidad: med.cantidad,
+          })),
+        insumos: insumos.filter((insumo) => insumo.nombre.trim()),
       });
       setFeedback({
         type: "success",
@@ -101,13 +140,17 @@ function NotaMedicaForm() {
       setPacienteId("");
       setEnfermeroId("");
       setObservaciones("");
-      setSignosVitales({
-        temperatura: "",
-        presion: "",
-        frecuenciaCardiaca: "",
-        frecuenciaRespiratoria: "",
-      });
-      setMedicamentos([{ nombre: "", dosis: "", frecuencia: "" }]);
+      setNombrePaciente("");
+      setNombreHospital("");
+      setServicio("");
+      setHabitacion("");
+      setCama("");
+      setNombreEnfermeroAlta("");
+      setNombreEnfermeroAsignado("");
+      setInsumos([{ nombre: "", cantidad: "", notas: "" }]);
+      setMedicamentos([
+        { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
+      ]);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Error desconocido";
@@ -139,17 +182,105 @@ function NotaMedicaForm() {
             </div>
 
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  ID del Paciente
-                  <input
-                    type="text"
-                    value={pacienteId}
-                    onChange={(e) => setPacienteId(e.target.value)}
-                    placeholder="Ej. 823"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
+              <div className="space-y-4">
+                <p className="text-sm font-semibold text-auto-primary">
+                  Información del paciente
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Nombre del paciente
+                    <input
+                      type="text"
+                      value={nombrePaciente}
+                      onChange={(e) => setNombrePaciente(e.target.value)}
+                      placeholder="Ej. Juan Pérez"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    ID del Paciente
+                    <input
+                      type="text"
+                      value={pacienteId}
+                      onChange={(e) => setPacienteId(e.target.value)}
+                      placeholder="Ej. 823"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Hospital
+                    <input
+                      type="text"
+                      value={nombreHospital}
+                      onChange={(e) => setNombreHospital(e.target.value)}
+                      placeholder="Ej. Hospital General"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Servicio
+                    <input
+                      type="text"
+                      value={servicio}
+                      onChange={(e) => setServicio(e.target.value)}
+                      placeholder="Ej. Terapia intensiva"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Habitación
+                    <input
+                      type="text"
+                      value={habitacion}
+                      onChange={(e) => setHabitacion(e.target.value)}
+                      placeholder="Ej. 203"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Cama
+                    <input
+                      type="text"
+                      value={cama}
+                      onChange={(e) => setCama(e.target.value)}
+                      placeholder="Ej. Cama 4"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                </div>
+              </div>
+              <div className="space-y-4">
+                <p className="text-sm font-semibold text-auto-primary">
+                  Enfermeros
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Enfermero (da de alta)
+                    <input
+                      type="text"
+                      value={nombreEnfermeroAlta}
+                      onChange={(e) => setNombreEnfermeroAlta(e.target.value)}
+                      placeholder="Ej. Ana Gómez"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                    Enfermero asignado
+                    <input
+                      type="text"
+                      value={nombreEnfermeroAsignado}
+                      onChange={(e) =>
+                        setNombreEnfermeroAsignado(e.target.value)
+                      }
+                      placeholder="Ej. Luis Torres"
+                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
+                    />
+                  </label>
+                </div>
                 <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
                   ID del Enfermero
                   <input
@@ -161,75 +292,6 @@ function NotaMedicaForm() {
                   />
                 </label>
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  Temperatura (°C)
-                  <input
-                    type="text"
-                    value={signosVitales.temperatura}
-                    onChange={(e) =>
-                      handleSignoChange("temperatura", e.target.value)
-                    }
-                    placeholder="Ej. 37.2"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  Presión arterial
-                  <input
-                    type="text"
-                    value={signosVitales.presion}
-                    onChange={(e) =>
-                      handleSignoChange("presion", e.target.value)
-                    }
-                    placeholder="Ej. 120/80"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  Frecuencia cardíaca (lpm)
-                  <input
-                    type="text"
-                    value={signosVitales.frecuenciaCardiaca}
-                    onChange={(e) =>
-                      handleSignoChange("frecuenciaCardiaca", e.target.value)
-                    }
-                    placeholder="Ej. 78"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  Frecuencia respiratoria (rpm)
-                  <input
-                    type="text"
-                    value={signosVitales.frecuenciaRespiratoria}
-                    onChange={(e) =>
-                      handleSignoChange(
-                        "frecuenciaRespiratoria",
-                        e.target.value
-                      )
-                    }
-                    placeholder="Ej. 18"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                Observaciones clínicas
-                <textarea
-                  value={observaciones}
-                  onChange={(e) => setObservaciones(e.target.value)}
-                  rows={5}
-                  placeholder="Describe síntomas, evolución y notas relevantes"
-                  className="rounded-3xl border border-auto px-4 py-3 bg-auto-primary text-auto-primary focus:border-sky-500"
-                />
-              </div>
-
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-auto-tertiary">
@@ -263,7 +325,7 @@ function NotaMedicaForm() {
                           </button>
                         )}
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <input
                           type="text"
                           value={med.nombre}
@@ -303,10 +365,105 @@ function NotaMedicaForm() {
                           placeholder="Frecuencia"
                           className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
                         />
+                        <input
+                          type="text"
+                          value={med.cantidad}
+                          onChange={(e) =>
+                            handleMedicamentoChange(
+                              index,
+                              "cantidad",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Cantidad"
+                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
+                        />
                       </div>
                     </div>
                   ))}
                 </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-auto-tertiary">
+                    Insumos utilizados
+                  </p>
+                  <button
+                    type="button"
+                    onClick={addInsumo}
+                    className="text-sm font-semibold text-sky-600 hover:text-sky-500"
+                  >
+                    + Añadir insumo
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {insumos.map((insumo, index) => (
+                    <div
+                      key={index}
+                      className="bg-auto-primary/40 border border-auto rounded-2xl p-4 space-y-3"
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-semibold text-auto-tertiary">
+                          Insumo {index + 1}
+                        </span>
+                        {insumos.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeInsumo(index)}
+                            className="text-xs text-red-500 hover:text-red-400"
+                          >
+                            Eliminar
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input
+                          type="text"
+                          value={insumo.nombre}
+                          onChange={(e) =>
+                            handleInsumoChange(index, "nombre", e.target.value)
+                          }
+                          placeholder="Nombre"
+                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
+                        />
+                        <input
+                          type="text"
+                          value={insumo.cantidad}
+                          onChange={(e) =>
+                            handleInsumoChange(
+                              index,
+                              "cantidad",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Cantidad"
+                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
+                        />
+                        <input
+                          type="text"
+                          value={insumo.notas}
+                          onChange={(e) =>
+                            handleInsumoChange(index, "notas", e.target.value)
+                          }
+                          placeholder="Notas"
+                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
+                Observaciones clínicas
+                <textarea
+                  value={observaciones}
+                  onChange={(e) => setObservaciones(e.target.value)}
+                  rows={5}
+                  placeholder="Describe síntomas, evolución y notas relevantes"
+                  className="rounded-3xl border border-auto px-4 py-3 bg-auto-primary text-auto-primary focus:border-sky-500"
+                />
               </div>
 
               {feedback && (
