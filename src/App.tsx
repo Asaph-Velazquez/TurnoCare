@@ -52,6 +52,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 import Home from "./Components/NoCoordinador/Home";
 import NotaMedicaForm from "./Components/NoCoordinador/NotaMedicaForm";
 import MisPacientes from "./Components/NoCoordinador/MisPacientes";
+import InventarioNoCoordinador from "./Components/NoCoordinador/Inventario";
 
 function App() {
   return (
@@ -412,6 +413,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
       </Routes>
       <Footer />
     </div>

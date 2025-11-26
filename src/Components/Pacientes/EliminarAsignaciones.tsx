@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import FormLayout from "../utilities/Form/FormLayout";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 interface Paciente {
   pacienteId: number;
@@ -47,8 +48,17 @@ function EliminarAsignaciones() {
   const [filteredPacientes, setFilteredPacientes] = useState<Paciente[]>([]);
   
   const [activeTab, setActiveTab] = useState<'medicamentos' | 'insumos'>('medicamentos');
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingDelete, setPendingDelete] = useState<{type: 'medicamento' | 'insumo', id: number, nombre: string} | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    type: "medicamento" | "insumo" | null;
+    id: number | null;
+    nombre: string;
+  }>({
+    isOpen: false,
+    type: null,
+    id: null,
+    nombre: "",
+  });
 
   // Cargar pacientes
   useEffect(() => {
@@ -132,30 +142,42 @@ function EliminarAsignaciones() {
   };
 
   // Mostrar confirmación para eliminación individual
-  const confirmDeleteSingle = (type: 'medicamento' | 'insumo', id: number, nombre: string) => {
-    setPendingDelete({ type, id, nombre });
-    setShowConfirmDialog(true);
+  const confirmDeleteSingle = (
+    type: "medicamento" | "insumo",
+    id: number,
+    nombre: string
+  ) => {
+    setConfirmDialog({ isOpen: true, type, id, nombre });
   };
 
   // Eliminar medicamento individual
   const handleDeleteMedicamento = async (medicamentoId: number) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/medicamentos/desasignar/${selectedPacienteId}/${medicamentoId}`);
-      
-      setMedicamentosAsignados(medicamentosAsignados.filter(m => m.medicamentoId !== medicamentoId));
-      setSelectedMedicamentos(new Set([...selectedMedicamentos].filter(id => id !== medicamentoId)));
-      
-      setAlert({ type: "success", message: "Medicamento eliminado exitosamente" });
+      await axios.delete(
+        `http://localhost:5000/api/medicamentos/desasignar/${selectedPacienteId}/${medicamentoId}`
+      );
+
+      setMedicamentosAsignados(
+        medicamentosAsignados.filter((m) => m.medicamentoId !== medicamentoId)
+      );
+      setSelectedMedicamentos(
+        new Set([...selectedMedicamentos].filter((id) => id !== medicamentoId))
+      );
+
+      setAlert({
+        type: "success",
+        message: "Medicamento eliminado exitosamente",
+      });
     } catch (error: any) {
-      setAlert({ 
-        type: "danger", 
-        message: error.response?.data?.error || "Error al eliminar medicamento" 
+      setAlert({
+        type: "danger",
+        message:
+          error.response?.data?.error || "Error al eliminar medicamento",
       });
     } finally {
       setLoading(false);
-      setShowConfirmDialog(false);
-      setPendingDelete(null);
+      setConfirmDialog({ isOpen: false, type: null, id: null, nombre: "" });
     }
   };
 
@@ -163,96 +185,37 @@ function EliminarAsignaciones() {
   const handleDeleteInsumo = async (insumoId: number) => {
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/insumos/desasignar/${selectedPacienteId}/${insumoId}`);
-      
-      setInsumosAsignados(insumosAsignados.filter(i => i.insumoId !== insumoId));
-      setSelectedInsumos(new Set([...selectedInsumos].filter(id => id !== insumoId)));
-      
+      await axios.delete(
+        `http://localhost:5000/api/insumos/desasignar/${selectedPacienteId}/${insumoId}`
+      );
+
+      setInsumosAsignados(
+        insumosAsignados.filter((i) => i.insumoId !== insumoId)
+      );
+      setSelectedInsumos(
+        new Set([...selectedInsumos].filter((id) => id !== insumoId))
+      );
+
       setAlert({ type: "success", message: "Insumo eliminado exitosamente" });
     } catch (error: any) {
-      setAlert({ 
-        type: "danger", 
-        message: error.response?.data?.error || "Error al eliminar insumo" 
+      setAlert({
+        type: "danger",
+        message: error.response?.data?.error || "Error al eliminar insumo",
       });
     } finally {
       setLoading(false);
-      setShowConfirmDialog(false);
-      setPendingDelete(null);
+      setConfirmDialog({ isOpen: false, type: null, id: null, nombre: "" });
     }
   };
 
-  // Eliminar medicamentos seleccionados
-  const handleDeleteSelectedMedicamentos = async () => {
-    if (selectedMedicamentos.size === 0) {
-      setAlert({ type: "danger", message: "No hay medicamentos seleccionados" });
-      return;
-    }
+  const confirmDelete = async () => {
+    if (!confirmDialog.id || !confirmDialog.type) return;
 
-    setLoading(true);
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const medicamentoId of selectedMedicamentos) {
-      try {
-        await axios.delete(`http://localhost:5000/api/medicamentos/desasignar/${selectedPacienteId}/${medicamentoId}`);
-        successCount++;
-      } catch (error) {
-        errorCount++;
-      }
-    }
-
-    // Recargar lista
-    try {
-      const medsRes = await axios.get(`http://localhost:5000/api/medicamentos/asignados/${selectedPacienteId}`);
-      const meds = Array.isArray(medsRes.data?.data) ? medsRes.data.data : [];
-      setMedicamentosAsignados(meds);
-      setSelectedMedicamentos(new Set());
-    } catch (error) {}
-
-    if (errorCount === 0) {
-      setAlert({ type: "success", message: `${successCount} medicamento(s) eliminado(s) exitosamente` });
+    if (confirmDialog.type === "medicamento") {
+      await handleDeleteMedicamento(confirmDialog.id);
     } else {
-      setAlert({ type: "danger", message: `${successCount} eliminado(s), ${errorCount} error(es)` });
+      await handleDeleteInsumo(confirmDialog.id);
     }
-
-    setLoading(false);
-  };
-
-  // Eliminar insumos seleccionados
-  const handleDeleteSelectedInsumos = async () => {
-    if (selectedInsumos.size === 0) {
-      setAlert({ type: "danger", message: "No hay insumos seleccionados" });
-      return;
-    }
-
-    setLoading(true);
-    let successCount = 0;
-    let errorCount = 0;
-
-    for (const insumoId of selectedInsumos) {
-      try {
-        await axios.delete(`http://localhost:5000/api/insumos/desasignar/${selectedPacienteId}/${insumoId}`);
-        successCount++;
-      } catch (error) {
-        errorCount++;
-      }
-    }
-
-    // Recargar lista
-    try {
-      const insRes = await axios.get(`http://localhost:5000/api/insumos/asignados/${selectedPacienteId}`);
-      const ins = Array.isArray(insRes.data?.data) ? insRes.data.data : [];
-      setInsumosAsignados(ins);
-      setSelectedInsumos(new Set());
-    } catch (error) {}
-
-    if (errorCount === 0) {
-      setAlert({ type: "success", message: `${successCount} insumo(s) eliminado(s) exitosamente` });
-    } else {
-      setAlert({ type: "danger", message: `${successCount} eliminado(s), ${errorCount} error(es)` });
-    }
-
-    setLoading(false);
   };
 
   const selectedPaciente = pacientes.find(p => p.pacienteId.toString() === selectedPacienteId);
@@ -540,46 +503,37 @@ function EliminarAsignaciones() {
         </main>
       </div>
 
-      {/* Modal de confirmación */}
-      {showConfirmDialog && pendingDelete && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-              ⚠️ Confirmar Eliminación
-            </h3>
-            <p className="text-gray-700 dark:text-gray-300 mb-6">
-              ¿Estás seguro de que deseas eliminar{' '}
-              <span className="font-semibold text-red-600 dark:text-red-400">{pendingDelete.nombre}</span>
-              {' '}de las asignaciones del paciente?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  if (pendingDelete.type === 'medicamento') {
-                    handleDeleteMedicamento(pendingDelete.id);
-                  } else {
-                    handleDeleteInsumo(pendingDelete.id);
-                  }
-                }}
-                disabled={loading}
-                className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition disabled:opacity-50"
-              >
-                Eliminar
-              </button>
-              <button
-                onClick={() => {
-                  setShowConfirmDialog(false);
-                  setPendingDelete(null);
-                }}
-                disabled={loading}
-                className="flex-1 px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-800 dark:text-white rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={`¿Eliminar ${
+          confirmDialog.type === "medicamento" ? "Medicamento" : "Insumo"
+        }?`}
+        message={`¿Estás seguro de que deseas eliminar "${confirmDialog.nombre}" de las asignaciones del paciente?`}
+        details={
+          selectedPaciente
+            ? [
+                {
+                  label: "Paciente",
+                  value: `${selectedPaciente.nombre} ${selectedPaciente.apellidop} ${selectedPaciente.apellidom}`,
+                },
+                {
+                  label: "Expediente",
+                  value: selectedPaciente.numeroExpediente,
+                },
+              ]
+            : []
+        }
+        confirmLabel={`Eliminar ${
+          confirmDialog.type === "medicamento" ? "Medicamento" : "Insumo"
+        }`}
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() =>
+          setConfirmDialog({ isOpen: false, type: null, id: null, nombre: "" })
+        }
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }

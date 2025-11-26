@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 interface Enfermero {
   enfermeroId: number;
@@ -19,6 +20,13 @@ function EliminarEnfermero() {
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [alert, setAlert] = useState<{ type: string; message: string } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    enfermero: Enfermero | null;
+  }>({
+    isOpen: false,
+    enfermero: null,
+  });
 
   useEffect(() => {
     fetchEnfermeros();
@@ -58,20 +66,27 @@ function EliminarEnfermero() {
   };
 
   const handleDelete = async (enfermero: Enfermero) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de eliminar al enfermero ${enfermero.nombre} ${enfermero.apellidoPaterno} ${enfermero.apellidoMaterno}?\n\nNúmero de empleado: ${enfermero.numeroEmpleado}\nEspecialidad: ${enfermero.especialidad || "N/A"}\n\nEsta acción no se puede deshacer.`
-    );
+    setConfirmDialog({ isOpen: true, enfermero });
+  };
 
-    if (!confirmDelete) return;
+  const confirmDelete = async () => {
+    if (!confirmDialog.enfermero) return;
 
     setAlert(null);
     setLoading(true);
 
     try {
-      const response = await axios.delete(`http://localhost:5000/api/enfermeros/${enfermero.enfermeroId}`);setAlert({ type: "success", message: `Enfermero ${enfermero.nombre} ${enfermero.apellidoPaterno} eliminado exitosamente` });
+      const response = await axios.delete(
+        `http://localhost:5000/api/enfermeros/${confirmDialog.enfermero.enfermeroId}`
+      );
+      setAlert({
+        type: "success",
+        message: `Enfermero ${confirmDialog.enfermero.nombre} ${confirmDialog.enfermero.apellidoPaterno} eliminado exitosamente`,
+      });
       // Recargar lista
       await fetchEnfermeros();
-    } catch (error: any) {let errorMessage = "Error al eliminar enfermero";
+    } catch (error: any) {
+      let errorMessage = "Error al eliminar enfermero";
       if (error.response?.data?.error) {
         errorMessage = error.response.data.error;
       } else if (error.message) {
@@ -80,6 +95,7 @@ function EliminarEnfermero() {
       setAlert({ type: "danger", message: errorMessage });
     } finally {
       setLoading(false);
+      setConfirmDialog({ isOpen: false, enfermero: null });
     }
   };
 
@@ -217,6 +233,39 @@ function EliminarEnfermero() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Enfermero?"
+        message={`¿Estás seguro de eliminar al enfermero ${confirmDialog.enfermero?.nombre} ${confirmDialog.enfermero?.apellidoPaterno} ${confirmDialog.enfermero?.apellidoMaterno}?`}
+        details={
+          confirmDialog.enfermero
+            ? [
+                {
+                  label: "Número de empleado",
+                  value: confirmDialog.enfermero.numeroEmpleado,
+                },
+                {
+                  label: "Especialidad",
+                  value:
+                    confirmDialog.enfermero.especialidad || "No especificada",
+                },
+                {
+                  label: "Rol",
+                  value: confirmDialog.enfermero.esCoordinador
+                    ? "Coordinador"
+                    : "Enfermero",
+                },
+              ]
+            : []
+        }
+        confirmLabel="Eliminar Enfermero"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, enfermero: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }

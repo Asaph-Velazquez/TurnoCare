@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 type Hospital = {
   hospitalId: number;
@@ -16,6 +17,10 @@ function EliminarHospital() {
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; hospital: Hospital | null }>({
+    isOpen: false,
+    hospital: null,
+  });
 
   useEffect(() => {
     fetchHospitales();
@@ -56,22 +61,24 @@ function EliminarHospital() {
   };
 
   const handleDelete = async (h: Hospital) => {
-    const confirmDelete = window.confirm(
-      `¿Seguro que deseas eliminar el hospital "${h.nombre}"?\n\nDirección: ${h.direccion || "N/A"}\nTeléfono: ${h.telefono || "N/A"}\n\nEsta acción no se puede deshacer.`
-    );
-    if (!confirmDelete) return;
+    setConfirmDialog({ isOpen: true, hospital: h });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDialog.hospital) return;
 
     setAlert(null);
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/api/hospital/${h.hospitalId}`);
-      setAlert({ type: "success", message: `Hospital "${h.nombre}" eliminado correctamente` });
+      await axios.delete(`http://localhost:5000/api/hospital/${confirmDialog.hospital.hospitalId}`);
+      setAlert({ type: "success", message: `Hospital "${confirmDialog.hospital.nombre}" eliminado correctamente` });
       await fetchHospitales();
     } catch (err: any) {
       const msg = err?.response?.data?.error || err?.message || "Error al eliminar hospital";
       setAlert({ type: "danger", message: msg });
     } finally {
       setLoading(false);
+      setConfirmDialog({ isOpen: false, hospital: null });
     }
   };
 
@@ -196,6 +203,22 @@ function EliminarHospital() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Hospital?"
+        message={`¿Estás seguro de que deseas eliminar el hospital "${confirmDialog.hospital?.nombre}"?`}
+        details={confirmDialog.hospital ? [
+          { label: "Dirección", value: confirmDialog.hospital.direccion || "No especificada" },
+          { label: "Teléfono", value: confirmDialog.hospital.telefono || "No especificado" },
+        ] : []}
+        confirmLabel="Eliminar Hospital"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, hospital: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }

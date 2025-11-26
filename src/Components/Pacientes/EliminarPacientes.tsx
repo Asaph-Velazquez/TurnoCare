@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 interface Paciente {
   pacienteId: number;
@@ -23,6 +24,13 @@ function EliminarPacientes() {
   const [loading, setLoading] = useState(false);
   const [loadingList, setLoadingList] = useState(true);
   const [alert, setAlert] = useState<{ type: string; message: string } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    paciente: Paciente | null;
+  }>({
+    isOpen: false,
+    paciente: null,
+  });
 
   // Cargar pacientes al montar
   useEffect(() => {
@@ -70,23 +78,31 @@ function EliminarPacientes() {
 
   // Manejar eliminación de paciente
   const handleDelete = async (paciente: Paciente) => {
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de eliminar al paciente ${paciente.nombre} ${paciente.apellidop} ${paciente.apellidom}?\n\nExpediente: ${paciente.numeroExpediente}\nHabitación: ${paciente.numeroHabitacion || "N/A"}\nCama: ${paciente.numeroCama || "N/A"}\n\nEsta acción no se puede deshacer.`
-    );
+    setConfirmDialog({ isOpen: true, paciente });
+  };
 
-    if (!confirmDelete) return;
+  const confirmDelete = async () => {
+    if (!confirmDialog.paciente) return;
 
     setAlert(null);
     setLoading(true);
 
     try {
-      await axios.delete(`http://localhost:5000/api/pacientes/${paciente.pacienteId}`);
-      setAlert({ type: "success", message: `Paciente ${paciente.nombre} ${paciente.apellidop} eliminado exitosamente` });
+      await axios.delete(`http://localhost:5000/api/pacientes/${confirmDialog.paciente.pacienteId}`);
+      setAlert({
+        type: "success",
+        message: `Paciente ${confirmDialog.paciente.nombre} ${confirmDialog.paciente.apellidop} eliminado exitosamente`,
+      });
       await fetchPacientes();
-    } catch (error: any) {const errorMessage = error.response?.data?.error || error.message || "Error al eliminar paciente";
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.error ||
+        error.message ||
+        "Error al eliminar paciente";
       setAlert({ type: "danger", message: errorMessage });
     } finally {
       setLoading(false);
+      setConfirmDialog({ isOpen: false, paciente: null });
     }
   };
 
@@ -220,6 +236,42 @@ function EliminarPacientes() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Paciente?"
+        message={`¿Estás seguro de eliminar al paciente ${confirmDialog.paciente?.nombre} ${confirmDialog.paciente?.apellidop} ${confirmDialog.paciente?.apellidom}?`}
+        details={
+          confirmDialog.paciente
+            ? [
+                {
+                  label: "Expediente",
+                  value: confirmDialog.paciente.numeroExpediente,
+                },
+                {
+                  label: "Edad",
+                  value: confirmDialog.paciente.edad
+                    ? `${confirmDialog.paciente.edad} años`
+                    : "No especificada",
+                },
+                {
+                  label: "Habitación",
+                  value: confirmDialog.paciente.numeroHabitacion || "N/A",
+                },
+                {
+                  label: "Cama",
+                  value: confirmDialog.paciente.numeroCama || "N/A",
+                },
+              ]
+            : []
+        }
+        confirmLabel="Eliminar Paciente"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, paciente: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }

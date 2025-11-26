@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 type Service = {
   servicioId: number;
@@ -16,6 +17,10 @@ function EliminarServicio() {
   const [loadingList, setLoadingList] = useState(true);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{ type: "success" | "danger"; message: string } | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{ isOpen: boolean; service: Service | null }>({
+    isOpen: false,
+    service: null,
+  });
 
   useEffect(() => { fetchServices(); }, []);
 
@@ -36,18 +41,24 @@ function EliminarServicio() {
   };
 
   const handleDelete = async (s: Service) => {
-    const ok = window.confirm(`¿Seguro que deseas eliminar el servicio "${s.nombre}"? Esta acción no se puede deshacer.`);
-    if (!ok) return;
-    setLoading(true); setAlert(null);
-    try { 
-      await axios.delete(`http://localhost:5000/api/servicios/deleteService/${s.servicioId}`); 
-      setAlert({ type: "success", message: `Servicio "${s.nombre}" eliminado correctamente` }); 
-      await fetchServices(); 
-    } catch (err: any) { 
-      const msg = err?.response?.data?.error || err?.message || "Error al eliminar"; 
-      setAlert({ type: "danger", message: msg }); 
-    } finally { 
-      setLoading(false); 
+    setConfirmDialog({ isOpen: true, service: s });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDialog.service) return;
+
+    setLoading(true);
+    setAlert(null);
+    try {
+      await axios.delete(`http://localhost:5000/api/servicios/deleteService/${confirmDialog.service.servicioId}`);
+      setAlert({ type: "success", message: `Servicio "${confirmDialog.service.nombre}" eliminado correctamente` });
+      await fetchServices();
+    } catch (err: any) {
+      const msg = err?.response?.data?.error || err?.message || "Error al eliminar";
+      setAlert({ type: "danger", message: msg });
+    } finally {
+      setLoading(false);
+      setConfirmDialog({ isOpen: false, service: null });
     }
   };
 
@@ -127,6 +138,22 @@ function EliminarServicio() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Servicio?"
+        message={`¿Seguro que deseas eliminar el servicio "${confirmDialog.service?.nombre}"?`}
+        details={confirmDialog.service ? [
+          ...(confirmDialog.service.hospital?.nombre ? [{ label: "Hospital", value: confirmDialog.service.hospital.nombre }] : []),
+          ...(confirmDialog.service.descripcion ? [{ label: "Descripción", value: confirmDialog.service.descripcion }] : []),
+        ] : []}
+        confirmLabel="Eliminar Servicio"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, service: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }
