@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 type Insumo = {
   insumoId: number;
@@ -21,6 +22,13 @@ export default function EliminarInsumo() {
   const [loadingList, setLoadingList] = useState(true);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    insumo: Insumo | null;
+  }>({
+    isOpen: false,
+    insumo: null,
+  });
 
   useEffect(() => {
     fetchInsumos();
@@ -60,7 +68,8 @@ export default function EliminarInsumo() {
         : [];
       setInsumos(data);
       setFiltered(data);
-    } catch (error) {setInsumos([]);
+    } catch (error) {
+      setInsumos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -68,35 +77,33 @@ export default function EliminarInsumo() {
   };
 
   const handleDelete = async (insumo: Insumo) => {
-    const confirmDelete = window.confirm(
-      `¿Deseas eliminar el insumo ${insumo.nombre}?\n\nCategoría: ${
-        insumo.categoria || "Sin registro"
-      }\nUbicación: ${
-        insumo.ubicacion || "Sin registro"
-      }\n\nEsta acción no se puede deshacer.`
-    );
+    setConfirmDialog({ isOpen: true, insumo });
+  };
 
-    if (!confirmDelete) return;
+  const confirmDelete = async () => {
+    if (!confirmDialog.insumo) return;
 
     setAlert(null);
     setLoading(true);
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/insumos/${insumo.insumoId}`
+        `http://localhost:5000/api/insumos/${confirmDialog.insumo.insumoId}`
       );
       setAlert({
         type: "success",
-        message: `Insumo ${insumo.nombre} eliminado correctamente`,
+        message: `Insumo ${confirmDialog.insumo.nombre} eliminado correctamente`,
       });
       await fetchInsumos();
-    } catch (error: any) {const message =
+    } catch (error: any) {
+      const message =
         error?.response?.data?.error ||
         error?.message ||
         "Error al eliminar insumo";
       setAlert({ type: "danger", message });
     } finally {
       setLoading(false);
+      setConfirmDialog({ isOpen: false, insumo: null });
     }
   };
 
@@ -279,6 +286,38 @@ export default function EliminarInsumo() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Insumo?"
+        message={`¿Deseas eliminar el insumo "${confirmDialog.insumo?.nombre}" del inventario?`}
+        details={
+          confirmDialog.insumo
+            ? [
+                {
+                  label: "Categoría",
+                  value: confirmDialog.insumo.categoria || "Sin categoría",
+                },
+                {
+                  label: "Cantidad",
+                  value: `${confirmDialog.insumo.cantidadDisponible ?? 0} ${
+                    confirmDialog.insumo.unidadMedida || "unidades"
+                  }`,
+                },
+                {
+                  label: "Ubicación",
+                  value: confirmDialog.insumo.ubicacion || "Sin ubicación",
+                },
+              ]
+            : []
+        }
+        confirmLabel="Eliminar Insumo"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, insumo: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }

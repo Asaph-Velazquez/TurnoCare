@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DeleteCard from "../utilities/DeleteUpdate/Delete";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 type Medicamento = {
   medicamentoId: number;
@@ -21,6 +22,13 @@ export default function EliminarMedicamento() {
   const [loadingList, setLoadingList] = useState(true);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<AlertState>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    medicamento: Medicamento | null;
+  }>({
+    isOpen: false,
+    medicamento: null,
+  });
 
   useEffect(() => {
     fetchMedicamentos();
@@ -60,7 +68,8 @@ export default function EliminarMedicamento() {
         : [];
       setMedicamentos(data);
       setFiltered(data);
-    } catch (error) {setMedicamentos([]);
+    } catch (error) {
+      setMedicamentos([]);
       setFiltered([]);
     } finally {
       setLoadingList(false);
@@ -68,37 +77,33 @@ export default function EliminarMedicamento() {
   };
 
   const handleDelete = async (medicamento: Medicamento) => {
-    const confirmDelete = window.confirm(
-      `¿Deseas eliminar el medicamento ${medicamento.nombre}?\n\nStock: ${
-        medicamento.cantidadStock
-      } unidades\nLote: ${
-        medicamento.lote || "Sin lote"
-      }\nUbicación: ${
-        medicamento.ubicacion || "Sin ubicación"
-      }\n\nEsta acción no se puede deshacer.`
-    );
+    setConfirmDialog({ isOpen: true, medicamento });
+  };
 
-    if (!confirmDelete) return;
+  const confirmDelete = async () => {
+    if (!confirmDialog.medicamento) return;
 
     setAlert(null);
     setLoading(true);
 
     try {
       await axios.delete(
-        `http://localhost:5000/api/medicamentos/${medicamento.medicamentoId}`
+        `http://localhost:5000/api/medicamentos/${confirmDialog.medicamento.medicamentoId}`
       );
       setAlert({
         type: "success",
-        message: `Medicamento ${medicamento.nombre} eliminado del inventario correctamente`,
+        message: `Medicamento ${confirmDialog.medicamento.nombre} eliminado del inventario correctamente`,
       });
       await fetchMedicamentos();
-    } catch (error: any) {const message =
+    } catch (error: any) {
+      const message =
         error?.response?.data?.error ||
         error?.message ||
         "Error al eliminar medicamento";
       setAlert({ type: "danger", message });
     } finally {
       setLoading(false);
+      setConfirmDialog({ isOpen: false, medicamento: null });
     }
   };
 
@@ -283,6 +288,23 @@ export default function EliminarMedicamento() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Medicamento?"
+        message={`¿Deseas eliminar el medicamento "${confirmDialog.medicamento?.nombre}" del inventario?`}
+        details={confirmDialog.medicamento ? [
+          { label: "Stock", value: `${confirmDialog.medicamento.cantidadStock} unidades` },
+          { label: "Lote", value: confirmDialog.medicamento.lote || "Sin lote" },
+          { label: "Ubicación", value: confirmDialog.medicamento.ubicacion || "Sin ubicación" },
+        ] : []}
+        confirmLabel="Eliminar Medicamento"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, medicamento: null })}
+        loading={loading}
+        type="danger"
+      />
     </div>
   );
 }
