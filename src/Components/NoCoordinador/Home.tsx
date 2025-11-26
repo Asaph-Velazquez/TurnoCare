@@ -184,7 +184,7 @@ function Home() {
         navigate("");
         break;
       case "inventario":
-        navigate("");
+        navigate("/nocoordinador/inventario");
         break;
       case "perfil":
         navigate("");
@@ -264,22 +264,49 @@ function Home() {
           <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Mis Turnos</p><p className="text-2xl font-semibold text-auto-primary">{turnosCount !== null ? turnosCount : "--"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">Mis Turnos</p>
+                  <p className="text-2xl font-semibold text-auto-primary">{turnosCount !== null ? turnosCount : "--"}</p>
+                </div>
               </div>
             </div>
 
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Pacientes Asignados</p><p className="text-2xl font-semibold text-auto-primary">{pacientesCount !== null ? pacientesCount : "--"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">Pacientes Asignados</p>
+                  <p className="text-2xl font-semibold text-auto-primary">{pacientesCount !== null ? pacientesCount : "--"}</p>
+                </div>
               </div>
             </div>
 
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
-                <div className="flex-shrink-0"><div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center"><svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg></div></div>
-                <div className="ml-3"><p className="text-sm font-medium text-auto-tertiary">Próximo Turno</p><p className="text-2xl font-semibold text-auto-primary">{nextTurno ? nextTurno.toLocaleString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : "Ninguno"}</p></div>
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-auto-tertiary">Próximo Turno</p>
+                  <p className="text-2xl font-semibold text-auto-primary">{nextTurno ? nextTurno.toLocaleString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : "Ninguno"}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -50,6 +50,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 
 //No Coordniador
 import Home from "./Components/NoCoordinador/Home";
+import InventarioNoCoordinador from "./Components/NoCoordinador/Inventario";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
         <Route path="/turnos/asignar-enfermero" element={<ProtectedRoute><AsignarHorarioEnfermero /></ProtectedRoute>} />
         <Route path="/turnos/listar" element={<ProtectedRoute><ListarTurnos /></ProtectedRoute>} />
         <Route path="/NoCoordinador/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+        <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
       </Routes>
       <Footer />
     </div>

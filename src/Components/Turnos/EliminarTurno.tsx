@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import DataTable from "../utilities/DataTable";
+import ConfirmDialog from "../utilities/ConfirmDialog";
 
 interface Enfermero {
   enfermeroId: number;
@@ -24,6 +25,13 @@ function EliminarTurno() {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{type: string, message: string} | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    turno: Turno | null;
+  }>({
+    isOpen: false,
+    turno: null,
+  });
 
   useEffect(() => {
     fetchTurnos();
@@ -89,22 +97,23 @@ function EliminarTurno() {
   };
 
   const handleDelete = async (turno: Turno) => {
-    const { tipo, icono } = getTipoTurno(turno.nombre);
-    const confirmDelete = window.confirm(
-      `¿Estás seguro de eliminar el turno ${icono} ${tipo} (${formatHora(turno.horaInicio)} - ${formatHora(turno.horaFin)})?`
-    );
-    
-    if (!confirmDelete) return;
+    setConfirmDialog({ isOpen: true, turno });
+  };
+
+  const confirmDelete = async () => {
+    if (!confirmDialog.turno) return;
+
+    setAlert(null);
 
     try {
-      await axios.delete(`http://localhost:5000/api/turnos/${turno.turnoId}`);
+      await axios.delete(`http://localhost:5000/api/turnos/${confirmDialog.turno.turnoId}`);
       
       setAlert({
         type: "success",
         message: "Turno eliminado exitosamente"
       });
       
-      fetchTurnos();
+      await fetchTurnos();
     } catch (error: any) {
       let errorMessage = "Error al eliminar turno";
       if (error.response?.data?.error) {
@@ -115,6 +124,8 @@ function EliminarTurno() {
         type: "danger",
         message: errorMessage
       });
+    } finally {
+      setConfirmDialog({ isOpen: false, turno: null });
     }
   };
 
@@ -276,6 +287,36 @@ function EliminarTurno() {
           </div>
         </main>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="¿Eliminar Turno?"
+        message={`¿Estás seguro de que deseas eliminar el turno ${
+          confirmDialog.turno ? getTipoTurno(confirmDialog.turno.nombre).icono : ""
+        } ${confirmDialog.turno ? getTipoTurno(confirmDialog.turno.nombre).tipo : ""}?`}
+        details={
+          confirmDialog.turno
+            ? [
+                {
+                  label: "Horario",
+                  value: `${formatHora(confirmDialog.turno.horaInicio)} - ${formatHora(confirmDialog.turno.horaFin)}`,
+                },
+                {
+                  label: "Enfermeros asignados",
+                  value: confirmDialog.turno.enfermeros?.length
+                    ? `${confirmDialog.turno.enfermeros.length} enfermero(s)`
+                    : "Sin asignar",
+                },
+              ]
+            : []
+        }
+        confirmLabel="Eliminar Turno"
+        cancelLabel="Cancelar"
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmDialog({ isOpen: false, turno: null })}
+        loading={false}
+        type="danger"
+      />
     </div>
   );
 }
