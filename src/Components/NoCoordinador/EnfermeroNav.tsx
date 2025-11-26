@@ -66,19 +66,19 @@ function EnfermeroNav() {
                 Inicio
               </a>
               <a
-                href=""
+                href="/NoCoordinador/mis-turnos"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Mis Turnos
               </a>
               <a
-                href=""
+                href="/NoCoordinador/mis-pacientes"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Mis Pacientes
               </a>
               <a
-                href=""
+                href="/nocoordinador/inventario"
                 className="text-auto-secondary hover:text-sky-600 transition-colors"
               >
                 Inventario

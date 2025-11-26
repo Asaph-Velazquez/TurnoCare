@@ -21,39 +21,21 @@ type Insumo = {
   ubicacion: string | null;
 };
 
-type InventarioServicio = {
-  inventarioServicioId: number;
-  cantidadAsignada: number;
-  servicio: {
-    servicioId: number;
-    nombre: string;
-    hospital?: {
-      nombre: string;
-    };
-  };
-  medicamento?: {
-    medicamentoId: number;
-    nombre: string;
-    descripcion?: string;
-  } | null;
-  insumo?: {
-    insumoId: number;
-    nombre: string;
-    categoria?: string;
-  } | null;
-};
-
 function Inventario() {
-  const [activeTab, setActiveTab] = useState<"medicamentos" | "insumos" | "servicios">("medicamentos");
+  const [activeTab, setActiveTab] = useState<"medicamentos" | "insumos">("medicamentos");
   const [medicamentos, setMedicamentos] = useState<Medicamento[]>([]);
   const [insumos, setInsumos] = useState<Insumo[]>([]);
-  const [inventarioServicios, setInventarioServicios] = useState<InventarioServicio[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetchData();
   }, [activeTab]);
+
+  useEffect(() => {
+    // Cargar insumos al inicio para mostrar el conteo correcto
+    fetchInsumos();
+  }, []);
 
   const fetchData = async () => {
     setLoading(true);
@@ -64,23 +46,22 @@ function Inventario() {
           setMedicamentos(Array.isArray(resMeds.data?.data) ? resMeds.data.data : []);
           break;
         case "insumos":
-          const resInsumos = await axios.get("http://localhost:5000/api/insumos/");
-          setInsumos(Array.isArray(resInsumos.data?.data) ? resInsumos.data.data : []);
-          break;
-        case "servicios":
-          const resServicios = await axios.get("http://localhost:5000/api/inventario-servicio/");
-          const serviciosData = Array.isArray(resServicios.data?.data) 
-            ? resServicios.data.data 
-            : Array.isArray(resServicios.data) 
-            ? resServicios.data 
-            : [];
-          setInventarioServicios(serviciosData);
+          await fetchInsumos();
           break;
       }
     } catch (error) {
       console.error("Error al cargar datos:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchInsumos = async () => {
+    try {
+      const resInsumos = await axios.get("http://localhost:5000/api/insumos/");
+      setInsumos(Array.isArray(resInsumos.data?.data) ? resInsumos.data.data : []);
+    } catch (error) {
+      console.error("Error al cargar insumos:", error);
     }
   };
 
@@ -94,18 +75,7 @@ function Inventario() {
     (i.categoria || "").toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredServicios = inventarioServicios.filter(s => {
-    const searchLower = searchTerm.toLowerCase();
-    const servicioNombre = (s.servicio?.nombre || "").toLowerCase();
-    const hospitalNombre = (s.servicio?.hospital?.nombre || "").toLowerCase();
-    const itemNombre = (s.medicamento?.nombre || s.insumo?.nombre || "").toLowerCase();
-    
-    return (
-      servicioNombre.includes(searchLower) ||
-      hospitalNombre.includes(searchLower) ||
-      itemNombre.includes(searchLower)
-    );
-  });
+
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20 pb-10">
@@ -190,16 +160,6 @@ function Inventario() {
               >
                 🏥 Insumos ({insumos.length})
               </button>
-              <button
-                onClick={() => setActiveTab("servicios")}
-                className={`flex-1 px-6 py-3 rounded-lg font-medium transition-all duration-200 ${
-                  activeTab === "servicios"
-                    ? "bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg"
-                    : "text-auto-secondary hover:text-auto-primary hover:bg-auto-tertiary"
-                }`}
-              >
-                📋 Por Servicio ({inventarioServicios.length})
-              </button>
             </div>
           </div>
 
@@ -282,121 +242,6 @@ function Inventario() {
                           )}
                         </div>
                       ))
-                    )}
-                  </div>
-                )}
-
-                {/* Inventario por Servicio */}
-                {activeTab === "servicios" && (
-                  <div className="space-y-4">
-                    {filteredServicios.length === 0 ? (
-                      <div className="text-center py-12">
-                        <p className="text-auto-secondary">No se encontró inventario por servicio</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-6">
-                        {/* Agrupar por servicio */}
-                        {Object.entries(
-                          filteredServicios.reduce((acc, inv) => {
-                            const servicioId = inv.servicio.servicioId;
-                            if (!acc[servicioId]) {
-                              acc[servicioId] = {
-                                servicio: inv.servicio,
-                                items: [],
-                              };
-                            }
-                            acc[servicioId].items.push(inv);
-                            return acc;
-                          }, {} as Record<number, { servicio: any; items: InventarioServicio[] }>)
-                        ).map(([servicioId, data]) => (
-                          <div key={servicioId} className="bg-auto-primary rounded-xl border border-auto overflow-hidden">
-                            {/* Header del servicio */}
-                            <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <div className="bg-white/20 p-2 rounded-lg">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      className="h-6 w-6 text-white"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      stroke="currentColor"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                                      />
-                                    </svg>
-                                  </div>
-                                  <div>
-                                    <h3 className="text-xl font-bold text-white">
-                                      {data.servicio.nombre}
-                                    </h3>
-                                    {data.servicio.hospital?.nombre && (
-                                      <p className="text-purple-100 text-sm">
-                                        🏥 {data.servicio.hospital.nombre}
-                                      </p>
-                                    )}
-                                  </div>
-                                </div>
-                                <span className="bg-white/20 text-white px-3 py-1 rounded-lg text-sm font-semibold">
-                                  {data.items.length} {data.items.length === 1 ? "ítem" : "ítems"}
-                                </span>
-                              </div>
-                            </div>
-
-                            {/* Lista de items del servicio */}
-                            <div className="p-4 space-y-3">
-                              {data.items.map((inv) => (
-                                <div
-                                  key={inv.inventarioServicioId}
-                                  className="bg-auto-secondary rounded-lg p-4 border border-auto hover:shadow-md transition-shadow"
-                                >
-                                  <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                      <div className="flex items-center gap-2 mb-2">
-                                        <span className={`px-2 py-1 rounded text-xs font-bold ${
-                                          inv.medicamento
-                                            ? "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200"
-                                            : "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200"
-                                        }`}>
-                                          {inv.medicamento ? "💊 Medicamento" : "🏥 Insumo"}
-                                        </span>
-                                      </div>
-                                      <h4 className="text-lg font-bold text-auto-primary">
-                                        {inv.medicamento?.nombre || inv.insumo?.nombre}
-                                      </h4>
-                                      {inv.medicamento?.descripcion && (
-                                        <p className="text-sm text-auto-secondary mt-1 italic">
-                                          {inv.medicamento.descripcion}
-                                        </p>
-                                      )}
-                                      {inv.insumo?.categoria && (
-                                        <p className="text-sm text-auto-secondary mt-1">
-                                          <span className="font-semibold">Categoría:</span>{" "}
-                                          {inv.insumo.categoria}
-                                        </p>
-                                      )}
-                                    </div>
-                                    <div className="text-right ml-4">
-                                      <div className="bg-gradient-to-r from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-900/30 px-4 py-2 rounded-lg">
-                                        <p className="text-xs text-purple-600 dark:text-purple-300 font-medium">
-                                          Cantidad Asignada
-                                        </p>
-                                        <p className="text-2xl font-bold text-purple-800 dark:text-purple-200">
-                                          {inv.cantidadAsignada}
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     )}
                   </div>
                 )}

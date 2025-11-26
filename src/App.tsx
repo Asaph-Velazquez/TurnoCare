@@ -53,6 +53,7 @@ import Home from "./Components/NoCoordinador/Home";
 import NotaMedicaForm from "./Components/NoCoordinador/NotaMedicaForm";
 import MisPacientes from "./Components/NoCoordinador/MisPacientes";
 import InventarioNoCoordinador from "./Components/NoCoordinador/Inventario";
+import MisTurnos from "./Components/NoCoordinador/MisTurnos";
 
 function App() {
   return (
@@ -414,6 +415,23 @@ function App() {
           }
         />
         <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
+        <Route
+          path="/NoCoordinador/mis-pacientes"
+          element={
+            <ProtectedRoute>
+              <MisPacientes />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
+        <Route
+          path="/NoCoordinador/mis-turnos"
+          element={
+            <ProtectedRoute>
+              <MisTurnos />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
       <Footer />
     </div>
