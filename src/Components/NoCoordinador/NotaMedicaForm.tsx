@@ -1,101 +1,236 @@
 import axios from "axios";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import EnfermeroNav from "./EnfermeroNav";
 
-type Medicamento = {
+interface Paciente {
+  pacienteId: number;
+  nombre: string;
+  apellidop: string;
+  apellidom: string;
+  numeroExpediente: string;
+  edad: number | null;
+  numeroCama: string | null;
+  numeroHabitacion: string | null;
+  servicioId: number | null;
+}
+
+interface Servicio {
+  servicioId: number;
+  nombre: string;
+}
+
+interface Hospital {
+  hospitalId: number;
+  nombre: string;
+}
+
+interface Medicamento {
+  medicamentoId: number;
+  nombre: string;
+  descripcion?: string;
+  cantidadStock: number;
+}
+
+interface Insumo {
+  insumoId: number;
+  nombre: string;
+  descripcion?: string;
+  cantidadDisponible: number;
+}
+
+interface MedicamentoAsignado {
+  id: number;
   nombre: string;
   dosis: string;
   frecuencia: string;
   cantidad: string;
-};
+}
 
-type Insumo = {
+interface InsumoAsignado {
+  id: number;
   nombre: string;
   cantidad: string;
   notas: string;
-};
+}
 
 function NotaMedicaForm() {
-  const [pacienteId, setPacienteId] = useState("");
+  const { pacienteId } = useParams<{ pacienteId: string }>();
+  const navigate = useNavigate();
+  
+  const [paciente, setPaciente] = useState<Paciente | null>(null);
+  const [servicio, setServicio] = useState<Servicio | null>(null);
+  const [hospital, setHospital] = useState<Hospital | null>(null);
   const [enfermeroId, setEnfermeroId] = useState("");
   const [observaciones, setObservaciones] = useState("");
-  const [nombrePaciente, setNombrePaciente] = useState("");
-  const [nombreHospital, setNombreHospital] = useState("");
-  const [servicio, setServicio] = useState("");
-  const [habitacion, setHabitacion] = useState("");
-  const [cama, setCama] = useState("");
   const [nombreEnfermeroAlta, setNombreEnfermeroAlta] = useState("");
   const [nombreEnfermeroAsignado, setNombreEnfermeroAsignado] = useState("");
-  const [medicamentos, setMedicamentos] = useState<Medicamento[]>([
-    { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
-  ]);
-  const [insumos, setInsumos] = useState<Insumo[]>([
-    { nombre: "", cantidad: "", notas: "" },
-  ]);
+  
+  const [medicamentosDisponibles, setMedicamentosDisponibles] = useState<Medicamento[]>([]);
+  const [insumosDisponibles, setInsumosDisponibles] = useState<Insumo[]>([]);
+  const [medicamentosAsignados, setMedicamentosAsignados] = useState<MedicamentoAsignado[]>([]);
+  const [insumosAsignados, setInsumosAsignados] = useState<InsumoAsignado[]>([]);
+  
+  const [loadingPaciente, setLoadingPaciente] = useState(false);
+  const [loadingMedicamentos, setLoadingMedicamentos] = useState(false);
+  const [loadingInsumos, setLoadingInsumos] = useState(false);
+  const [activeTab, setActiveTab] = useState<'medicamentos' | 'insumos'>('medicamentos');
+  
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleMedicamentoChange = (
-    index: number,
-    field: keyof Medicamento,
-    value: string
-  ) => {
-    setMedicamentos((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
-      return next;
-    });
-  };
+  useEffect(() => {
+    const userRaw = localStorage.getItem("user");
+    if (userRaw) {
+      try {
+        const user = JSON.parse(userRaw);
+        // userid contiene el enfermeroId del backend
+        setEnfermeroId(user.userid?.toString() || "");
+        setNombreEnfermeroAlta(`${user.nombre || ""} ${user.apellidoPaterno || ""}`.trim());
+        setNombreEnfermeroAsignado(`${user.nombre || ""} ${user.apellidoPaterno || ""}`.trim());
+      } catch (err) {
+        console.error("Error parsing user data:", err);
+      }
+    }
+  }, []);
 
-  const handleInsumoChange = (
-    index: number,
-    field: keyof Insumo,
-    value: string
-  ) => {
-    setInsumos((prev) => {
-      const next = [...prev];
-      next[index] = { ...next[index], [field]: value };
-      return next;
-    });
-  };
+  // Cargar datos del paciente
+  useEffect(() => {
+    if (!pacienteId) return;
 
-  const addMedicamento = () => {
-    setMedicamentos((prev) => [
-      ...prev,
-      { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
+    const fetchPaciente = async () => {
+      setLoadingPaciente(true);
+      try {
+        const response = await axios.get(`http://localhost:5000/api/pacientes/${pacienteId}`);
+        const pacienteData = response.data.data || response.data;
+        setPaciente(pacienteData);
+
+        try {
+          const [serviciosRes, hospitalesRes] = await Promise.all([
+            axios.get("http://localhost:5000/api/servicios/listServices"),
+            axios.get("http://localhost:5000/api/hospital")
+          ]);
+
+          const serviciosData = Array.isArray(serviciosRes.data) ? serviciosRes.data : serviciosRes.data.data || [];
+          const hospitalesData = Array.isArray(hospitalesRes.data) ? hospitalesRes.data : hospitalesRes.data.data || [];
+
+          if (pacienteData.servicioId) {
+            const servicioEncontrado = serviciosData.find((s: any) => s.servicioId === pacienteData.servicioId);
+            if (servicioEncontrado) {
+              setServicio(servicioEncontrado);
+
+              if (servicioEncontrado.hospitalId) {
+                const hospitalEncontrado = hospitalesData.find((h: any) => h.hospitalId === servicioEncontrado.hospitalId);
+                if (hospitalEncontrado) {
+                  setHospital(hospitalEncontrado);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.log("No se pudieron cargar servicios/hospitales, continuando sin ellos");
+        }
+      } catch (error) {
+        console.error("Error cargando paciente:", error);
+        setFeedback({ type: "error", message: "Error al cargar datos del paciente" });
+      } finally {
+        setLoadingPaciente(false);
+      }
+    };
+
+    fetchPaciente();
+  }, [pacienteId]);
+
+  useEffect(() => {
+    const fetchMedicamentos = async () => {
+      setLoadingMedicamentos(true);
+      try {
+        const response = await axios.get("http://localhost:5000/api/medicamentos");
+        const data = response.data.success ? response.data.data : response.data;
+        setMedicamentosDisponibles(data || []);
+      } catch (error) {
+        console.error("Error cargando medicamentos:", error);
+      } finally {
+        setLoadingMedicamentos(false);
+      }
+    };
+    fetchMedicamentos();
+  }, []);
+
+  useEffect(() => {
+    const fetchInsumos = async () => {
+      setLoadingInsumos(true);
+      try {
+        const response = await axios.get("http://localhost:5000/api/insumos");
+        const data = response.data.success ? response.data.data : response.data;
+        setInsumosDisponibles(data || []);
+      } catch (error) {
+        console.error("Error cargando insumos:", error);
+      } finally {
+        setLoadingInsumos(false);
+      }
+    };
+    fetchInsumos();
+  }, []);
+
+  const handleAddMedicamento = (medicamento: Medicamento) => {
+    if (medicamentosAsignados.some(m => m.id === medicamento.medicamentoId)) {
+      setFeedback({ type: "error", message: "Este medicamento ya está en la lista" });
+      return;
+    }
+    setMedicamentosAsignados([
+      ...medicamentosAsignados,
+      {
+        id: medicamento.medicamentoId,
+        nombre: medicamento.nombre,
+        dosis: "",
+        frecuencia: "",
+        cantidad: "1"
+      }
     ]);
   };
 
-  const removeMedicamento = (index: number) => {
-    setMedicamentos((prev) => prev.filter((_, i) => i !== index));
+  const handleAddInsumo = (insumo: Insumo) => {
+    if (insumosAsignados.some(i => i.id === insumo.insumoId)) {
+      setFeedback({ type: "error", message: "Este insumo ya está en la lista" });
+      return;
+    }
+    setInsumosAsignados([
+      ...insumosAsignados,
+      {
+        id: insumo.insumoId,
+        nombre: insumo.nombre,
+        cantidad: "1",
+        notas: ""
+      }
+    ]);
   };
 
-  const addInsumo = () => {
-    setInsumos((prev) => [...prev, { nombre: "", cantidad: "", notas: "" }]);
+  const handleUpdateMedicamento = (id: number, field: keyof MedicamentoAsignado, value: string) => {
+    setMedicamentosAsignados(medicamentosAsignados.map(m =>
+      m.id === id ? { ...m, [field]: value } : m
+    ));
   };
 
-  const removeInsumo = (index: number) => {
-    setInsumos((prev) => prev.filter((_, i) => i !== index));
+  const handleUpdateInsumo = (id: number, field: keyof InsumoAsignado, value: string) => {
+    setInsumosAsignados(insumosAsignados.map(i =>
+      i.id === id ? { ...i, [field]: value } : i
+    ));
+  };
+
+  const handleRemoveMedicamento = (id: number) => {
+    setMedicamentosAsignados(medicamentosAsignados.filter(m => m.id !== id));
+  };
+
+  const handleRemoveInsumo = (id: number) => {
+    setInsumosAsignados(insumosAsignados.filter(i => i.id !== id));
   };
 
   const isFormValid = () => {
-    const datosBasicos = [
-      pacienteId,
-      nombrePaciente,
-      enfermeroId,
-      nombreEnfermeroAlta,
-      nombreEnfermeroAsignado,
-      servicio,
-      nombreHospital,
-      cama,
-      habitacion,
-      observaciones,
-    ];
-
-    return datosBasicos.every((value) => value.trim());
+    return paciente && enfermeroId && observaciones.trim();
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -113,44 +248,40 @@ function NotaMedicaForm() {
 
     try {
       await axios.post("http://localhost:5000/api/notas-medicas", {
-        pacienteId,
-        nombrePaciente,
+        pacienteId: paciente!.pacienteId,
+        nombrePaciente: `${paciente!.nombre} ${paciente!.apellidop} ${paciente!.apellidom}`,
         enfermeroId,
         nombreEnfermeroAlta,
         nombreEnfermeroAsignado,
-        servicio,
-        nombreHospital,
-        habitacion,
-        cama,
+        servicio: servicio?.nombre || "",
+        nombreHospital: hospital?.nombre || "",
+        habitacion: paciente!.numeroHabitacion || "",
+        cama: paciente!.numeroCama || "",
         observaciones,
-        medicamentos: medicamentos
-          .filter((med) => med.nombre.trim())
-          .map((med) => ({
-            nombre: med.nombre,
-            dosis: med.dosis,
-            frecuencia: med.frecuencia,
-            cantidad: med.cantidad,
-          })),
-        insumos: insumos.filter((insumo) => insumo.nombre.trim()),
+        medicamentos: medicamentosAsignados.map((med) => ({
+          nombre: med.nombre,
+          dosis: med.dosis,
+          frecuencia: med.frecuencia,
+          cantidad: med.cantidad,
+        })),
+        insumos: insumosAsignados.map((ins) => ({
+          nombre: ins.nombre,
+          cantidad: ins.cantidad,
+          notas: ins.notas,
+        })),
       });
       setFeedback({
         type: "success",
         message: "Nota médica guardada correctamente.",
       });
-      setPacienteId("");
-      setEnfermeroId("");
+      
       setObservaciones("");
-      setNombrePaciente("");
-      setNombreHospital("");
-      setServicio("");
-      setHabitacion("");
-      setCama("");
-      setNombreEnfermeroAlta("");
-      setNombreEnfermeroAsignado("");
-      setInsumos([{ nombre: "", cantidad: "", notas: "" }]);
-      setMedicamentos([
-        { nombre: "", dosis: "", frecuencia: "", cantidad: "" },
-      ]);
+      setMedicamentosAsignados([]);
+      setInsumosAsignados([]);
+      
+      setTimeout(() => {
+        navigate("/NoCoordinador/mis-pacientes");
+      }, 2000);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Error desconocido";
@@ -159,6 +290,30 @@ function NotaMedicaForm() {
       setIsSubmitting(false);
     }
   };
+
+  const medicamentosLibres = medicamentosDisponibles.filter(
+    m => !medicamentosAsignados.some(ma => ma.id === m.medicamentoId) && m.cantidadStock > 0
+  );
+
+  const insumosLibres = insumosDisponibles.filter(
+    i => !insumosAsignados.some(ia => ia.id === i.insumoId) && i.cantidadDisponible > 0
+  );
+
+  if (loadingPaciente) {
+    return (
+      <div className="min-h-screen bg-auto-primary pt-20 flex items-center justify-center">
+        <div className="text-auto-primary text-xl">Cargando datos del paciente...</div>
+      </div>
+    );
+  }
+
+  if (!paciente && pacienteId) {
+    return (
+      <div className="min-h-screen bg-auto-primary pt-20 flex items-center justify-center">
+        <div className="text-red-500 text-xl">No se encontró el paciente</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-auto-primary">
@@ -176,284 +331,250 @@ function NotaMedicaForm() {
                   Completa los datos clínicos del paciente
                 </p>
               </div>
-              <div className="bg-gradient-to-r from-sky-500 to-cyan-500 rounded-2xl px-4 py-2 text-white text-sm font-semibold">
-                {isSubmitting ? "Guardando…" : "Formulario Clínico"}
-              </div>
+              <button
+                onClick={() => navigate("/NoCoordinador/mis-pacientes")}
+                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white rounded-lg font-medium transition-all duration-200"
+              >
+                ← Regresar
+              </button>
             </div>
 
+            {/* Información del paciente (solo lectura) */}
+            {paciente && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-xl p-6">
+                <h3 className="font-semibold text-blue-900 dark:text-blue-300 mb-4 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                  </svg>
+                  Información del Paciente
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Nombre:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{paciente.nombre} {paciente.apellidop} {paciente.apellidom}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Expediente:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{paciente.numeroExpediente}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Edad:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{paciente.edad || "N/A"} años</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Habitación:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{paciente.numeroHabitacion || "N/A"}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Cama:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{paciente.numeroCama || "N/A"}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Servicio:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{servicio?.nombre || "N/A"}</p>
+                  </div>
+                  <div className="md:col-span-2">
+                    <span className="font-medium text-blue-800 dark:text-blue-200">Hospital:</span>
+                    <p className="text-blue-900 dark:text-blue-100">{hospital?.nombre || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <form className="space-y-6" onSubmit={handleSubmit}>
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-auto-primary">
-                  Información del paciente
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Nombre del paciente
-                    <input
-                      type="text"
-                      value={nombrePaciente}
-                      onChange={(e) => setNombrePaciente(e.target.value)}
-                      placeholder="Ej. Juan Pérez"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    ID del Paciente
-                    <input
-                      type="text"
-                      value={pacienteId}
-                      onChange={(e) => setPacienteId(e.target.value)}
-                      placeholder="Ej. 823"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Hospital
-                    <input
-                      type="text"
-                      value={nombreHospital}
-                      onChange={(e) => setNombreHospital(e.target.value)}
-                      placeholder="Ej. Hospital General"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Servicio
-                    <input
-                      type="text"
-                      value={servicio}
-                      onChange={(e) => setServicio(e.target.value)}
-                      placeholder="Ej. Terapia intensiva"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Habitación
-                    <input
-                      type="text"
-                      value={habitacion}
-                      onChange={(e) => setHabitacion(e.target.value)}
-                      placeholder="Ej. 203"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Cama
-                    <input
-                      type="text"
-                      value={cama}
-                      onChange={(e) => setCama(e.target.value)}
-                      placeholder="Ej. Cama 4"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                </div>
-              </div>
-              <div className="space-y-4">
-                <p className="text-sm font-semibold text-auto-primary">
-                  Enfermeros
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Enfermero (da de alta)
-                    <input
-                      type="text"
-                      value={nombreEnfermeroAlta}
-                      onChange={(e) => setNombreEnfermeroAlta(e.target.value)}
-                      placeholder="Ej. Ana Gómez"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                    Enfermero asignado
-                    <input
-                      type="text"
-                      value={nombreEnfermeroAsignado}
-                      onChange={(e) =>
-                        setNombreEnfermeroAsignado(e.target.value)
-                      }
-                      placeholder="Ej. Luis Torres"
-                      className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                    />
-                  </label>
-                </div>
-                <label className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
-                  ID del Enfermero
-                  <input
-                    type="text"
-                    value={enfermeroId}
-                    onChange={(e) => setEnfermeroId(e.target.value)}
-                    placeholder="Ej. 1041"
-                    className="rounded-2xl border border-auto px-3 py-2 bg-auto-primary text-auto-primary focus:border-sky-500"
-                  />
-                </label>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-auto-tertiary">
-                    Medicamentos prescritos
-                  </p>
-                  <button
-                    type="button"
-                    onClick={addMedicamento}
-                    className="text-sm font-semibold text-sky-600 hover:text-sky-500"
-                  >
-                    + Agregar
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {medicamentos.map((med, index) => (
-                    <div
-                      key={index}
-                      className="bg-auto-primary/40 border border-auto rounded-2xl p-4 space-y-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-semibold text-auto-tertiary">
-                          Medicamento {index + 1}
-                        </span>
-                        {medicamentos.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeMedicamento(index)}
-                            className="text-xs text-red-500 hover:text-red-400"
-                          >
-                            Eliminar
-                          </button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <input
-                          type="text"
-                          value={med.nombre}
-                          onChange={(e) =>
-                            handleMedicamentoChange(
-                              index,
-                              "nombre",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Nombre"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                        <input
-                          type="text"
-                          value={med.dosis}
-                          onChange={(e) =>
-                            handleMedicamentoChange(
-                              index,
-                              "dosis",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Dosis"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                        <input
-                          type="text"
-                          value={med.frecuencia}
-                          onChange={(e) =>
-                            handleMedicamentoChange(
-                              index,
-                              "frecuencia",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Frecuencia"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                        <input
-                          type="text"
-                          value={med.cantidad}
-                          onChange={(e) =>
-                            handleMedicamentoChange(
-                              index,
-                              "cantidad",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Cantidad"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              {/* Tabs para Medicamentos e Insumos */}
+              <div className="flex gap-2 border-b border-auto">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('medicamentos')}
+                  className={`px-6 py-3 font-medium transition-colors ${
+                    activeTab === 'medicamentos'
+                      ? 'border-b-2 border-sky-500 text-sky-600'
+                      : 'text-auto-secondary hover:text-auto-primary'
+                  }`}
+                >
+                  💊 Medicamentos ({medicamentosAsignados.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('insumos')}
+                  className={`px-6 py-3 font-medium transition-colors ${
+                    activeTab === 'insumos'
+                      ? 'border-b-2 border-sky-500 text-sky-600'
+                      : 'text-auto-secondary hover:text-auto-primary'
+                  }`}
+                >
+                  🏥 Insumos ({insumosAsignados.length})
+                </button>
               </div>
 
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-auto-tertiary">
-                    Insumos utilizados
-                  </p>
-                  <button
-                    type="button"
-                    onClick={addInsumo}
-                    className="text-sm font-semibold text-sky-600 hover:text-sky-500"
-                  >
-                    + Añadir insumo
-                  </button>
-                </div>
-                <div className="space-y-3">
-                  {insumos.map((insumo, index) => (
-                    <div
-                      key={index}
-                      className="bg-auto-primary/40 border border-auto rounded-2xl p-4 space-y-3"
-                    >
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs font-semibold text-auto-tertiary">
-                          Insumo {index + 1}
-                        </span>
-                        {insumos.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() => removeInsumo(index)}
-                            className="text-xs text-red-500 hover:text-red-400"
-                          >
-                            Eliminar
-                          </button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input
-                          type="text"
-                          value={insumo.nombre}
-                          onChange={(e) =>
-                            handleInsumoChange(index, "nombre", e.target.value)
-                          }
-                          placeholder="Nombre"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                        <input
-                          type="text"
-                          value={insumo.cantidad}
-                          onChange={(e) =>
-                            handleInsumoChange(
-                              index,
-                              "cantidad",
-                              e.target.value
-                            )
-                          }
-                          placeholder="Cantidad"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
-                        <input
-                          type="text"
-                          value={insumo.notas}
-                          onChange={(e) =>
-                            handleInsumoChange(index, "notas", e.target.value)
-                          }
-                          placeholder="Notas"
-                          className="rounded-2xl border border-auto px-3 py-2 bg-auto-secondary text-auto-primary focus:border-sky-500"
-                        />
+              {/* Contenido de Medicamentos */}
+              {activeTab === 'medicamentos' && (
+                <div className="space-y-4">
+                  <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-xl p-4">
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-3">Agregar Medicamento</h4>
+                    <div className="max-h-60 overflow-y-auto space-y-2">
+                      {loadingMedicamentos ? (
+                        <p className="text-sm text-purple-700 dark:text-purple-300">Cargando medicamentos...</p>
+                      ) : medicamentosLibres.length === 0 ? (
+                        <p className="text-sm text-purple-700 dark:text-purple-300">No hay medicamentos disponibles en inventario</p>
+                      ) : (
+                        medicamentosLibres.map(med => (
+                          <div key={med.medicamentoId} className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between border border-transparent dark:border-gray-700">
+                            <div className="flex-1">
+                              <p className="font-medium text-purple-900 dark:text-purple-300">{med.nombre}</p>
+                              <p className="text-xs text-purple-700 dark:text-purple-400">
+                                Stock: {med.cantidadStock} unidades
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleAddMedicamento(med)}
+                              className="ml-3 px-3 py-1 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition text-sm"
+                            >
+                              + Agregar
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Lista de medicamentos asignados */}
+                  {medicamentosAsignados.length > 0 && (
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
+                      <h4 className="font-semibold text-green-900 dark:text-green-300 mb-3">Medicamentos Prescritos</h4>
+                      <div className="space-y-3">
+                        {medicamentosAsignados.map(item => (
+                          <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-green-300 dark:border-green-700">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="font-medium text-green-900 dark:text-green-300">{item.nombre}</p>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveMedicamento(item.id)}
+                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                              <div>
+                                <label className="text-xs text-green-800 dark:text-green-200">Cantidad</label>
+                                <input
+                                  type="text"
+                                  value={item.cantidad}
+                                  onChange={(e) => handleUpdateMedicamento(item.id, 'cantidad', e.target.value)}
+                                  placeholder="Ej: 2"
+                                  className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-green-800 dark:text-green-200">Dosis</label>
+                                <input
+                                  type="text"
+                                  value={item.dosis || ''}
+                                  onChange={(e) => handleUpdateMedicamento(item.id, 'dosis', e.target.value)}
+                                  placeholder="Ej: 500mg"
+                                  className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                                />
+                              </div>
+                              <div className="md:col-span-2">
+                                <label className="text-xs text-green-800 dark:text-green-200">Frecuencia</label>
+                                <input
+                                  type="text"
+                                  value={item.frecuencia || ''}
+                                  onChange={(e) => handleUpdateMedicamento(item.id, 'frecuencia', e.target.value)}
+                                  placeholder="Ej: cada 8 horas"
+                                  className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
+              )}
+
+              {/* Contenido de Insumos */}
+              {activeTab === 'insumos' && (
+                <div className="space-y-4">
+                  <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-700 rounded-xl p-4">
+                    <h4 className="font-semibold text-cyan-900 dark:text-cyan-300 mb-3">Agregar Insumo</h4>
+                    <div className="max-h-60 overflow-y-auto space-y-2">
+                      {loadingInsumos ? (
+                        <p className="text-sm text-cyan-700 dark:text-cyan-300">Cargando insumos...</p>
+                      ) : insumosLibres.length === 0 ? (
+                        <p className="text-sm text-cyan-700 dark:text-cyan-300">No hay insumos disponibles en inventario</p>
+                      ) : (
+                        insumosLibres.map(ins => (
+                          <div key={ins.insumoId} className="bg-white dark:bg-gray-800 rounded-lg p-3 flex items-center justify-between border border-transparent dark:border-gray-700">
+                            <div className="flex-1">
+                              <p className="font-medium text-cyan-900 dark:text-cyan-300">{ins.nombre}</p>
+                              <p className="text-xs text-cyan-700 dark:text-cyan-400">
+                                Disponible: {ins.cantidadDisponible} unidades
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleAddInsumo(ins)}
+                              className="ml-3 px-3 py-1 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition text-sm"
+                            >
+                              + Agregar
+                            </button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Lista de insumos asignados */}
+                  {insumosAsignados.length > 0 && (
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
+                      <h4 className="font-semibold text-green-900 dark:text-green-300 mb-3">Insumos Utilizados</h4>
+                      <div className="space-y-3">
+                        {insumosAsignados.map(item => (
+                          <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-green-300 dark:border-green-700">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="font-medium text-green-900 dark:text-green-300">{item.nombre}</p>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveInsumo(item.id)}
+                                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 ml-3"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2">
+                              <div>
+                                <label className="text-xs text-green-800 dark:text-green-200">Cantidad</label>
+                                <input
+                                  type="text"
+                                  value={item.cantidad}
+                                  onChange={(e) => handleUpdateInsumo(item.id, 'cantidad', e.target.value)}
+                                  placeholder="Ej: 5"
+                                  className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-xs text-green-800 dark:text-green-200">Notas</label>
+                                <input
+                                  type="text"
+                                  value={item.notas || ''}
+                                  onChange={(e) => handleUpdateInsumo(item.id, 'notas', e.target.value)}
+                                  placeholder="Observaciones"
+                                  className="w-full px-2 py-1 border border-green-300 dark:border-green-600 rounded text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="flex flex-col gap-2 text-sm font-semibold text-auto-tertiary">
                 Observaciones clínicas

@@ -179,26 +179,6 @@ function Home() {
       ),
     },
     {
-      id: "asignaciones",
-      title: "Nota Medica",
-      description: "Realiza una nota medica al paciente",
-      icon: (
-        <svg
-          className="w-8 h-8"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 12h6m-3-3v6M3 12a9 9 0 1118 0 9 9 0 01-18 0z"
-          />
-        </svg>
-      ),
-    },
-    {
       id: "inventario",
       title: "Inventario (Ver)",
       description: "Consultar disponibilidad de insumos",
@@ -224,19 +204,16 @@ function Home() {
   const handleOptionClick = (optionId: string) => {
     switch (optionId) {
       case "misTurnos":
-        navigate("");
+        navigate("/turnos");
         break;
       case "misPacientes":
-        navigate("");
-        break;
-      case "asignaciones":
-        navigate("/NoCoordinador//NotaMedicaForm");
+        navigate("/NoCoordinador/mis-pacientes");
         break;
       case "inventario":
-        navigate("");
+        navigate("/Inventario");
         break;
       case "perfil":
-        navigate("");
+        navigate("/perfil");
         break;
     }
   };

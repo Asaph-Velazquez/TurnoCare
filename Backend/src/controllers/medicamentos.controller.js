@@ -44,7 +44,11 @@ const createMedicamento = async (req, resp) => {
 // CRUD - Leer todos
 const getAllMedicamentos = async (req, resp) => {
   try {
+    // Solo devolver medicamentos del inventario (sin registroMedicoId)
     const medicamentos = await prisma.medicamento.findMany({
+      where: {
+        registroMedicoId: null
+      },
       orderBy: { actualizadoEn: "desc" },
     });
     resp.json({ success: true, data: medicamentos });

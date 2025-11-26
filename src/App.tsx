@@ -51,6 +51,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 //No Coordniador
 import Home from "./Components/NoCoordinador/Home";
 import NotaMedicaForm from "./Components/NoCoordinador/NotaMedicaForm";
+import MisPacientes from "./Components/NoCoordinador/MisPacientes";
 
 function App() {
   return (
@@ -396,10 +397,18 @@ function App() {
           }
         />
         <Route
-          path="/NoCoordinador//NotaMedicaForm"
+          path="/NoCoordinador/NotaMedicaForm/:pacienteId?"
           element={
             <ProtectedRoute>
               <NotaMedicaForm />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/NoCoordinador/mis-pacientes"
+          element={
+            <ProtectedRoute>
+              <MisPacientes />
             </ProtectedRoute>
           }
         />
