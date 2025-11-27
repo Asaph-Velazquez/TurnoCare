@@ -1,10 +1,14 @@
 const PDFDocument = require("pdfkit");
 
 function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
-    const doc = new PDFDocument({ margin: 50 });
+    try {
+        const doc = new PDFDocument({ margin: 50 });
 
-    doc.on("data", dataCallback);
-    doc.on("end", endCallback);
+        doc.on("data", dataCallback);
+        doc.on("end", endCallback);
+        doc.on("error", (err) => {
+            console.error("Error en PDFDocument:", err);
+        });
 
     // ==============================
     // ENCABEZADO
@@ -18,7 +22,13 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
     doc
         .fontSize(12)
         .font("Helvetica")
-        .text(`Fecha y hora: ${new Date().toLocaleString()}`, { align: "right" });
+        .text(`Fecha y hora: ${new Date(notaData.fechaHora).toLocaleString('es-MX', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })}`, { align: "right" });
 
     doc.moveDown();
 
@@ -37,13 +47,13 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
     doc.fontSize(16).font("Helvetica-Bold").text("Datos del Paciente");
     doc.moveDown(0.5);
 
-    const paciente = notaData.paciente;
+    const paciente = notaData.paciente || {};
 
     doc.fontSize(12).font("Helvetica");
-    doc.text(`Nombre: ${paciente.nombre} ${paciente.apellidop} ${paciente.apellidom}`);
-    doc.text(`Número de expediente: ${paciente.numeroExpediente}`);
-    doc.text(`Edad: ${paciente.edad}`);
-    doc.text(`Habitación/Cama: ${paciente.numeroHabitacion} / ${paciente.numeroCama}`);
+    doc.text(`Nombre: ${paciente.nombre || 'N/A'} ${paciente.apellidop || ''} ${paciente.apellidom || ''}`);
+    doc.text(`Número de expediente: ${paciente.numeroExpediente || 'N/A'}`);
+    doc.text(`Edad: ${paciente.edad || 'N/A'}`);
+    doc.text(`Habitación/Cama: ${paciente.numeroHabitacion || 'N/A'} / ${paciente.numeroCama || 'N/A'}`);
 
     doc.moveDown();
 
@@ -53,54 +63,66 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
     doc.fontSize(16).font("Helvetica-Bold").text("Datos del Enfermero");
     doc.moveDown(0.5);
 
-    const enfermero = notaData.enfermero;
+    const enfermero = notaData.enfermero || {};
 
     doc.fontSize(12).font("Helvetica");
-    doc.text(`Nombre: ${enfermero.nombre} ${enfermero.apellidoPaterno} ${enfermero.apellidoMaterno}`);
-    doc.text(`Número de empleado: ${enfermero.numeroEmpleado}`);
-    doc.text(`Turno asignado: ${enfermero.turnoAsignado?.turnoNombre || "No registrado"}`);
-
-    doc.moveDown();
-
-    // ==============================
-    // SIGNOS VITALES
-    // ==============================
-    doc.fontSize(16).font("Helvetica-Bold").text("Signos Vitales");
-    doc.moveDown(0.5);
-
-    doc.fontSize(12).font("Helvetica");
-    const sv = notaData.signosVitales;
-
-    doc.text(`- Frecuencia cardiaca: ${sv.frecuenciaCardiaca} lpm`);
-    doc.text(`- Presión arterial: ${sv.presionArterial}`);
-    doc.text(`- Temperatura: ${sv.temperatura} °C`);
-    doc.text(`- Saturación O2: ${sv.saturacionOxigeno}%`);
-    doc.text(`- Frecuencia respiratoria: ${sv.frecuenciaRespiratoria} rpm`);
+    doc.text(`Nombre: ${enfermero.nombre || 'N/A'} ${enfermero.apellidoPaterno || ''} ${enfermero.apellidoMaterno || ''}`);
+    doc.text(`Número de empleado: ${enfermero.numeroEmpleado || 'N/A'}`);
+    doc.text(`Turno asignado: ${enfermero.turno?.nombre || "No registrado"}`);
+    doc.text(`Servicio: ${enfermero.servicio?.nombre || "No asignado"}`);
 
     doc.moveDown();
 
     // ==============================
     // OBSERVACIONES
     // ==============================
-    doc.fontSize(16).font("Helvetica-Bold").text("Observaciones");
+    doc.fontSize(16).font("Helvetica-Bold").text("Observaciones Clínicas");
     doc.moveDown(0.5);
 
     doc.fontSize(12).font("Helvetica");
-    doc.text(notaData.observaciones, { align: "justify" });
+    doc.text(notaData.observaciones || "Sin observaciones registradas", { align: "justify" });
 
-    doc.moveDown();
+    doc.moveDown(1.5);
 
     // ==============================
-    // MEDICAMENTOS ADMINISTRADOS
+    // MEDICAMENTOS PRESCRITOS
     // ==============================
-    if (notaData.medicamentos && notaData.medicamentos.length > 0) {
-        doc.fontSize(16).font("Helvetica-Bold").text("Medicamentos Administrados");
+    const medicamentos = notaData.paciente?.medicamentos || [];
+    if (medicamentos.length > 0) {
+        doc.fontSize(16).font("Helvetica-Bold").text("Medicamentos Prescritos");
         doc.moveDown(0.5);
 
         doc.fontSize(12).font("Helvetica");
 
-        notaData.medicamentos.forEach((med) => {
-            doc.text(`• ${med.nombre} (dosis: ${med.dosis}, vía: ${med.via})`);
+        medicamentos.forEach((medAsignado) => {
+            const med = medAsignado.medicamento;
+            doc.text(`- ${med.nombre}`);
+            doc.fontSize(10).fillColor("#555");
+            doc.text(`  Cantidad: ${medAsignado.cantidadAsignada || 'N/A'} | Dosis: ${medAsignado.dosis || 'N/A'} | Frecuencia: ${medAsignado.frecuencia || 'N/A'}`);
+            doc.fontSize(12).fillColor("#000");
+            doc.moveDown(0.3);
+        });
+
+        doc.moveDown();
+    }
+
+    // ==============================
+    // INSUMOS UTILIZADOS
+    // ==============================
+    const insumos = notaData.paciente?.insumos || [];
+    if (insumos.length > 0) {
+        doc.fontSize(16).font("Helvetica-Bold").text("Insumos Utilizados");
+        doc.moveDown(0.5);
+
+        doc.fontSize(12).font("Helvetica");
+
+        insumos.forEach((insAsignado) => {
+            const ins = insAsignado.insumo;
+            doc.text(`- ${ins.nombre}`);
+            doc.fontSize(10).fillColor("#555");
+            doc.text(`  Cantidad: ${insAsignado.cantidad || 'N/A'}`);
+            doc.fontSize(12).fillColor("#000");
+            doc.moveDown(0.3);
         });
 
         doc.moveDown();
@@ -118,6 +140,10 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
         });
 
     doc.end();
+    } catch (err) {
+        console.error("Error generando PDF:", err);
+        throw err;
+    }
 }
 
 module.exports = { buildMedicalNotePDF };

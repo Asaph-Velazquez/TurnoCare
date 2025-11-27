@@ -203,22 +203,68 @@ const generateMedicalNote = async (req, resp) => {
     }
 };
 
+// Obtener todas las notas médicas de un paciente
+const getMedicalNotesByPaciente = async (req, resp) => {
+    const { pacienteId } = req.params;
+
+    try {
+        const pacienteIdNum = parseInt(pacienteId);
+        
+        if (isNaN(pacienteIdNum)) {
+            return resp.status(400).json({ 
+                success: false, 
+                error: 'ID de paciente inválido' 
+            });
+        }
+
+        const notas = await prisma.registroMedico.findMany({
+            where: { pacienteId: pacienteIdNum },
+            include: {
+                enfermero: {
+                    select: {
+                        nombre: true,
+                        apellidoPaterno: true,
+                        apellidoMaterno: true
+                    }
+                }
+            },
+            orderBy: { fechaHora: 'desc' }
+        });
+
+        resp.json({ success: true, data: notas });
+    } catch (err) {
+        console.error('Error obteniendo notas médicas del paciente:', err);
+        resp.status(500).json({ success: false, error: err.message });
+    }
+};
+
 const downloadMedicalNotePDF = async (req, resp) => {
     const { registroId } = req.params;
 
     try {
+        console.log(`Generando PDF para registro ID: ${registroId}`);
+        
         const nota = await prisma.registroMedico.findUnique({
-            where: { registroId: 1 },
+            where: { registroId: parseInt(registroId) },
             include: {
-                paciente: true,
+                paciente: {
+                    include: {
+                        medicamentosAsignados: {
+                            include: {
+                                medicamento: true
+                            }
+                        },
+                        insumosAsignados: {
+                            include: {
+                                insumo: true
+                            }
+                        }
+                    }
+                },
                 enfermero: {
                     include: {
-                        turno: true,        // <--- ESTE ES EL CORRECTO
-                        servicio: true,
-                        registrosMedicos: true,
-                        inventarios: true,
-                        insumos: true,
-                        capacitaciones: true
+                        turno: true,
+                        servicio: true
                     }
                 }
             }
@@ -226,8 +272,15 @@ const downloadMedicalNotePDF = async (req, resp) => {
 
 
         if (!nota) {
+            console.error(`Nota médica no encontrada: ${registroId}`);
             return resp.status(404).json({ success: false, error: "Nota médica no encontrada" });
         }
+
+        console.log('Nota encontrada, generando PDF...');
+        console.log('Paciente:', nota.paciente?.nombre);
+        console.log('Enfermero:', nota.enfermero?.nombre);
+        console.log('Medicamentos:', nota.paciente?.medicamentos?.length || 0);
+        console.log('Insumos:', nota.paciente?.insumos?.length || 0);
 
         resp.setHeader("Content-Type", "application/pdf");
         resp.setHeader(
@@ -239,11 +292,15 @@ const downloadMedicalNotePDF = async (req, resp) => {
         buildMedicalNotePDF(
             nota,
             chunk => resp.write(chunk),
-            () => resp.end()
+            () => {
+                console.log('PDF generado exitosamente');
+                resp.end();
+            }
         );
 
     } catch (err) {
         console.error("Error generando PDF:", err);
+        console.error("Stack trace:", err.stack);
         resp.status(500).json({ success: false, error: err.message });
     }
 };
@@ -251,5 +308,6 @@ const downloadMedicalNotePDF = async (req, resp) => {
 
 module.exports = {
     generateMedicalNote,
+    getMedicalNotesByPaciente,
     downloadMedicalNotePDF
 };

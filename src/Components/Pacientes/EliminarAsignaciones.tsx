@@ -32,7 +32,11 @@ interface InsumoAsignado {
   };
 }
 
-function EliminarAsignaciones() {
+interface EliminarAsignacionesProps {
+  onPacienteSelect?: (pacienteId: string | null) => void;
+}
+
+function EliminarAsignaciones({ onPacienteSelect }: EliminarAsignacionesProps) {
   const [selectedPacienteId, setSelectedPacienteId] = useState("");
   const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [medicamentosAsignados, setMedicamentosAsignados] = useState<MedicamentoAsignado[]>([]);
@@ -246,7 +250,10 @@ function EliminarAsignaciones() {
                     </div>
                     <select
                       value={selectedPacienteId}
-                      onChange={(e) => setSelectedPacienteId(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedPacienteId(e.target.value);
+                        onPacienteSelect?.(e.target.value || null);
+                      }}
                       required
                       className="w-full px-4 py-3 bg-auto-tertiary border border-auto rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500 text-auto-primary disabled:opacity-50"
                       disabled={loadingPacientes}
