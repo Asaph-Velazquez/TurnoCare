@@ -165,10 +165,42 @@ const deleteTurno = async (req, resp) => {
     }
 };
 
+// Obtener turno por enfermeroId
+const getTurnoByEnfermeroId = async (req, resp) => {
+    const { enfermeroId } = req.params;
+
+    if (!enfermeroId || isNaN(parseInt(enfermeroId))) {
+        return resp.status(400).json({ success: false, error: "ID de enfermero inválido." });
+    }
+
+    try {
+        const enfermero = await prisma.enfermero.findUnique({
+            where: { enfermeroId: parseInt(enfermeroId) },
+            include: {
+                turno: true
+            }
+        });
+
+        if (!enfermero) {
+            return resp.status(404).json({ success: false, error: 'Enfermero no encontrado.' });
+        }
+
+        if (!enfermero.turno) {
+            return resp.status(404).json({ success: false, error: 'El enfermero no tiene un turno asignado.' });
+        }
+
+        resp.json({ success: true, data: enfermero.turno });
+    } catch (err) {
+        console.error(err);
+        resp.status(500).json({ success: false, error: 'Error del servidor.' });
+    }
+};
+
 module.exports = {
     listTurnos,
     getTurnoById,
     createTurno,
     updateTurno,
-    deleteTurno
+    deleteTurno,
+    getTurnoByEnfermeroId
 };

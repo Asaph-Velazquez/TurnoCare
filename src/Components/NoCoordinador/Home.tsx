@@ -8,20 +8,101 @@ function Home() {
   const [turnosData, setTurnosData] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [nextTurno, setNextTurno] = useState<Date | null>(null);
+  const [activeTurno, setActiveTurno] = useState<any | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState<string>("");
   const navigate = useNavigate();
 
+  // Obtener información del usuario desde localStorage
+  const getUserInfo = () => {
+    let userInfo = {
+      nombre: "Usuario",
+      apellidoPaterno: "",
+      numeroEmpleado: "",
+      especialidad: "Sin especialidad",
+    };
+
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw && raw !== "undefined" && raw !== "null") {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            userInfo = {
+              nombre:
+                parsed.nombre || localStorage.getItem("nombre") || "Usuario",
+              apellidoPaterno:
+                parsed.apellidoPaterno ||
+                localStorage.getItem("apellidoPaterno") ||
+                "",
+              numeroEmpleado:
+                parsed.numeroEmpleado ||
+                localStorage.getItem("numeroEmpleado") ||
+                "",
+              especialidad:
+                parsed.especialidad ||
+                localStorage.getItem("especialidad") ||
+                "Sin especialidad",
+            };
+          }
+        } catch (parseError) {
+          userInfo = {
+            nombre: localStorage.getItem("nombre") || "Usuario",
+            apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+            numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+            especialidad:
+              localStorage.getItem("especialidad") || "Sin especialidad",
+          };
+        }
+      } else {
+        userInfo = {
+          nombre: localStorage.getItem("nombre") || "Usuario",
+          apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+          numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+          especialidad:
+            localStorage.getItem("especialidad") || "Sin especialidad",
+        };
+      }
+    } catch (err) {
+      userInfo = {
+        nombre: localStorage.getItem("nombre") || "Usuario",
+        apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
+        numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
+        especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
+      };
+    }
+
+    return userInfo;
+  };
+
+  const userInfo = getUserInfo();
+
   useEffect(() => {
+    const numeroEmpleado = userInfo.numeroEmpleado;
+    
+    // Obtener turnos del enfermero específico
     axios
-      .get("http://localhost:5000/api/turnos")
+      .get(`http://localhost:5000/api/enfermeros`)
       .then((res) => {
-        const data =
-          res.data && Array.isArray(res.data.data)
-            ? res.data.data
-            : Array.isArray(res.data)
-            ? res.data
-            : [];
-        setTurnosData(data);
-        setTurnosCount(data.length);
+        const enfermeros = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+        const enfermeroActual = enfermeros.find((e: any) => e.numeroEmpleado === numeroEmpleado);
+        
+        if (enfermeroActual && enfermeroActual.turnoAsignadoId) {
+          // Obtener el turno específico del enfermero
+          axios
+            .get(`http://localhost:5000/api/turnos/${enfermeroActual.turnoAsignadoId}`)
+            .then((turnoRes) => {
+              const turnoData = turnoRes.data.data || turnoRes.data;
+              setTurnosData([turnoData]);
+              setTurnosCount(1);
+            })
+            .catch(() => {
+              setTurnosData([]);
+              setTurnosCount(0);
+            });
+        } else {
+          setTurnosData([]);
+          setTurnosCount(0);
+        }
       })
       .catch(() => {
         setTurnosData([]);
@@ -79,62 +160,104 @@ function Home() {
     }
   }, [turnosData, currentTime]);
 
-  let userInfo = {
-    nombre: "Usuario",
-    apellidoPaterno: "",
-    numeroEmpleado: "",
-    especialidad: "Sin especialidad",
-  };
-
-  try {
-    const raw = localStorage.getItem("user");
-    if (raw && raw !== "undefined" && raw !== "null") {
-      try {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === "object") {
-          userInfo = {
-            nombre:
-              parsed.nombre || localStorage.getItem("nombre") || "Usuario",
-            apellidoPaterno:
-              parsed.apellidoPaterno ||
-              localStorage.getItem("apellidoPaterno") ||
-              "",
-            numeroEmpleado:
-              parsed.numeroEmpleado ||
-              localStorage.getItem("numeroEmpleado") ||
-              "",
-            especialidad:
-              parsed.especialidad ||
-              localStorage.getItem("especialidad") ||
-              "Sin especialidad",
-          };
+  // Detectar turno activo y calcular tiempo restante
+  useEffect(() => {
+    try {
+      const now = new Date();
+      const currentTimeOnly = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+      
+      let foundActiveTurno = null;
+      let timeUntilStart = "";
+      
+      for (const turno of turnosData) {
+        if (turno.horaInicio && turno.horaFin) {
+          const inicio = new Date(turno.horaInicio);
+          const fin = new Date(turno.horaFin);
+          
+          // Extraer horas de UTC y convertir a segundos del día
+          let inicioSeconds = inicio.getUTCHours() * 3600 + inicio.getUTCMinutes() * 60 + inicio.getUTCSeconds();
+          let finSeconds = fin.getUTCHours() * 3600 + fin.getUTCMinutes() * 60 + fin.getUTCSeconds();
+          
+          console.log('=== DEBUG TURNO ===');
+          console.log('Hora actual:', now.toLocaleTimeString('es-MX'));
+          console.log('Segundos actuales:', currentTimeOnly);
+          console.log('Turno:', turno.nombre);
+          console.log('Inicio UTC:', inicio.toISOString(), '- Segundos:', inicioSeconds);
+          console.log('Fin UTC:', fin.toISOString(), '- Segundos:', finSeconds);
+          
+          let isInTurno = false;
+          let remainingSeconds = 0;
+          
+          // Caso especial: turno cruza la medianoche (ej: 16:00 a 00:00)
+          if (finSeconds < inicioSeconds) {
+            console.log('Turno cruza medianoche');
+            // Si la hora actual es después del inicio O antes del fin
+            if (currentTimeOnly >= inicioSeconds || currentTimeOnly < finSeconds) {
+              isInTurno = true;
+              // Calcular tiempo restante
+              if (currentTimeOnly >= inicioSeconds) {
+                // Estamos en el mismo día, calcular hasta medianoche + hasta fin
+                remainingSeconds = (86400 - currentTimeOnly) + finSeconds;
+              } else {
+                // Ya pasamos medianoche, calcular hasta fin
+                remainingSeconds = finSeconds - currentTimeOnly;
+              }
+            } else {
+              // No está en turno, calcular tiempo hasta que inicie
+              const secondsUntilStart = inicioSeconds - currentTimeOnly;
+              const hours = Math.floor(secondsUntilStart / 3600);
+              const minutes = Math.floor((secondsUntilStart % 3600) / 60);
+              const seconds = secondsUntilStart % 60;
+              timeUntilStart = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+          } else {
+            // Turno normal dentro del mismo día
+            if (currentTimeOnly >= inicioSeconds && currentTimeOnly < finSeconds) {
+              isInTurno = true;
+              remainingSeconds = finSeconds - currentTimeOnly;
+            } else {
+              // No está en turno, calcular tiempo hasta que inicie
+              let secondsUntilStart;
+              if (currentTimeOnly < inicioSeconds) {
+                // El turno es hoy más tarde
+                secondsUntilStart = inicioSeconds - currentTimeOnly;
+              } else {
+                // El turno es mañana
+                secondsUntilStart = (86400 - currentTimeOnly) + inicioSeconds;
+              }
+              const hours = Math.floor(secondsUntilStart / 3600);
+              const minutes = Math.floor((secondsUntilStart % 3600) / 60);
+              const seconds = secondsUntilStart % 60;
+              timeUntilStart = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+          }
+          
+          console.log('¿Está en turno?', isInTurno);
+          
+          if (isInTurno) {
+            foundActiveTurno = turno;
+            
+            const hours = Math.floor(remainingSeconds / 3600);
+            const minutes = Math.floor((remainingSeconds % 3600) / 60);
+            const seconds = remainingSeconds % 60;
+            
+            setTimeRemaining(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+            break;
+          }
         }
-      } catch (parseError) {
-        userInfo = {
-          nombre: localStorage.getItem("nombre") || "Usuario",
-          apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
-          numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-          especialidad:
-            localStorage.getItem("especialidad") || "Sin especialidad",
-        };
       }
-    } else {
-      userInfo = {
-        nombre: localStorage.getItem("nombre") || "Usuario",
-        apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
-        numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-        especialidad:
-          localStorage.getItem("especialidad") || "Sin especialidad",
-      };
+      
+      setActiveTurno(foundActiveTurno);
+      
+      if (!foundActiveTurno) {
+        setTimeRemaining(timeUntilStart);
+      }
+    } catch (err) {
+      console.error('Error al detectar turno activo:', err);
+      setActiveTurno(null);
+      setTimeRemaining("");
     }
-  } catch (err) {
-    userInfo = {
-      nombre: localStorage.getItem("nombre") || "Usuario",
-      apellidoPaterno: localStorage.getItem("apellidoPaterno") || "",
-      numeroEmpleado: localStorage.getItem("numeroEmpleado") || "",
-      especialidad: localStorage.getItem("especialidad") || "Sin especialidad",
-    };
-  }
+  }, [turnosData, currentTime]);
 
   const nurseOptions = [
     {
@@ -280,37 +403,80 @@ function Home() {
                 </div>
               </div>
 
-              {/* Reloj */}
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl shadow-md">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-6 h-6 text-white"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                  />
-                </svg>
-                <div>
-                  <div className="text-lg font-bold tabular-nums text-white">
-                    {currentTime.toLocaleTimeString("es-MX", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })}
+              <div className="flex items-center gap-3">
+                {/* Indicador de Turno Activo */}
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl shadow-md ${activeTurno ? 'bg-gradient-to-r from-green-500 to-emerald-500' : 'bg-gradient-to-r from-red-500 to-rose-500'}`}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-6 h-6 text-white"
+                  >
+                    {activeTurno ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                      />
+                    )}
+                  </svg>
+                  <div>
+                    <div className="text-sm font-bold text-white">
+                      {activeTurno ? "Turno Activo" : "Fuera de turno"}
+                    </div>
+                    {timeRemaining && (
+                      <div className="text-lg font-bold tabular-nums text-white">
+                        {timeRemaining}
+                      </div>
+                    )}
+                    {!activeTurno && !timeRemaining && (
+                      <div className="text-xs text-white/90">
+                        Sin turno asignado
+                      </div>
+                    )}
                   </div>
-                  <div className="text-xs text-white/90">
-                    {currentTime.toLocaleDateString("es-MX", {
-                      weekday: "long",
-                      day: "numeric",
-                      month: "short",
-                    })}
+                </div>
+
+                {/* Reloj */}
+                <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl shadow-md">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-6 h-6 text-white"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  <div>
+                    <div className="text-lg font-bold tabular-nums text-white">
+                      {currentTime.toLocaleTimeString("es-MX", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                      })}
+                    </div>
+                    <div className="text-xs text-white/90">
+                      {currentTime.toLocaleDateString("es-MX", {
+                        weekday: "long",
+                        day: "numeric",
+                        month: "short",
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
