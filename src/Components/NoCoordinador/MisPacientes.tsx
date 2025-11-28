@@ -118,7 +118,7 @@ function MisPacientes() {
   }, [pacientes, enfermeroData, searchTerm]);
 
   const handleVerDetalles = (pacienteId: number) => {
-    navigate(`/pacientes/detalles/${pacienteId}`);
+    navigate(`/pacientes/detalles/${pacienteId}`, { state: { fromNursePanel: true } });
   };
 
   if (loading) {

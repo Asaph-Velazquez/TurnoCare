@@ -58,9 +58,10 @@ import MisTurnos from "./Components/NoCoordinador/MisTurnos";
 function App() {
   const location = useLocation();
   
-  // Determinar qué navbar mostrar según la ruta
   const isNurseRoute = location.pathname.startsWith('/NoCoordinador') || 
-                       location.pathname.startsWith('/nocoordinador');
+                       location.pathname.startsWith('/nocoordinador') ||
+                       (location.pathname === '/Enfermeros/Detalles' && location.state?.fromNursePanel) ||
+                       (location.pathname.startsWith('/pacientes/detalles/') && location.state?.fromNursePanel);
   const isLoginRoute = location.pathname === '/';
   
   return (
