@@ -58,10 +58,6 @@ function ProtectedRoute({ children, requireCoordinator = false }: ProtectedRoute
     return <Navigate to="/NoCoordinador/home" replace />;
   }
 
-  if (isNurseRoute && esCoordinador) {
-    return <Navigate to="/AdminHome" replace />;
-  }
-
   if (requireCoordinator && !esCoordinador) {
     return <Navigate to="/NoCoordinador/home" replace />;
   }

@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import AdminNav from "./Components/Admin/AdminNav";
 import EnfermeroNav from "./Components/NoCoordinador/EnfermeroNav";
@@ -56,10 +56,16 @@ import InventarioNoCoordinador from "./Components/NoCoordinador/Inventario";
 import MisTurnos from "./Components/NoCoordinador/MisTurnos";
 
 function App() {
+  const location = useLocation();
+  
+  // Determinar qué navbar mostrar según la ruta
+  const isNurseRoute = location.pathname.startsWith('/NoCoordinador') || 
+                       location.pathname.startsWith('/nocoordinador');
+  const isLoginRoute = location.pathname === '/';
+  
   return (
     <div>
-      <AdminNav />
-      <EnfermeroNav />
+      {!isLoginRoute && (isNurseRoute ? <EnfermeroNav /> : <AdminNav />)}
       <Routes>
         <Route path="/" element={<Login />} />
         <Route

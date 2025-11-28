@@ -14,17 +14,48 @@ function AdminHome() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Obtener información del usuario para el temporizador
+    let numeroEmpleado = "";
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw && raw !== "undefined" && raw !== "null") {
+        const parsed = JSON.parse(raw);
+        numeroEmpleado = parsed?.numeroEmpleado || localStorage.getItem("numeroEmpleado") || "";
+      } else {
+        numeroEmpleado = localStorage.getItem("numeroEmpleado") || "";
+      }
+    } catch (err) {
+      numeroEmpleado = localStorage.getItem("numeroEmpleado") || "";
+    }
+
     axios.get("http://localhost:5000/api/enfermeros")
       .then(res => {
-        if (res.data && Array.isArray(res.data.data)) {
-          setEnfermerosCount(res.data.data.length);
-        } else if (Array.isArray(res.data)) {
-          setEnfermerosCount(res.data.length);
+        const enfermeros = Array.isArray(res.data.data) ? res.data.data : Array.isArray(res.data) ? res.data : [];
+        setEnfermerosCount(enfermeros.length);
+        
+        // Obtener el turno específico del enfermero logueado
+        const enfermeroActual = enfermeros.find((e: any) => e.numeroEmpleado === numeroEmpleado);
+        
+        if (enfermeroActual && enfermeroActual.turnoAsignadoId) {
+          // Obtener el turno específico del enfermero
+          axios
+            .get(`http://localhost:5000/api/turnos/${enfermeroActual.turnoAsignadoId}`)
+            .then((turnoRes) => {
+              const turnoData = turnoRes.data.data || turnoRes.data;
+              setTurnosData([turnoData]);
+            })
+            .catch(() => {
+              setTurnosData([]);
+            });
         } else {
-          setEnfermerosCount(0);
+          setTurnosData([]);
         }
       })
-      .catch(() => setEnfermerosCount(0));
+      .catch(() => {
+        setEnfermerosCount(0);
+        setTurnosData([]);
+      });
+      
     axios.get("http://localhost:5000/api/servicios/listServices")
       .then(res => {
         if (res.data && Array.isArray(res.data.data)) {
@@ -40,18 +71,14 @@ function AdminHome() {
       .then(res => {
         if (res.data && Array.isArray(res.data.data)) {
           setTurnosCount(res.data.data.length);
-          setTurnosData(res.data.data);
         } else if (Array.isArray(res.data)) {
           setTurnosCount(res.data.length);
-          setTurnosData(res.data);
         } else {
           setTurnosCount(0);
-          setTurnosData([]);
         }
       })
       .catch(() => {
         setTurnosCount(0);
-        setTurnosData([]);
       });
     axios.get("http://localhost:5000/api/pacientes")
       .then(res => {

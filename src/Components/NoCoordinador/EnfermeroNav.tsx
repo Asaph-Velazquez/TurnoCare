@@ -3,7 +3,7 @@ import { useAuthListener } from "../../hooks/useAuthListener";
 
 function EnfermeroNav() {
   const navigate = useNavigate();
-  const { isCoordinator, isLoggedIn } = useAuthListener();
+  const { isLoggedIn } = useAuthListener();
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -13,13 +13,11 @@ function EnfermeroNav() {
     localStorage.removeItem("userID");
     localStorage.removeItem("numeroEmpleado");
     localStorage.removeItem("nombre");
-    // Dispatch custom event to notify other components
     window.dispatchEvent(new Event('authChanged'));
     navigate("/");
   };
 
-  // Only render if logged in as non-coordinator
-  if (!isLoggedIn || isCoordinator) {
+  if (!isLoggedIn) {
     return null;
   }
 

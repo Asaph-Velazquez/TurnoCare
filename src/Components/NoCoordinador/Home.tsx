@@ -12,7 +12,6 @@ function Home() {
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const navigate = useNavigate();
 
-  // Obtener información del usuario desde localStorage
   const getUserInfo = () => {
     let userInfo = {
       nombre: "Usuario",
@@ -79,7 +78,6 @@ function Home() {
   useEffect(() => {
     const numeroEmpleado = userInfo.numeroEmpleado;
     
-    // Obtener turnos del enfermero específico
     axios
       .get(`http://localhost:5000/api/enfermeros`)
       .then((res) => {
@@ -87,7 +85,6 @@ function Home() {
         const enfermeroActual = enfermeros.find((e: any) => e.numeroEmpleado === numeroEmpleado);
         
         if (enfermeroActual && enfermeroActual.turnoAsignadoId) {
-          // Obtener el turno específico del enfermero
           axios
             .get(`http://localhost:5000/api/turnos/${enfermeroActual.turnoAsignadoId}`)
             .then((turnoRes) => {
@@ -160,7 +157,6 @@ function Home() {
     }
   }, [turnosData, currentTime]);
 
-  // Detectar turno activo y calcular tiempo restante
   useEffect(() => {
     try {
       const now = new Date();
@@ -174,7 +170,6 @@ function Home() {
           const inicio = new Date(turno.horaInicio);
           const fin = new Date(turno.horaFin);
           
-          // Extraer horas de UTC y convertir a segundos del día
           let inicioSeconds = inicio.getUTCHours() * 3600 + inicio.getUTCMinutes() * 60 + inicio.getUTCSeconds();
           let finSeconds = fin.getUTCHours() * 3600 + fin.getUTCMinutes() * 60 + fin.getUTCSeconds();
           
@@ -188,22 +183,16 @@ function Home() {
           let isInTurno = false;
           let remainingSeconds = 0;
           
-          // Caso especial: turno cruza la medianoche (ej: 16:00 a 00:00)
           if (finSeconds < inicioSeconds) {
             console.log('Turno cruza medianoche');
-            // Si la hora actual es después del inicio O antes del fin
             if (currentTimeOnly >= inicioSeconds || currentTimeOnly < finSeconds) {
               isInTurno = true;
-              // Calcular tiempo restante
               if (currentTimeOnly >= inicioSeconds) {
-                // Estamos en el mismo día, calcular hasta medianoche + hasta fin
                 remainingSeconds = (86400 - currentTimeOnly) + finSeconds;
               } else {
-                // Ya pasamos medianoche, calcular hasta fin
                 remainingSeconds = finSeconds - currentTimeOnly;
               }
             } else {
-              // No está en turno, calcular tiempo hasta que inicie
               const secondsUntilStart = inicioSeconds - currentTimeOnly;
               const hours = Math.floor(secondsUntilStart / 3600);
               const minutes = Math.floor((secondsUntilStart % 3600) / 60);
@@ -211,18 +200,14 @@ function Home() {
               timeUntilStart = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
           } else {
-            // Turno normal dentro del mismo día
             if (currentTimeOnly >= inicioSeconds && currentTimeOnly < finSeconds) {
               isInTurno = true;
               remainingSeconds = finSeconds - currentTimeOnly;
             } else {
-              // No está en turno, calcular tiempo hasta que inicie
               let secondsUntilStart;
               if (currentTimeOnly < inicioSeconds) {
-                // El turno es hoy más tarde
                 secondsUntilStart = inicioSeconds - currentTimeOnly;
               } else {
-                // El turno es mañana
                 secondsUntilStart = (86400 - currentTimeOnly) + inicioSeconds;
               }
               const hours = Math.floor(secondsUntilStart / 3600);
@@ -513,19 +498,19 @@ function Home() {
 
           <br />
           {/* Quick Stats */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-auto-tertiary">Mis Turnos</p>
-                  <p className="text-2xl font-semibold text-auto-primary">{turnosCount !== null ? turnosCount : "--"}</p>
+                  <p className="text-sm font-medium text-auto-tertiary">Mi Turno Asignado</p>
+                  <p className="text-2xl font-semibold text-auto-primary">{turnosCount !== null ? (turnosCount === 1 ? "Asignado" : "Sin asignar") : "--"}</p>
                 </div>
               </div>
             </div>
@@ -535,29 +520,13 @@ function Home() {
                 <div className="flex-shrink-0">
                   <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                     </svg>
                   </div>
                 </div>
                 <div className="ml-3">
-                  <p className="text-sm font-medium text-auto-tertiary">Pacientes Asignados</p>
+                  <p className="text-sm font-medium text-auto-tertiary">Pacientes en Sistema</p>
                   <p className="text-2xl font-semibold text-auto-primary">{pacientesCount !== null ? pacientesCount : "--"}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-xl p-6 shadow-lg">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-full flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-auto-tertiary">Próximo Turno</p>
-                  <p className="text-2xl font-semibold text-auto-primary">{nextTurno ? nextTurno.toLocaleString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : "Ninguno"}</p>
                 </div>
               </div>
             </div>

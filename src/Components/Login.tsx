@@ -1,10 +1,12 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import PanelSelectionModal from "./PanelSelectionModal";
 
 function Login() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showPanelModal, setShowPanelModal] = useState(false);
 
   const nombreInfo = useRef<HTMLInputElement>(null);
   const apellidoPaternoInfo = useRef<HTMLInputElement>(null);
@@ -86,9 +88,12 @@ function Login() {
       setTimeout(() => {
         try {
           const isCoord = userData.user && !!userData.user.esCoordinador;
+          console.log('Es coordinador?', isCoord);
           window.dispatchEvent(new Event('authChanged'));
           if (isCoord) {
-            navigate("/AdminHome");
+            // Mostrar modal de selección de panel para coordinadores
+            console.log('Mostrando modal de selección');
+            setShowPanelModal(true);
           } else {
             navigate("/NoCoordinador/home");
           }
@@ -101,6 +106,19 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-auto-primary flex items-center justify-center p-4 pt-25">
+      {/* Modal de selección de panel */}
+      <PanelSelectionModal 
+        isOpen={showPanelModal} 
+        onClose={() => setShowPanelModal(false)}
+        onSelectPanel={(panel) => {
+          if (panel === 'admin') {
+            navigate("/AdminHome");
+          } else {
+            navigate("/NoCoordinador/home");
+          }
+        }}
+      />
+      
       {/* Fondo decorativo */}
       <div className="absolute inset-0 bg-gradient-to-br from-sky-400/20 via-cyan-300/10 to-blue-500/20 "></div>
       <div className="relative bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl max-w-md w-full p-8 mx-4">
