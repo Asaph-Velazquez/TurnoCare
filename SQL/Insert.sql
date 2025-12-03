@@ -229,65 +229,117 @@ INSERT INTO paciente ("numeroExpediente", nombre, apellidop, apellidom, edad, "n
 -- =====================================
 INSERT INTO capacitacion (titulo, descripcion, "fechaImparticion", duracion, instructor) VALUES
 
--- CAPACITACIONES RECIENTES (2026-2027)
-('Actualización en IA Clínica', 'Uso de herramientas de IA para apoyo diagnóstico', '2026-02-10 09:00:00', 180, 'Dr. Martín Castañeda'),
-('Seguridad del Paciente 2.0', 'Nuevos protocolos de seguridad y reporte de eventos', '2026-03-05 11:00:00', 240, 'Lic. Teresa Aguilar'),
+-- CAPACITACIONES PASADAS (2024-2025)
+('Manejo Básico de RCP', 'Reanimación cardiopulmonar básica y avanzada', '2024-01-15 09:00:00', 240, 'Dr. Fernando Campos'),
+('Protocolo de Sepsis', 'Identificación temprana y manejo de sepsis', '2024-03-20 10:00:00', 180, 'Dra. Patricia Vega'),
+('Administración Segura de Medicamentos', 'Prevención de errores en medicación', '2024-05-10 08:30:00', 210, 'Lic. Andrea Moreno'),
+('Control de Infecciones Nosocomiales', 'Prevención y control de infecciones hospitalarias', '2024-07-18 11:00:00', 180, 'Dr. Roberto Sánchez'),
+('Cuidados Paliativos Básicos', 'Atención integral al paciente terminal', '2024-09-25 14:00:00', 240, 'Dra. Elena Campos'),
+('Atención al Paciente Diabético', 'Manejo de diabetes y complicaciones', '2024-11-08 09:30:00', 210, 'Dr. Luis Hernández'),
+('Urgencias Pediátricas', 'Manejo de emergencias en población infantil', '2025-01-12 08:00:00', 300, 'Dra. Carmen Vega'),
+('Cuidados Intensivos Avanzados', 'Manejo del paciente crítico en UCI', '2025-03-22 07:30:00', 360, 'Dr. Alejandro Ruiz'),
+('Manejo de Heridas y Curaciones', 'Técnicas modernas de curación', '2025-05-14 10:00:00', 180, 'Lic. Mónica Torres'),
+('Farmacología Clínica', 'Actualización en medicamentos esenciales', '2025-07-19 09:00:00', 240, 'Quím. Farm. Laura Díaz'),
+('Ética en Enfermería', 'Dilemas éticos y toma de decisiones', '2025-09-05 16:00:00', 180, 'Lic. Rosa Guerrero'),
+('Prevención de Caídas Hospitalarias', 'Protocolos de seguridad del paciente', '2025-11-10 11:00:00', 150, 'Lic. Teresa Aguilar'),
+
+-- CAPACITACIONES EN CURSO (Noviembre-Diciembre 2025)
+('Actualización en Ventilación Mecánica', 'Modos ventilatorios y destete', '2025-11-15 08:00:00', 300, 'Dr. Ricardo Fuentes'),
+('Manejo de Paciente COVID-19', 'Protocolos actualizados de atención', '2025-11-20 10:30:00', 240, 'Dr. Martín Castañeda'),
+('Nutrición Enteral y Parenteral', 'Soporte nutricional especializado', '2025-11-28 09:00:00', 210, 'Lic. Adriana Vázquez'),
+('Comunicación Efectiva con Pacientes', 'Habilidades blandas en enfermería', '2025-12-05 14:00:00', 180, 'Psic. Esperanza Maldonado'),
+('Manejo de Urgencias Cardiovasculares', 'Infarto agudo y arritmias', '2025-12-10 08:30:00', 270, 'Dr. Miguel Aguilar'),
+('Bioseguridad y Manejo de Residuos', 'Normas de bioseguridad hospitalaria', '2025-12-18 10:00:00', 180, 'Lic. Andrés Valdez'),
+
+-- CAPACITACIONES FUTURAS (2026-2027)
+('Actualización en IA Clínica', 'Uso de herramientas de IA para apoyo diagnóstico', '2026-01-10 09:00:00', 180, 'Dr. Martín Castañeda'),
+('Seguridad del Paciente 2.0', 'Nuevos protocolos de seguridad y reporte de eventos', '2026-02-05 11:00:00', 240, 'Lic. Teresa Aguilar'),
 ('Telemedicina en Urgencias', 'Implementación y flujo de atención remota', '2026-03-20 08:30:00', 210, 'Dra. Paula Núñez'),
 ('Ventilación No Invasiva Avanzada', 'Estrategias y monitoreo en VNI', '2026-04-12 07:45:00', 300, 'Dr. Ricardo Fuentes'),
 ('Manejo de Paciente Politraumatizado', 'Abordaje integral y coordinado en trauma', '2026-05-09 08:00:00', 360, 'Dr. Esteban Rosales'),
 ('Farmacovigilancia Hospitalaria', 'Detección y registro de eventos adversos', '2026-06-01 10:15:00', 180, 'Quím. Farm. Laura Díaz'),
-('Cuidados Paliativos Multidisciplinarios', 'Intervenciones de enfermería en etapa terminal', '2026-06-18 14:00:00', 240, 'Dra. Elena Campos'),
-('Control de Infecciones en UCI', 'Prevención de IAAS y auditorías internas', '2026-07-03 09:30:00', 210, 'Lic. Andrés Valdez'),
-('RCP Pediátrico Actualizado', 'Nuevas guías y simulación de escenarios', '2026-08-21 08:00:00', 240, 'Dra. Carmen Vega'),
-('Manejo Integral de Sepsis', 'Detección temprana y bundle terapéutico', '2026-09-10 07:30:00', 300, 'Dr. Alejandro Ruiz'),
-('Ética y Bioética Clínica', 'Casos prácticos y toma de decisiones', '2026-10-02 16:00:00', 180, 'Lic. Rosa Guerrero'),
-('Nutrición Clínica en UCI', 'Soporte nutricional y seguimiento', '2026-11-14 09:00:00', 210, 'Lic. Adriana Vázquez'),
-('Atención de Paciente Oncológico Crítico', 'Complicaciones y cuidados específicos', '2026-12-05 08:00:00', 300, 'Dr. Felipe Acosta'),
-('Salud Mental en Personal de Salud', 'Prevención del burnout y primeros auxilios psicológicos', '2027-01-18 10:00:00', 180, 'Psic. Esperanza Maldonado'),
-('Ultrasonido Básico en Urgencias', 'FAST y evaluaciones a pie de cama', '2027-02-12 08:30:00', 240, 'Dr. Miguel Aguilar');
+('Cuidados Paliativos Multidisciplinarios', 'Intervenciones de enfermería en etapa terminal', '2026-07-18 14:00:00', 240, 'Dra. Elena Campos'),
+('Control de Infecciones en UCI', 'Prevención de IAAS y auditorías internas', '2026-08-03 09:30:00', 210, 'Lic. Andrés Valdez'),
+('RCP Pediátrico Actualizado', 'Nuevas guías y simulación de escenarios', '2026-09-21 08:00:00', 240, 'Dra. Carmen Vega'),
+('Manejo Integral de Sepsis', 'Detección temprana y bundle terapéutico', '2026-10-10 07:30:00', 300, 'Dr. Alejandro Ruiz'),
+('Ética y Bioética Clínica', 'Casos prácticos y toma de decisiones', '2026-11-02 16:00:00', 180, 'Lic. Rosa Guerrero'),
+('Nutrición Clínica en UCI', 'Soporte nutricional y seguimiento', '2026-12-14 09:00:00', 210, 'Lic. Adriana Vázquez'),
+('Atención de Paciente Oncológico Crítico', 'Complicaciones y cuidados específicos', '2027-01-05 08:00:00', 300, 'Dr. Felipe Acosta'),
+('Salud Mental en Personal de Salud', 'Prevención del burnout y primeros auxilios psicológicos', '2027-02-18 10:00:00', 180, 'Psic. Esperanza Maldonado'),
+('Ultrasonido Básico en Urgencias', 'FAST y evaluaciones a pie de cama', '2027-03-12 08:30:00', 240, 'Dr. Miguel Aguilar');
 
 -- =====================================
 -- 8. ASIGNACIÓN DE CAPACITACIONES
 -- =====================================
 INSERT INTO enfermero_capacitacion ("enfermeroId", "capacitacionId", asistio) VALUES
--- Coordinadores asisten a múltiples capacitaciones
-(1, 1, TRUE), (1, 3, TRUE), (1, 4, TRUE), (1, 6, TRUE),
-(2, 1, TRUE), (2, 2, TRUE), (2, 5, TRUE), (2, 6, TRUE),
-(3, 1, TRUE), (3, 3, TRUE), (3, 6, TRUE), (3, 8, TRUE),
+-- Coordinadores asisten a múltiples capacitaciones (pasadas)
+(1, 1, TRUE), (1, 2, TRUE), (1, 3, TRUE), (1, 4, TRUE), (1, 5, TRUE), (1, 6, TRUE),
+(2, 1, TRUE), (2, 2, TRUE), (2, 3, TRUE), (2, 8, TRUE), (2, 10, TRUE),
+(3, 1, TRUE), (3, 6, TRUE), (3, 7, TRUE), (3, 9, TRUE),
 
--- Enfermeros de Urgencias
-(4, 1, TRUE), (4, 2, TRUE), (4, 10, TRUE),
-(5, 1, TRUE), (5, 6, FALSE), (5, 10, TRUE),
-(6, 1, TRUE), (6, 2, TRUE),
-(7, 1, TRUE), (7, 4, TRUE),
-(8, 1, TRUE), (8, 10, FALSE),
+-- Enfermeros de Urgencias (capacitaciones pasadas y en curso)
+(4, 1, TRUE), (4, 2, TRUE), (4, 3, TRUE), (4, 13, TRUE), (4, 14, TRUE),
+(5, 1, TRUE), (5, 2, TRUE), (5, 4, TRUE), (5, 15, TRUE),
+(6, 1, TRUE), (6, 3, TRUE), (6, 11, TRUE), (6, 16, TRUE),
+(7, 1, TRUE), (7, 2, TRUE), (7, 17, TRUE),
+(8, 1, TRUE), (8, 4, TRUE), (8, 14, FALSE),
 
--- Enfermeros de Pediatría
-(9, 1, TRUE), (9, 3, TRUE), (9, 8, TRUE),
-(10, 1, TRUE), (10, 3, TRUE), (10, 6, TRUE),
-(11, 3, TRUE), (11, 8, TRUE),
-(12, 1, TRUE), (12, 3, TRUE),
+-- Enfermeros de Pediatría (pasadas y en curso)
+(9, 1, TRUE), (9, 7, TRUE), (9, 9, TRUE), (9, 13, TRUE),
+(10, 1, TRUE), (10, 7, TRUE), (10, 3, TRUE), (10, 16, TRUE),
+(11, 7, TRUE), (11, 9, TRUE), (11, 15, TRUE),
+(12, 1, TRUE), (12, 7, TRUE), (12, 17, TRUE),
 
--- Enfermeros de Cardiología
-(13, 1, TRUE), (13, 2, TRUE), (13, 4, TRUE),
-(14, 1, TRUE), (14, 2, TRUE),
-(15, 1, TRUE), (15, 6, TRUE),
+-- Enfermeros de Cardiología (pasadas y en curso)
+(13, 1, TRUE), (13, 2, TRUE), (13, 6, TRUE), (13, 17, TRUE),
+(14, 1, TRUE), (14, 2, TRUE), (14, 10, TRUE), (14, 14, TRUE),
+(15, 1, TRUE), (15, 3, TRUE), (15, 6, TRUE),
 
--- Enfermeros de UCI
-(30, 1, TRUE), (30, 2, TRUE), (30, 5, TRUE), (30, 6, TRUE),
-(31, 1, TRUE), (31, 5, TRUE), (31, 6, TRUE),
-(32, 2, TRUE), (32, 5, TRUE),
-(33, 1, TRUE), (33, 5, TRUE),
+-- Enfermeros de Neurología (pasadas y en curso)
+(16, 1, TRUE), (16, 2, TRUE), (16, 4, TRUE), (16, 13, TRUE),
+(17, 1, TRUE), (17, 5, TRUE), (17, 11, TRUE),
+(18, 1, TRUE), (18, 2, TRUE), (18, 16, TRUE),
 
--- Enfermeros de Oncología
-(34, 1, TRUE), (34, 4, TRUE), (34, 7, TRUE),
-(35, 1, TRUE), (35, 7, TRUE), (35, 6, TRUE),
-(36, 7, TRUE), (36, 4, FALSE),
+-- Enfermeros de Ginecología (pasadas)
+(19, 1, TRUE), (19, 3, TRUE), (19, 5, TRUE), (19, 9, TRUE),
+(20, 1, TRUE), (20, 3, TRUE), (20, 11, TRUE),
+(21, 1, TRUE), (21, 5, TRUE), (21, 10, TRUE),
 
--- Enfermeros de Psiquiatría
-(37, 1, TRUE), (37, 6, TRUE), (37, 9, TRUE),
-(38, 1, TRUE), (38, 9, TRUE),
-(39, 9, TRUE), (39, 6, TRUE);
+-- Enfermeros de Traumatología (pasadas y en curso)
+(22, 1, TRUE), (22, 2, TRUE), (22, 9, TRUE), (22, 15, TRUE),
+(23, 1, TRUE), (23, 4, TRUE), (23, 9, TRUE),
+(24, 1, TRUE), (24, 2, TRUE), (24, 3, TRUE),
+(25, 1, TRUE), (25, 9, TRUE), (25, 16, TRUE),
+
+-- Enfermeros de Medicina Interna (pasadas)
+(26, 1, TRUE), (26, 2, TRUE), (26, 6, TRUE), (26, 10, TRUE),
+(27, 1, TRUE), (27, 3, TRUE), (27, 4, TRUE), (27, 11, TRUE),
+(28, 1, TRUE), (28, 2, TRUE), (28, 10, TRUE),
+(29, 1, TRUE), (29, 6, TRUE), (29, 11, TRUE),
+
+-- Enfermeros de UCI (pasadas y en curso)
+(30, 1, TRUE), (30, 2, TRUE), (30, 4, TRUE), (30, 8, TRUE), (30, 13, TRUE), (30, 15, TRUE),
+(31, 1, TRUE), (31, 2, TRUE), (31, 8, TRUE), (31, 13, TRUE), (31, 14, TRUE),
+(32, 1, TRUE), (32, 2, TRUE), (32, 4, TRUE), (32, 8, TRUE), (32, 17, TRUE),
+(33, 1, TRUE), (33, 8, TRUE), (33, 13, TRUE), (33, 15, TRUE),
+
+-- Enfermeros de Oncología (pasadas y en curso)
+(34, 1, TRUE), (34, 3, TRUE), (34, 5, TRUE), (34, 10, TRUE), (34, 16, TRUE),
+(35, 1, TRUE), (35, 5, TRUE), (35, 3, TRUE), (35, 15, TRUE),
+(36, 1, TRUE), (36, 5, TRUE), (36, 10, FALSE), (36, 14, TRUE),
+
+-- Enfermeros de Psiquiatría (pasadas y en curso)
+(37, 1, TRUE), (37, 5, TRUE), (37, 11, TRUE), (37, 16, TRUE),
+(38, 1, TRUE), (38, 11, TRUE), (38, 5, TRUE),
+(39, 1, TRUE), (39, 11, TRUE), (39, 3, TRUE),
+
+-- Enfermeros flotantes (pasadas)
+(40, 1, TRUE), (40, 3, TRUE), (40, 12, TRUE),
+(41, 1, TRUE), (41, 3, TRUE), (41, 9, TRUE),
+(42, 1, TRUE), (42, 2, TRUE), (42, 12, TRUE),
+(43, 1, TRUE), (43, 3, TRUE), (43, 4, TRUE),
+(44, 1, TRUE), (44, 12, TRUE),
+(45, 1, TRUE), (45, 3, TRUE), (45, 11, TRUE);
 
 -- =====================================
 -- 9. MEDICAMENTOS
@@ -350,6 +402,23 @@ INSERT INTO registromedico ("pacienteId", "enfermeroId", "fechaHora", "signosVit
 -- =====================================
 INSERT INTO paciente_insumo ("pacienteId", "insumoId", cantidad, "asignadoEn") VALUES
 -- Pacientes de Urgencias
+(1, 1, 3, '2025-10-22 12:30:00'), -- Jeringas 5ml
+(1, 3, 3, '2025-10-22 12:30:00'), -- Agujas 21G
+(1, 5, 2, '2025-10-22 12:30:00'), -- Guantes M
+(2, 7, 5, '2025-11-01 09:00:00'), -- Gasas estériles
+(2, 8, 2, '2025-11-01 09:00:00'), -- Vendas elásticas
+
+-- Pacientes UCI
+(30, 9, 2, '2025-10-30 20:30:00'), -- Catéter IV 18G
+(30, 11, 4, '2025-10-30 20:30:00'), -- Suero fisiológico
+(30, 17, 2, '2025-10-30 20:30:00'), -- Equipos venoclisis
+(31, 9, 1, '2025-11-01 03:00:00'), -- Catéter IV 18G
+(31, 11, 6, '2025-11-01 03:00:00'), -- Suero fisiológico
+
+-- Pacientes Pediatría
+(5, 1, 2, '2025-10-28 10:30:00'), -- Jeringas 5ml
+(5, 4, 2, '2025-10-28 10:30:00'), -- Agujas 23G (calibre menor para niños)
+(6, 10, 1, '2025-10-29 15:00:00'), -- Catéter 20G
 (6, 12, 2, '2025-10-29 15:00:00'); -- Suero glucosado
 
 -- =====================================
@@ -360,50 +429,48 @@ INSERT INTO paciente_medicamento ("pacienteId", "medicamentoId", "cantidadAsigna
 (1, 1, 6, '500mg', 'Cada 8 horas', 'Oral', '2025-10-22 12:30:00'),
 (1, 4, 6, '20mg', 'Cada 12 horas', 'Oral', '2025-10-22 12:30:00'),
 
-(1, 1, 3, '2025-10-22 12:30:00'), -- Jeringas 5ml
-(1, 3, 3, '2025-10-22 12:30:00'), -- Agujas 21G(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
-(1, 5, 2, '2025-10-22 12:30:00'), -- Guantes Mral', '2025-10-25 08:00:00'),
-(2, 7, 5, '2025-11-01 09:00:00'), -- Gasas estériles'2025-10-25 08:00:00'),
-(2, 8, 2, '2025-11-01 09:00:00'), -- Vendas elásticas
-
--- Pacientes UCI'Oral', '2025-10-28 10:30:00'),
-(30, 9, 2, '2025-10-30 20:30:00'), -- Catéter IV 18G,
-(30, 11, 4, '2025-10-30 20:30:00'), -- Suero fisiológico
-(30, 17, 2, '2025-10-30 20:30:00'), -- Equipos venoclisis-- Sergio (PAC030) - UCI
-(31, 9, 1, '2025-11-01 03:00:00'),IV', '2025-10-30 20:30:00'),
-(31, 11, 6, '2025-11-01 03:00:00'),
-
--- Pacientes Pediatría
-(5, 1, 2, '2025-10-28 10:30:00'),(26, 5, 60, '850mg', 'Cada 12 horas', 'Oral', '2025-10-29 11:00:00'),
-(5, 4, 2, '2025-10-28 10:30:00'), -- Agujas 23G (calibre menor para niños)z al día', 'Subcutánea', '2025-10-29 11:00:00');
-(6, 10, 1, '2025-10-29 15:00:00'), -- Catéter 20G
-(6, 12, 2, '2025-10-29 15:00:00'); -- Suero glucosado
--- VERIFICACIÓN DE DATOS INSERTADOS
--- =====================================================
--- 13. ASIGNACIÓN DE MEDICAMENTOS A PACIENTES
--- =====================================
-INSERT INTO paciente_medicamento ("pacienteId", "medicamentoId", "cantidadAsignada", dosis, frecuencia, "viaAdministracion", "asignadoEn") VALUESSELECT 'Servicios' as tabla, COUNT(*) as total FROM servicio
--- Daniel (PAC001) - Dolor abdominal
-(1, 1, 6, '500mg', 'Cada 8 horas', 'Oral', '2025-10-22 12:30:00'),
-(1, 4, 6, '20mg', 'Cada 12 horas', 'Oral', '2025-10-22 12:30:00'),
-SELECT 'Enfermeros' as tabla, COUNT(*) as total FROM enfermero
 -- Roberto (PAC010) - Post-infarto
-(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),*) as total FROM paciente
+(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
 (10, 7, 30, '20mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
 (10, 6, 60, '50mg', 'Cada 12 horas', 'Oral', '2025-10-25 08:00:00'),
 
--- Sofía (PAC005) - Pediatríaacitacion
+-- Sofía (PAC005) - Pediatría
 (5, 1, 20, '250mg', 'Cada 6 horas', 'Oral', '2025-10-28 10:30:00'),
-(5, 3, 18, '250mg', 'Cada 8 horas', 'Oral', '2025-10-28 10:30:00'),as total FROM enfermero_capacitacion
+(5, 3, 18, '250mg', 'Cada 8 horas', 'Oral', '2025-10-28 10:30:00'),
 
--- Sergio (PAC030) - UCIentos
+-- Sergio (PAC030) - UCI
 (30, 3, 9, '1g', 'Cada 8 horas', 'IV', '2025-10-30 20:30:00'),
 (30, 12, 5, '10mg', 'Según necesidad', 'IV', '2025-10-30 20:30:00'),
 
--- Ricardo (PAC026) - Diabetes descompensadaiomedicamentos
+-- Ricardo (PAC026) - Diabetes descompensada
 (26, 5, 60, '850mg', 'Cada 12 horas', 'Oral', '2025-10-29 11:00:00'),
-(26, 11, 30, '20 UI', 'Una vez al día', 'Subcutánea', '2025-10-29 11:00:00');edico
+(26, 11, 30, '20 UI', 'Una vez al día', 'Subcutánea', '2025-10-29 11:00:00');
 
 -- =====================================
 -- VERIFICACIÓN DE DATOS INSERTADOS
+-- =====================================
+SELECT 'Hospitales' as tabla, COUNT(*) as total FROM hospital
+UNION ALL
+SELECT 'Turnos' as tabla, COUNT(*) as total FROM turno
+UNION ALL
+SELECT 'Servicios' as tabla, COUNT(*) as total FROM servicio
+UNION ALL
+SELECT 'Enfermeros' as tabla, COUNT(*) as total FROM enfermero
+UNION ALL
+SELECT 'Pacientes' as tabla, COUNT(*) as total FROM paciente
+UNION ALL
+SELECT 'Capacitaciones' as tabla, COUNT(*) as total FROM capacitacion
+UNION ALL
+SELECT 'Enfermero-Capacitacion' as tabla, COUNT(*) as total FROM enfermero_capacitacion
+UNION ALL
+SELECT 'Medicamentos' as tabla, COUNT(*) as total FROM medicamentos
+UNION ALL
+SELECT 'Insumos' as tabla, COUNT(*) as total FROM insumo
+UNION ALL
+SELECT 'Inventario-Medicamentos' as tabla, COUNT(*) as total FROM inventariomedicamentos
+UNION ALL
+SELECT 'Registro-Medico' as tabla, COUNT(*) as total FROM registromedico
+UNION ALL
+SELECT 'Paciente-Insumo' as tabla, COUNT(*) as total FROM paciente_insumo
+UNION ALL
 SELECT 'Paciente-Medicamento' as tabla, COUNT(*) as total FROM paciente_medicamento;
