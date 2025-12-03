@@ -40,10 +40,22 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
     try {
       setLoading(true);
       const response = await axios.get("http://localhost:5000/api/enfermeros/");
-      if (response.data.success && response.data.data) {
-        setEnfermeros(response.data.data);
+      
+      console.log('Respuesta completa:', response.data);
+      
+      // Manejar diferentes formatos de respuesta
+      let data = [];
+      if (response.data.success && Array.isArray(response.data.data)) {
+        data = response.data.data;
+      } else if (Array.isArray(response.data)) {
+        data = response.data;
       }
+      
+      console.log('Enfermeros parseados:', data);
+      setEnfermeros(data);
     } catch (error) {
+      console.error('Error al cargar enfermeros:', error);
+      setEnfermeros([]);
     } finally {
       setLoading(false);
     }

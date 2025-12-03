@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
 type Turno = {
@@ -76,6 +76,7 @@ function MisTurnos() {
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20 pb-10">
+      {/* Fondo decorativo */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-sky-400/10 via-transparent to-cyan-400/10"></div>
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-sky-300/20 rounded-full blur-3xl"></div>
@@ -95,17 +96,12 @@ function MisTurnos() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-auto-primary">Mi Turno</h2>
-                <p className="text-auto-secondary text-sm">Visualiza tu turno asignado</p>
+                <h2 className="text-3xl font-bold text-auto-primary">Mi Turno Asignado</h2>
+                <p className="text-auto-secondary text-sm">Consulta tu horario y turno actual</p>
               </div>
             </div>
           </div>
@@ -120,111 +116,30 @@ function MisTurnos() {
                 </div>
               </div>
             ) : error ? (
-              <div className="text-center py-12">
-                <p className="text-red-500">{error}</p>
-                <button
-                  onClick={fetchTurno}
-                  className="mt-4 px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
-                >
-                  Reintentar
-                </button>
+              <div className="bg-red-100 border-2 border-red-300 text-red-800 rounded-xl p-4">
+                {error}
               </div>
             ) : !turno ? (
               <div className="text-center py-12">
-                <p className="text-auto-secondary">No tienes un turno asignado</p>
+                <svg className="w-16 h-16 text-auto-tertiary mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="text-xl font-semibold text-auto-primary mb-2">No tienes un turno asignado</h3>
+                <p className="text-auto-secondary">Consulta con tu coordinador para asignarte un turno</p>
               </div>
             ) : (
-              <div className="max-w-full">
-                <div
-                  key={turno.turnoId}
-                  className="bg-auto-primary rounded-xl p-8 border border-auto hover:shadow-xl transition-all duration-200"
-                >
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-                    {/* Sección del título */}
-                    <div className="flex items-center gap-4">
-                      <div className="bg-gradient-to-br from-sky-500 to-cyan-500 p-4 rounded-xl shadow-lg">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-8 w-8 text-white"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="text-2xl md:text-3xl font-bold text-auto-primary">{turno.nombre}</h3>
-                        <p className="text-auto-secondary text-sm mt-1">Tu turno asignado</p>
-                      </div>
-                    </div>
-
-                    {/* Sección de horarios */}
-                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
-                      <div className="bg-auto-secondary rounded-lg p-4 flex items-center gap-3 min-w-[200px]">
-                        <div className="bg-emerald-500/10 p-2 rounded-lg">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 text-emerald-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-auto-secondary text-xs font-semibold uppercase tracking-wide">Inicio</p>
-                          <p className="text-auto-primary font-bold text-lg">
-                            {formatTime(turno.horaInicio)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="bg-auto-secondary rounded-lg p-4 flex items-center gap-3 min-w-[200px]">
-                        <div className="bg-red-500/10 p-2 rounded-lg">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 text-red-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M11 17l-5-5m0 0l5-5m-5 5h12"
-                            />
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-auto-secondary text-xs font-semibold uppercase tracking-wide">Fin</p>
-                          <p className="text-auto-primary font-bold text-lg">
-                            {formatTime(turno.horaFin)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Sección del ID */}
-                    <div className="bg-auto-secondary rounded-lg p-4 min-w-[120px]">
-                      <p className="text-auto-secondary text-xs font-semibold uppercase tracking-wide mb-1">ID del Turno</p>
-                      <p className="font-mono text-auto-primary font-bold text-xl">
-                        #{turno.turnoId}
-                      </p>
-                    </div>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="md:col-span-1 bg-auto-primary rounded-xl p-4 border border-auto">
+                  <p className="text-xs text-auto-tertiary mb-1">Turno</p>
+                  <p className="text-lg font-bold text-auto-primary">{turno.nombre}</p>
+                </div>
+                <div className="bg-auto-primary rounded-xl p-4 border border-auto">
+                  <p className="text-xs text-auto-tertiary mb-1">Hora de inicio</p>
+                  <p className="text-lg font-bold text-auto-primary">{formatTime(turno.horaInicio)}</p>
+                </div>
+                <div className="bg-auto-primary rounded-xl p-4 border border-auto">
+                  <p className="text-xs text-auto-tertiary mb-1">Hora de fin</p>
+                  <p className="text-lg font-bold text-auto-primary">{formatTime(turno.horaFin)}</p>
                 </div>
               </div>
             )}

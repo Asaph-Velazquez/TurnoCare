@@ -100,6 +100,12 @@ function AdminNav() {
               >
                 Inventario
               </a>
+              <a
+                href="/capacitaciones"
+                className="text-auto-secondary hover:text-sky-600 transition-colors"
+              >
+                Capacitaciones
+              </a>
               
               {/* Botón de Cerrar Sesión */}
               <button

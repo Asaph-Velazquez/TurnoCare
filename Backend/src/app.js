@@ -10,6 +10,7 @@ const insumosRoutes = require("./routes/insumos.routes");
 const inventarioRoutes = require("./routes/inventario.routes");
 const estadisticasRoutes = require("./routes/estadisticas.routes");
 const notasMedicasRoutes = require("./routes/notaMedica.routes");
+const capacitacionesRoutes = require("./routes/capacitaciones.routes");
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use("/api/insumos", insumosRoutes);
 app.use("/api/inventarios", inventarioRoutes);
 app.use("/api/estadisticas", estadisticasRoutes);
 app.use("/api/notas-medicas", notasMedicasRoutes);
+app.use("/api/capacitaciones", capacitacionesRoutes);
 
 module.exports = app;

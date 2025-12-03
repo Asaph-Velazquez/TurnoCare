@@ -54,6 +54,12 @@ import NotaMedicaForm from "./Components/NoCoordinador/NotaMedicaForm";
 import MisPacientes from "./Components/NoCoordinador/MisPacientes";
 import InventarioNoCoordinador from "./Components/NoCoordinador/Inventario";
 import MisTurnos from "./Components/NoCoordinador/MisTurnos";
+import Capacitaciones from "./Components/Capacitaciones/Capacitaciones";
+import RegistrarCapacitacion from "./Components/Capacitaciones/RegistrarCapacitacion";
+import MisCapacitaciones from "./Components/NoCoordinador/MisCapacitaciones";
+import ListarCapacitaciones from "./Components/Capacitaciones/ListarCapacitaciones";
+import ActualizarCapacitacion from "./Components/Capacitaciones/ActualizarCapacitacion";
+import EliminarCapacitacion from "./Components/Capacitaciones/EliminarCapacitacion";
 
 function App() {
   const location = useLocation();
@@ -421,21 +427,67 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
         <Route
-          path="/NoCoordinador/mis-pacientes"
+          path="/nocoordinador/inventario"
           element={
             <ProtectedRoute>
-              <MisPacientes />
+              <InventarioNoCoordinador />
             </ProtectedRoute>
           }
         />
-        <Route path="/nocoordinador/inventario" element={<InventarioNoCoordinador />} />
         <Route
           path="/NoCoordinador/mis-turnos"
           element={
             <ProtectedRoute>
               <MisTurnos />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/capacitaciones"
+          element={
+            <ProtectedRoute>
+              <Capacitaciones />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/capacitaciones/registrar"
+          element={
+            <ProtectedRoute>
+              <RegistrarCapacitacion />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/capacitaciones/listar"
+          element={
+            <ProtectedRoute>
+              <ListarCapacitaciones />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/capacitaciones/actualizar"
+          element={
+            <ProtectedRoute>
+              <ActualizarCapacitacion />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/capacitaciones/eliminar"
+          element={
+            <ProtectedRoute>
+              <EliminarCapacitacion />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/NoCoordinador/mis-capacitaciones"
+          element={
+            <ProtectedRoute>
+              <MisCapacitaciones />
             </ProtectedRoute>
           }
         />

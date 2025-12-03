@@ -1,5 +1,8 @@
+-- EJECUTAR ESTE ARCHIVO PRIMERO (crea/actualiza el esquema)
+-- Luego ejecuta Insert.sql para cargar datos
+
 -- Tabla Hospital
-CREATE TABLE Hospital (
+CREATE TABLE IF NOT EXISTS Hospital (
     hospitalId SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     direccion VARCHAR(150),
@@ -7,7 +10,7 @@ CREATE TABLE Hospital (
 );
 
 -- Tabla Servicio
-CREATE TABLE Servicio(
+CREATE TABLE IF NOT EXISTS Servicio(
     servicioId SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion TEXT,
@@ -19,7 +22,7 @@ CREATE TABLE Servicio(
 );
 
 -- Tabla Urgencias
-CREATE TABLE Urgencias(
+CREATE TABLE IF NOT EXISTS Urgencias(
     urgenciaId SERIAL PRIMARY KEY,
     nivelTriaje VARCHAR(50),
     tiempoEsperaPromedio INTEGER,
@@ -29,7 +32,7 @@ CREATE TABLE Urgencias(
 );
 
 -- Tabla Turno
-CREATE TABLE Turno(
+CREATE TABLE IF NOT EXISTS Turno(
     turnoId SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     horaInicio TIME NOT NULL,
@@ -38,7 +41,7 @@ CREATE TABLE Turno(
 );
 
 -- Tabla Enfermero
-CREATE TABLE Enfermero(
+CREATE TABLE IF NOT EXISTS Enfermero(
     enfermeroId SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,            
     apellidoPaterno VARCHAR(100) NOT NULL,
@@ -56,7 +59,7 @@ CREATE TABLE Enfermero(
 );
 
 -- Tabla Paciente
-CREATE TABLE Paciente(
+CREATE TABLE IF NOT EXISTS Paciente(
     pacienteId SERIAL PRIMARY KEY,
     apellido VARCHAR(100) NOT NULL,
     nombre VARCHAR(100) NOT NULL,
@@ -72,7 +75,7 @@ CREATE TABLE Paciente(
 );
 
 -- Tabla RegistroMedico
-CREATE TABLE RegistroMedico(
+CREATE TABLE IF NOT EXISTS RegistroMedico(
     registroId SERIAL PRIMARY KEY,
     pacienteId INTEGER NOT NULL,
     enfermeroId INTEGER NOT NULL,
@@ -86,7 +89,7 @@ CREATE TABLE RegistroMedico(
 );
 
 -- Tabla Medicamentos
-CREATE TABLE Medicamentos (
+CREATE TABLE IF NOT EXISTS Medicamentos (
     medicamentoId SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     dosis VARCHAR(50),
@@ -102,7 +105,7 @@ CREATE TABLE Medicamentos (
 );
 
 -- Tabla InventarioMedicamentos
-CREATE TABLE InventarioMedicamentos(
+CREATE TABLE IF NOT EXISTS InventarioMedicamentos(
     inventarioId SERIAL PRIMARY KEY,
     medicamentosDisponibles JSONB NOT NULL,
     ubicacionAlmacen TEXT,
@@ -112,7 +115,7 @@ CREATE TABLE InventarioMedicamentos(
 );
 
 -- Tabla Capacitacion
-CREATE TABLE Capacitacion(
+CREATE TABLE IF NOT EXISTS Capacitacion(
     capacitacionId SERIAL PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
     descripcion TEXT,
@@ -122,7 +125,7 @@ CREATE TABLE Capacitacion(
 );
 
 -- Tabla intermedia: Enfermero_Capacitacion (relación muchos a muchos)
-CREATE TABLE Enfermero_Capacitacion(
+CREATE TABLE IF NOT EXISTS Enfermero_Capacitacion(
     enfermeroId INTEGER NOT NULL,
     capacitacionId INTEGER NOT NULL,
     asistio BOOLEAN DEFAULT FALSE,
@@ -135,17 +138,30 @@ CREATE TABLE Enfermero_Capacitacion(
         REFERENCES Capacitacion(capacitacionId) ON DELETE CASCADE
 );
 
+-- Tabla Insumo (aseguramos su creación antes de paciente_insumo)
+CREATE TABLE IF NOT EXISTS Insumo (
+    insumoId SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    categoria VARCHAR(100),
+    cantidadDisponible INTEGER DEFAULT 0,
+    unidadMedida VARCHAR(50),
+    ubicacion VARCHAR(120),
+    responsableId INTEGER,
+    actualizadoEn TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_insumo_responsable FOREIGN KEY (responsableId)
+        REFERENCES Enfermero(enfermeroId) ON DELETE SET NULL
+);
 
--- Modificaciones en el ritmo de desarrollo
-alter table paciente drop column apellido;
-alter table paciente add column apellidop varchar(50);
-alter table paciente add column apellidom varchar(100); 
-
+-- Modificaciones en desarrollo (idempotentes)
+ALTER TABLE Paciente DROP COLUMN IF EXISTS apellido;
+ALTER TABLE Paciente ADD COLUMN IF NOT EXISTS apellidop varchar(50);
+ALTER TABLE Paciente ADD COLUMN IF NOT EXISTS apellidom varchar(100);
 
 --modificaciones de enfermero
-alter table enfermero add column habitacionAsignada varchar(100);
+ALTER TABLE enfermero ADD COLUMN IF NOT EXISTS habitacionAsignada varchar(100);
 
 -- modificaciones de medicamentos para asociar a paciente
-alter table medicamentos add column pacienteId integer;
-alter table medicamentos add constraint fk_medicamento_paciente foreign key (pacienteId)
-    references paciente(pacienteId) on delete cascade;
+ALTER TABLE medicamentos ADD COLUMN IF NOT EXISTS pacienteId integer;
+ALTER TABLE medicamentos ADD CONSTRAINT fk_medicamento_paciente FOREIGN KEY (pacienteId)
+    REFERENCES paciente(pacienteId) ON DELETE CASCADE;

@@ -14,15 +14,16 @@
 TRUNCATE TABLE paciente_medicamento CASCADE;
 TRUNCATE TABLE paciente_insumo CASCADE;
 TRUNCATE TABLE registromedico CASCADE;
-TRUNCATE TABLE insumo CASCADE;
+TRUNCATE TABLE inventariomedicamentos CASCADE;
 TRUNCATE TABLE medicamentos CASCADE;
+TRUNCATE TABLE insumo CASCADE;
 TRUNCATE TABLE enfermero_capacitacion CASCADE;
 TRUNCATE TABLE capacitacion CASCADE;
 TRUNCATE TABLE paciente CASCADE;
 TRUNCATE TABLE urgencias CASCADE;
 TRUNCATE TABLE enfermero CASCADE;
-TRUNCATE TABLE servicio CASCADE;
 TRUNCATE TABLE turno CASCADE;
+TRUNCATE TABLE servicio CASCADE;
 TRUNCATE TABLE hospital CASCADE;
 
 -- Reiniciar secuencias de autoincremento
@@ -32,11 +33,11 @@ SELECT setval(pg_get_serial_sequence('turno', 'turnoId'), 1, false);
 SELECT setval(pg_get_serial_sequence('servicio', 'servicioId'), 1, false);
 SELECT setval(pg_get_serial_sequence('enfermero', 'enfermeroId'), 1, false);
 SELECT setval(pg_get_serial_sequence('paciente', 'pacienteId'), 1, false);
-SELECT setval(pg_get_serial_sequence('urgencias', 'urgenciaId'), 1, false);
-SELECT setval(pg_get_serial_sequence('capacitacion', 'capacitacionId'), 1, false);
-SELECT setval(pg_get_serial_sequence('medicamentos', 'medicamentoId'), 1, false);
-SELECT setval(pg_get_serial_sequence('insumo', 'insumoId'), 1, false);
 SELECT setval(pg_get_serial_sequence('registromedico', 'registroId'), 1, false);
+SELECT setval(pg_get_serial_sequence('medicamentos', 'medicamentoId'), 1, false);
+SELECT setval(pg_get_serial_sequence('inventariomedicamentos', 'inventarioId'), 1, false);
+SELECT setval(pg_get_serial_sequence('insumo', 'insumoId'), 1, false);
+SELECT setval(pg_get_serial_sequence('capacitacion', 'capacitacionId'), 1, false);
 
 -- =====================================
 -- 1. HOSPITALES
@@ -227,16 +228,23 @@ INSERT INTO paciente ("numeroExpediente", nombre, apellidop, apellidom, edad, "n
 -- 7. CAPACITACIONES
 -- =====================================
 INSERT INTO capacitacion (titulo, descripcion, "fechaImparticion", duracion, instructor) VALUES
-('RCP Básico', 'Reanimación cardiopulmonar básica para personal de enfermería', '2025-10-15 09:00:00', 240, 'Dr. Fernando Castillo'),
-('RCP Avanzado', 'Técnicas avanzadas de reanimación cardiopulmonar', '2025-10-18 09:00:00', 360, 'Dr. Fernando Castillo'),
-('Manejo de Urgencias Pediátricas', 'Protocolos de atención en emergencias infantiles', '2025-10-20 14:00:00', 360, 'Dra. Carmen Vega'),
-('Administración Segura de Medicamentos', 'Prevención de errores en medicación', '2025-10-25 10:00:00', 180, 'Lic. Patricia Morales'),
-('Cuidados Intensivos Avanzados', 'Técnicas especializadas en UCI', '2025-11-01 08:00:00', 480, 'Dr. Luis García'),
-('Protocolo de Bioseguridad', 'Medidas de seguridad y control de infecciones', '2025-11-05 16:00:00', 120, 'Lic. Ana Rodríguez'),
-('Manejo del Dolor Oncológico', 'Tratamiento del dolor en pacientes con cáncer', '2025-11-08 10:00:00', 300, 'Dr. Felipe Acosta'),
-('Cuidados Neonatales', 'Atención especializada al recién nacido', '2025-11-10 09:00:00', 420, 'Dra. Lucía Morales'),
-('Salud Mental en Enfermería', 'Abordaje de pacientes con trastornos psiquiátricos', '2025-11-12 14:00:00', 240, 'Dr. Rodrigo Esquivel'),
-('Manejo de Trauma', 'Atención inicial del paciente politraumatizado', '2025-11-15 08:00:00', 360, 'Dr. Eduardo Silva');
+
+-- CAPACITACIONES RECIENTES (2026-2027)
+('Actualización en IA Clínica', 'Uso de herramientas de IA para apoyo diagnóstico', '2026-02-10 09:00:00', 180, 'Dr. Martín Castañeda'),
+('Seguridad del Paciente 2.0', 'Nuevos protocolos de seguridad y reporte de eventos', '2026-03-05 11:00:00', 240, 'Lic. Teresa Aguilar'),
+('Telemedicina en Urgencias', 'Implementación y flujo de atención remota', '2026-03-20 08:30:00', 210, 'Dra. Paula Núñez'),
+('Ventilación No Invasiva Avanzada', 'Estrategias y monitoreo en VNI', '2026-04-12 07:45:00', 300, 'Dr. Ricardo Fuentes'),
+('Manejo de Paciente Politraumatizado', 'Abordaje integral y coordinado en trauma', '2026-05-09 08:00:00', 360, 'Dr. Esteban Rosales'),
+('Farmacovigilancia Hospitalaria', 'Detección y registro de eventos adversos', '2026-06-01 10:15:00', 180, 'Quím. Farm. Laura Díaz'),
+('Cuidados Paliativos Multidisciplinarios', 'Intervenciones de enfermería en etapa terminal', '2026-06-18 14:00:00', 240, 'Dra. Elena Campos'),
+('Control de Infecciones en UCI', 'Prevención de IAAS y auditorías internas', '2026-07-03 09:30:00', 210, 'Lic. Andrés Valdez'),
+('RCP Pediátrico Actualizado', 'Nuevas guías y simulación de escenarios', '2026-08-21 08:00:00', 240, 'Dra. Carmen Vega'),
+('Manejo Integral de Sepsis', 'Detección temprana y bundle terapéutico', '2026-09-10 07:30:00', 300, 'Dr. Alejandro Ruiz'),
+('Ética y Bioética Clínica', 'Casos prácticos y toma de decisiones', '2026-10-02 16:00:00', 180, 'Lic. Rosa Guerrero'),
+('Nutrición Clínica en UCI', 'Soporte nutricional y seguimiento', '2026-11-14 09:00:00', 210, 'Lic. Adriana Vázquez'),
+('Atención de Paciente Oncológico Crítico', 'Complicaciones y cuidados específicos', '2026-12-05 08:00:00', 300, 'Dr. Felipe Acosta'),
+('Salud Mental en Personal de Salud', 'Prevención del burnout y primeros auxilios psicológicos', '2027-01-18 10:00:00', 180, 'Psic. Esperanza Maldonado'),
+('Ultrasonido Básico en Urgencias', 'FAST y evaluaciones a pie de cama', '2027-02-12 08:30:00', 240, 'Dr. Miguel Aguilar');
 
 -- =====================================
 -- 8. ASIGNACIÓN DE CAPACITACIONES
@@ -342,23 +350,6 @@ INSERT INTO registromedico ("pacienteId", "enfermeroId", "fechaHora", "signosVit
 -- =====================================
 INSERT INTO paciente_insumo ("pacienteId", "insumoId", cantidad, "asignadoEn") VALUES
 -- Pacientes de Urgencias
-(1, 1, 3, '2025-10-22 12:30:00'), -- Jeringas 5ml
-(1, 3, 3, '2025-10-22 12:30:00'), -- Agujas 21G
-(1, 5, 2, '2025-10-22 12:30:00'), -- Guantes M
-(2, 7, 5, '2025-11-01 09:00:00'), -- Gasas estériles
-(2, 8, 2, '2025-11-01 09:00:00'), -- Vendas elásticas
-
--- Pacientes UCI
-(30, 9, 2, '2025-10-30 20:30:00'), -- Catéter IV 18G
-(30, 11, 4, '2025-10-30 20:30:00'), -- Suero fisiológico
-(30, 17, 2, '2025-10-30 20:30:00'), -- Equipos venoclisis
-(31, 9, 1, '2025-11-01 03:00:00'),
-(31, 11, 6, '2025-11-01 03:00:00'),
-
--- Pacientes Pediatría
-(5, 1, 2, '2025-10-28 10:30:00'),
-(5, 4, 2, '2025-10-28 10:30:00'), -- Agujas 23G (calibre menor para niños)
-(6, 10, 1, '2025-10-29 15:00:00'), -- Catéter 20G
 (6, 12, 2, '2025-10-29 15:00:00'); -- Suero glucosado
 
 -- =====================================
@@ -369,74 +360,50 @@ INSERT INTO paciente_medicamento ("pacienteId", "medicamentoId", "cantidadAsigna
 (1, 1, 6, '500mg', 'Cada 8 horas', 'Oral', '2025-10-22 12:30:00'),
 (1, 4, 6, '20mg', 'Cada 12 horas', 'Oral', '2025-10-22 12:30:00'),
 
+(1, 1, 3, '2025-10-22 12:30:00'), -- Jeringas 5ml
+(1, 3, 3, '2025-10-22 12:30:00'), -- Agujas 21G(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
+(1, 5, 2, '2025-10-22 12:30:00'), -- Guantes Mral', '2025-10-25 08:00:00'),
+(2, 7, 5, '2025-11-01 09:00:00'), -- Gasas estériles'2025-10-25 08:00:00'),
+(2, 8, 2, '2025-11-01 09:00:00'), -- Vendas elásticas
+
+-- Pacientes UCI'Oral', '2025-10-28 10:30:00'),
+(30, 9, 2, '2025-10-30 20:30:00'), -- Catéter IV 18G,
+(30, 11, 4, '2025-10-30 20:30:00'), -- Suero fisiológico
+(30, 17, 2, '2025-10-30 20:30:00'), -- Equipos venoclisis-- Sergio (PAC030) - UCI
+(31, 9, 1, '2025-11-01 03:00:00'),IV', '2025-10-30 20:30:00'),
+(31, 11, 6, '2025-11-01 03:00:00'),
+
+-- Pacientes Pediatría
+(5, 1, 2, '2025-10-28 10:30:00'),(26, 5, 60, '850mg', 'Cada 12 horas', 'Oral', '2025-10-29 11:00:00'),
+(5, 4, 2, '2025-10-28 10:30:00'), -- Agujas 23G (calibre menor para niños)z al día', 'Subcutánea', '2025-10-29 11:00:00');
+(6, 10, 1, '2025-10-29 15:00:00'), -- Catéter 20G
+(6, 12, 2, '2025-10-29 15:00:00'); -- Suero glucosado
+-- VERIFICACIÓN DE DATOS INSERTADOS
+-- =====================================================
+-- 13. ASIGNACIÓN DE MEDICAMENTOS A PACIENTES
+-- =====================================
+INSERT INTO paciente_medicamento ("pacienteId", "medicamentoId", "cantidadAsignada", dosis, frecuencia, "viaAdministracion", "asignadoEn") VALUESSELECT 'Servicios' as tabla, COUNT(*) as total FROM servicio
+-- Daniel (PAC001) - Dolor abdominal
+(1, 1, 6, '500mg', 'Cada 8 horas', 'Oral', '2025-10-22 12:30:00'),
+(1, 4, 6, '20mg', 'Cada 12 horas', 'Oral', '2025-10-22 12:30:00'),
+SELECT 'Enfermeros' as tabla, COUNT(*) as total FROM enfermero
 -- Roberto (PAC010) - Post-infarto
-(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
+(10, 15, 30, '5mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),*) as total FROM paciente
 (10, 7, 30, '20mg', 'Una vez al día', 'Oral', '2025-10-25 08:00:00'),
 (10, 6, 60, '50mg', 'Cada 12 horas', 'Oral', '2025-10-25 08:00:00'),
 
--- Sofía (PAC005) - Pediatría
+-- Sofía (PAC005) - Pediatríaacitacion
 (5, 1, 20, '250mg', 'Cada 6 horas', 'Oral', '2025-10-28 10:30:00'),
-(5, 3, 18, '250mg', 'Cada 8 horas', 'Oral', '2025-10-28 10:30:00'),
+(5, 3, 18, '250mg', 'Cada 8 horas', 'Oral', '2025-10-28 10:30:00'),as total FROM enfermero_capacitacion
 
--- Sergio (PAC030) - UCI
+-- Sergio (PAC030) - UCIentos
 (30, 3, 9, '1g', 'Cada 8 horas', 'IV', '2025-10-30 20:30:00'),
 (30, 12, 5, '10mg', 'Según necesidad', 'IV', '2025-10-30 20:30:00'),
 
--- Ricardo (PAC026) - Diabetes descompensada
+-- Ricardo (PAC026) - Diabetes descompensadaiomedicamentos
 (26, 5, 60, '850mg', 'Cada 12 horas', 'Oral', '2025-10-29 11:00:00'),
-(26, 11, 30, '20 UI', 'Una vez al día', 'Subcutánea', '2025-10-29 11:00:00');
+(26, 11, 30, '20 UI', 'Una vez al día', 'Subcutánea', '2025-10-29 11:00:00');edico
 
 -- =====================================
 -- VERIFICACIÓN DE DATOS INSERTADOS
--- =====================================
-SELECT 'Hospitales' as tabla, COUNT(*) as total FROM hospital
-UNION ALL
-SELECT 'Servicios' as tabla, COUNT(*) as total FROM servicio
-UNION ALL
-SELECT 'Turnos' as tabla, COUNT(*) as total FROM turno
-UNION ALL
-SELECT 'Enfermeros' as tabla, COUNT(*) as total FROM enfermero
-UNION ALL
-SELECT 'Pacientes' as tabla, COUNT(*) as total FROM paciente
-UNION ALL
-SELECT 'Urgencias' as tabla, COUNT(*) as total FROM urgencias
-UNION ALL
-SELECT 'Capacitaciones' as tabla, COUNT(*) as total FROM capacitacion
-UNION ALL
-SELECT 'Asignaciones Capacitación' as tabla, COUNT(*) as total FROM enfermero_capacitacion
-UNION ALL
-SELECT 'Medicamentos' as tabla, COUNT(*) as total FROM medicamentos
-UNION ALL
-SELECT 'Insumos' as tabla, COUNT(*) as total FROM insumo
-UNION ALL
-SELECT 'Registros Médicos' as tabla, COUNT(*) as total FROM registromedico
-UNION ALL
-SELECT 'Paciente-Insumo' as tabla, COUNT(*) as total FROM paciente_insumo
-UNION ALL
 SELECT 'Paciente-Medicamento' as tabla, COUNT(*) as total FROM paciente_medicamento;
-
--- =====================================
--- CONSULTAS ÚTILES PARA VERIFICAR DATOS
--- =====================================
-
--- Ver pacientes por servicio
--- SELECT s.nombre as servicio, COUNT(p."pacienteId") as total_pacientes
--- FROM servicio s
--- LEFT JOIN paciente p ON s."servicioId" = p."servicioId"
--- GROUP BY s."servicioId", s.nombre
--- ORDER BY total_pacientes DESC;
-
--- Ver enfermeros por servicio
--- SELECT s.nombre as servicio, COUNT(e."enfermeroId") as total_enfermeros
--- FROM servicio s
--- LEFT JOIN enfermero e ON s."servicioId" = e."servicioActualId"
--- GROUP BY s."servicioId", s.nombre
--- ORDER BY total_enfermeros DESC;
-
--- Ver capacitaciones más populares
--- SELECT c.titulo, COUNT(ec."enfermeroId") as total_asistentes,
---        SUM(CASE WHEN ec.asistio THEN 1 ELSE 0 END) as asistieron
--- FROM capacitacion c
--- LEFT JOIN enfermero_capacitacion ec ON c."capacitacionId" = ec."capacitacionId"
--- GROUP BY c."capacitacionId", c.titulo
--- ORDER BY total_asistentes DESC;

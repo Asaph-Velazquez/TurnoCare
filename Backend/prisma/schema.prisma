@@ -7,86 +7,78 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Hospital
 model Hospital {
-  hospitalId Int    @id @default(autoincrement())
-  nombre     String @db.VarChar(100)
-  direccion  String? @db.VarChar(150)
-  telefono   String? @db.VarChar(20)
-  
-  // Relaciones
+  hospitalId Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(100)
+  direccion  String?   @db.VarChar(150)
+  telefono   String?   @db.VarChar(20)
   servicios  Servicio[]
-  
   @@map("hospital")
 }
 
+// Servicio
 model Servicio {
-  servicioId       Int     @id @default(autoincrement())
-  nombre          String  @db.VarChar(100)
-  descripcion     String?
-  capacidadMaxima Int?
-  personalAsignado Int    @default(0)
-  hospitalId      Int
-  
-  // Relaciones
-  hospital        Hospital @relation(fields: [hospitalId], references: [hospitalId], onDelete: Cascade)
-  enfermeros      Enfermero[]
-  pacientes       Paciente[]
-  urgencias       Urgencias?
-  
+  servicioId       Int        @id @default(autoincrement())
+  nombre           String     @db.VarChar(100)
+  descripcion      String?
+  capacidadMaxima  Int?
+  personalAsignado Int        @default(0)
+  hospitalId       Int
+  hospital         Hospital   @relation(fields: [hospitalId], references: [hospitalId], onDelete: Cascade)
+  enfermeros       Enfermero[]
+  pacientes        Paciente[]
+  urgencias        Urgencias?
   @@map("servicio")
 }
 
+// Urgencias
 model Urgencias {
-  urgenciaId           Int @id @default(autoincrement())
-  nivelTriaje         String? @db.VarChar(50)
+  urgenciaId           Int      @id @default(autoincrement())
+  nivelTriaje          String?  @db.VarChar(50)
   tiempoEsperaPromedio Int?
-  servicioId          Int @unique
-  
-  // Relaciones
-  servicio            Servicio @relation(fields: [servicioId], references: [servicioId], onDelete: Cascade)
-  
+  servicioId           Int      @unique
+  servicio             Servicio @relation(fields: [servicioId], references: [servicioId], onDelete: Cascade)
   @@map("urgencias")
 }
 
+// Turno
 model Turno {
-  turnoId    Int      @id @default(autoincrement())
-  nombre     String   @db.VarChar(50)
-  horaInicio DateTime @db.Time
-  horaFin    DateTime @db.Time
-  
-  // Relaciones
+  turnoId    Int       @id @default(autoincrement())
+  nombre     String    @db.VarChar(50)
+  horaInicio DateTime  @db.Time
+  horaFin    DateTime  @db.Time
   enfermeros Enfermero[]
-  
   @@map("turno")
 }
 
+// Enfermero
 model Enfermero {
-  enfermeroId      Int     @id @default(autoincrement())
-  nombre           String  @db.VarChar(50)
-  apellidoPaterno  String  @db.VarChar(100)
-  apellidoMaterno  String  @db.VarChar(100)
-  numeroEmpleado   String  @unique @db.VarChar(20)
-  especialidad     String? @db.VarChar(100)
-  esCoordinador    Boolean @default(false)
-  habitacionAsignada  String? @db.VarChar(100)
-  turnoAsignadoId  Int?
-  servicioActualId Int?
-  
-  // Relaciones
-  turno            Turno? @relation(fields: [turnoAsignadoId], references: [turnoId], onDelete: SetNull)
-  servicio         Servicio? @relation(fields: [servicioActualId], references: [servicioId], onDelete: SetNull)
-  registrosMedicos RegistroMedico[]
-  inventarios      InventarioMedicamentos[]
-  insumos          Insumo[]
-  capacitaciones   EnfermeroCapacitacion[]
-  
+  enfermeroId         Int       @id @default(autoincrement())
+  nombre              String    @db.VarChar(50)
+  apellidoPaterno     String    @db.VarChar(100)
+  apellidoMaterno     String    @db.VarChar(100)
+  numeroEmpleado      String    @unique @db.VarChar(20)
+  especialidad        String?   @db.VarChar(100)
+  esCoordinador       Boolean   @default(false)
+  habitacionAsignada  String?   @db.VarChar(100)
+  habitacionesAsignadas String? @db.VarChar(255)
+  turnoAsignadoId     Int?
+  servicioActualId    Int?
+  turno               Turno?    @relation(fields: [turnoAsignadoId], references: [turnoId], onDelete: SetNull)
+  servicio            Servicio? @relation(fields: [servicioActualId], references: [servicioId], onDelete: SetNull)
+  registrosMedicos    RegistroMedico[]
+  inventarios         InventarioMedicamentos[]
+  insumos             Insumo[]
+  capacitaciones      EnfermeroCapacitacion[]
   @@map("enfermero")
 }
 
+// Paciente
 model Paciente {
   pacienteId       Int      @id @default(autoincrement())
-  apellidop         String   @db.VarChar(50)
-  apellidom         String   @db.VarChar(100)
+  apellidop        String   @db.VarChar(50)
+  apellidom        String   @db.VarChar(100)
   nombre           String   @db.VarChar(100)
   numeroExpediente String   @unique @db.VarChar(20)
   edad             Int?
@@ -95,133 +87,118 @@ model Paciente {
   fechaIngreso     DateTime @default(now())
   motivoConsulta   String?
   servicioId       Int?
-
-  // Relaciones
   servicio         Servicio? @relation(fields: [servicioId], references: [servicioId], onDelete: SetNull)
   registrosMedicos RegistroMedico[]
   insumosAsignados PacienteInsumo[]
   medicamentosAsignados PacienteMedicamento[]
-
   @@map("paciente")
 }
-/// Relación muchos a muchos entre Paciente e Insumo, con cantidad asignada
+
+// RegistroMedico
+model RegistroMedico {
+  registroId    Int      @id @default(autoincrement())
+  pacienteId    Int
+  enfermeroId   Int
+  fechaHora     DateTime @default(now())
+  signosVitales Json?
+  observaciones String?
+  paciente      Paciente  @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
+  enfermero     Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Restrict)
+  medicamentos  Medicamento[]
+  @@map("registromedico")
+}
+
+// Medicamento
+model Medicamento {
+  medicamentoId    Int              @id @default(autoincrement())
+  nombre           String           @db.VarChar(100)
+  descripcion      String?          @db.VarChar(255)
+  cantidadStock    Int              @default(0)
+  lote             String?          @db.VarChar(50)
+  fechaCaducidad   DateTime?
+  ubicacion        String?          @db.VarChar(100)
+  actualizadoEn    DateTime         @default(now())
+  registroMedicoId Int?
+  registroMedico   RegistroMedico?  @relation(fields: [registroMedicoId], references: [registroId])
+  asignaciones     PacienteMedicamento[]
+  @@map("medicamentos")
+}
+
+// PacienteInsumo
 model PacienteInsumo {
   pacienteInsumoId Int      @id @default(autoincrement())
-  paciente         Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
   pacienteId       Int
-  insumo           Insumo   @relation(fields: [insumoId], references: [insumoId], onDelete: Cascade)
   insumoId         Int
   cantidad         Int
   asignadoEn       DateTime @default(now())
-
+  paciente         Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
+  insumo           Insumo   @relation(fields: [insumoId], references: [insumoId], onDelete: Cascade)
   @@unique([pacienteId, insumoId])
   @@map("paciente_insumo")
 }
 
-model RegistroMedico {
-  registroId     Int      @id @default(autoincrement())
-  pacienteId     Int
-  enfermeroId    Int
-  fechaHora      DateTime @default(now())
-  signosVitales  Json?
-  observaciones  String?
-  
-  // Relaciones
-  paciente       Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
-  enfermero      Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Restrict)
-
-  medicamentos   Medicamento[]   // CORRECTO: nombre del modelo  
-  @@map("registromedico")
-}
-
-model Medicamento {
-  medicamentoId     Int      @id @default(autoincrement())
-  nombre            String   @db.VarChar(100)
-  descripcion       String?  @db.VarChar(255)
-  cantidadStock     Int      @default(0)
-  lote              String?  @db.VarChar(50)
-  fechaCaducidad    DateTime?
-  ubicacion         String?  @db.VarChar(100)
-  actualizadoEn     DateTime @default(now())
-
-  registroMedicoId  Int?         // FK
-  registroMedico    RegistroMedico? @relation(fields: [registroMedicoId], references: [registroId])
-
-  asignaciones      PacienteMedicamento[]
-
-  @@map("medicamentos")
-}
-
-/// Relación muchos a muchos entre Paciente y Medicamento, con cantidad y detalles de administración
+// PacienteMedicamento
 model PacienteMedicamento {
-  pacienteMedicamentoId Int      @id @default(autoincrement())
-  paciente             Paciente @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
-  pacienteId           Int
-  medicamento          Medicamento @relation(fields: [medicamentoId], references: [medicamentoId], onDelete: Cascade)
-  medicamentoId        Int
-  cantidadAsignada     Int
-  dosis                String?
-  frecuencia           String?
-  viaAdministracion    String?
-  asignadoEn           DateTime @default(now())
-
+  pacienteMedicamentoId Int        @id @default(autoincrement())
+  pacienteId            Int
+  medicamentoId         Int
+  cantidadAsignada      Int
+  dosis                 String?
+  frecuencia            String?
+  viaAdministracion     String?
+  asignadoEn            DateTime   @default(now())
+  paciente              Paciente   @relation(fields: [pacienteId], references: [pacienteId], onDelete: Cascade)
+  medicamento           Medicamento @relation(fields: [medicamentoId], references: [medicamentoId], onDelete: Cascade)
   @@unique([pacienteId, medicamentoId])
   @@map("paciente_medicamento")
 }
 
+// InventarioMedicamentos
 model InventarioMedicamentos {
-  inventarioId            Int    @id @default(autoincrement())
+  inventarioId         Int       @id @default(autoincrement())
   medicamentosDisponibles Json
-  ubicacionAlmacen        String?
-  responsableId           Int
-  
-  // Relaciones
-  responsable             Enfermero @relation(fields: [responsableId], references: [enfermeroId], onDelete: Restrict)
-  
+  ubicacionAlmacen     String?
+  responsableId        Int
+  responsable          Enfermero @relation(fields: [responsableId], references: [enfermeroId], onDelete: Restrict)
   @@map("inventariomedicamentos")
 }
 
+// Insumo
 model Insumo {
-  insumoId            Int      @id @default(autoincrement())
-  nombre              String   @db.VarChar(100)
-  descripcion         String?  @db.VarChar(255)
-  categoria           String?  @db.VarChar(100)
-  cantidadDisponible  Int      @default(0)
-  unidadMedida        String?  @db.VarChar(50)
-  ubicacion           String?  @db.VarChar(120)
-  responsableId       Int?
-  actualizadoEn       DateTime @default(now())
-
-  responsable         Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
-  pacientesAsignados  PacienteInsumo[]
-
+  insumoId           Int      @id @default(autoincrement())
+  nombre             String   @db.VarChar(100)
+  descripcion        String?  @db.VarChar(255)
+  categoria          String?  @db.VarChar(100)
+  cantidadDisponible Int      @default(0)
+  unidadMedida       String?  @db.VarChar(50)
+  ubicacion          String?  @db.VarChar(120)
+  responsableId      Int?
+  actualizadoEn      DateTime @default(now())
+  responsable        Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
+  pacientesAsignados PacienteInsumo[]
   @@map("insumo")
 }
 
+// Capacitacion
 model Capacitacion {
-  capacitacionId    Int      @id @default(autoincrement())
-  titulo            String   @db.VarChar(100)
-  descripcion       String?
-  fechaImparticion  DateTime?
-  duracion          Int?
-  instructor        String?  @db.VarChar(100)
-  
-  // Relaciones
-  enfermeros        EnfermeroCapacitacion[]
-  
+  capacitacionId   Int                     @id @default(autoincrement())
+  titulo           String                  @db.VarChar(100)
+  descripcion      String?
+  fechaImparticion DateTime?
+  duracion         Int?
+  instructor       String?                 @db.VarChar(100)
+  enfermeros       EnfermeroCapacitacion[]
   @@map("capacitacion")
 }
 
+// EnfermeroCapacitacion
 model EnfermeroCapacitacion {
-  enfermeroId       Int
-  capacitacionId    Int
-  asistio           Boolean  @default(false)
-  fechaInscripcion  DateTime @default(now())
-  
-  // Relaciones
-  enfermero         Enfermero @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Cascade)
-  capacitacion      Capacitacion @relation(fields: [capacitacionId], references: [capacitacionId], onDelete: Cascade)
-  
+  enfermeroId      Int
+  capacitacionId   Int
+  asistio          Boolean  @default(false)
+  fechaInscripcion DateTime @default(now())
+  enfermero        Enfermero    @relation(fields: [enfermeroId], references: [enfermeroId], onDelete: Cascade)
+  capacitacion     Capacitacion @relation(fields: [capacitacionId], references: [capacitacionId], onDelete: Cascade)
   @@id([enfermeroId, capacitacionId])
   @@map("enfermero_capacitacion")
 }

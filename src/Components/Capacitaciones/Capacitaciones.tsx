@@ -1,118 +1,106 @@
 import { useNavigate } from "react-router-dom";
-import EnfermeroList from "./EnfermeroList";
-import { useState } from "react";
 
-function Enfermero() {
+function Capacitaciones() {
   const navigate = useNavigate();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const EnfermeroOptions = [
+  const capacitacionesOptions = [
     {
-      id: "RegistrarEnfermero",
-      name: "Registrar Enfermero",
-      description: "Registrar un nuevo enfermero en el sistema",
+      id: "RegistrarCapacitacion",
+      name: "Registrar Capacitación",
+      description: "Crear una nueva capacitación para enfermeros",
       icon: (
         <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth="1.5"
-          stroke="currentColor"
           className="w-8 h-8 text-auto-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
           />
         </svg>
       ),
     },
     {
-      id: "EliminarEnfermero",
-      name: "Eliminar Enfermero",
-      description: "Eliminar un enfermero existente del sistema",
+      id: "ListarCapacitaciones",
+      name: "Listar Capacitaciones",
+      description: "Ver todas las capacitaciones registradas",
       icon: (
         <svg
-          xmlns="http://www.w3.org/2000/svg"
+          className="w-8 h-8 text-auto-primary"
           fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
           stroke="currentColor"
-          className="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-          />
-        </svg>
-      ),
-    },
-    {
-      id: "ActualizarEnfermero",
-      name: "Actualizar Enfermero",
-      description: "Actualizar la información de un enfermero existente",
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
           viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+            strokeWidth={2}
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
           />
         </svg>
       ),
     },
     {
-      id: "AsignarHorario",
-      name: "Asignar Horario al Personal",
-      description: "Asignar enfermeros y personal médico a turnos",
+      id: "ActualizarCapacitacion",
+      name: "Actualizar Capacitación",
+      description: "Modificar información de capacitaciones existentes",
       icon: (
         <svg
-          xmlns="http://www.w3.org/2000/svg"
+          className="w-8 h-8 text-auto-primary"
           fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
           stroke="currentColor"
-          className="size-6"
+          viewBox="0 0 24 24"
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            strokeWidth={2}
+            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
           />
         </svg>
       ),
-    }
+    },
+    {
+      id: "EliminarCapacitacion",
+      name: "Eliminar Capacitación",
+      description: "Eliminar capacitaciones del sistema",
+      icon: (
+        <svg
+          className="w-8 h-8 text-auto-primary"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+          />
+        </svg>
+      ),
+    },
   ];
+
   const handleOptionClick = (optionId: string) => {
     switch (optionId) {
-      case "RegistrarEnfermero":
-        navigate("/RegistrarEnfermero");
+      case "RegistrarCapacitacion":
+        navigate("/capacitaciones/registrar");
         break;
-      case "EliminarEnfermero":
-        navigate("/EliminarEnfermero");
+      case "ListarCapacitaciones":
+        navigate("/capacitaciones/listar");
         break;
-      case "ActualizarEnfermero":
-        navigate("/ActualizarEnfermero");
+      case "ActualizarCapacitacion":
+        navigate("/capacitaciones/actualizar");
         break;
-      case "AsignarHorario":
-        navigate("/turnos/asignar-enfermero");
+      case "EliminarCapacitacion":
+        navigate("/capacitaciones/eliminar");
         break;
     }
-  };
-
-  // Función para refrescar la lista
-  const handleRefreshList = () => {
-    setRefreshTrigger(prev => prev + 1);
   };
 
   return (
@@ -126,7 +114,7 @@ function Enfermero() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-auto-primary">
-                  Panel de Administración de Enfermeros
+                  Panel de Gestión de Capacitaciones
                 </h1>
                 <p className="text-auto-secondary mt-1">
                   Sistema TurnoCare - Gestión Hospitalaria
@@ -138,9 +126,9 @@ function Enfermero() {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6 mb-8">
+          <div className="bg-auto-secondary backdrop-blur-sm border border-auto rounded-3xl shadow-2xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {EnfermeroOptions.map((option) => (
+              {capacitacionesOptions.map((option) => (
                 <div
                   key={option.id}
                   onClick={() => handleOptionClick(option.id)}
@@ -164,20 +152,10 @@ function Enfermero() {
               ))}
             </div>
           </div>
-
-          {/* Sección de listado de enfermeros */}
-          <div className="mt-8">
-            <EnfermeroList
-              refreshTrigger={refreshTrigger}
-              onEnfermeroSelect={(enfermero) => {
-                console.log('Enfermero seleccionado:', enfermero);
-              }}
-            />
-          </div>
         </main>
       </div>
     </div>
   );
 }
 
-export default Enfermero;
+export default Capacitaciones;
