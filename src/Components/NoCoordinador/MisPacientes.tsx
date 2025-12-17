@@ -32,21 +32,75 @@ function MisPacientes() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userRaw = localStorage.getItem("user");
-    if (userRaw) {
+    const fetchEnfermeroData = async () => {
+      const userRaw = localStorage.getItem("user");
+      if (!userRaw) {
+        setError("No se encontró información del usuario. Por favor, inicia sesión nuevamente.");
+        return;
+      }
+
       try {
         const user = JSON.parse(userRaw);
+        const userId = user.userid;
+
+        // Si no tiene habitacionesAsignadas en localStorage, obtener datos actualizados del servidor
+        if (!user.habitacionesAsignadas && userId) {
+          console.log("Obteniendo datos actualizados del servidor...");
+          try {
+            const response = await axios.get(`http://localhost:5000/api/enfermeros`);
+            const enfermeros = response.data.data || response.data || [];
+            const enfermeroActual = enfermeros.find((e: any) => e.enfermeroId === userId);
+            
+            if (enfermeroActual) {
+              // Actualizar localStorage con los datos más recientes
+              const updatedUser = {
+                ...user,
+                servicioActualId: enfermeroActual.servicioActualId,
+                habitacionAsignada: enfermeroActual.habitacionAsignada,
+                habitacionesAsignadas: enfermeroActual.habitacionesAsignadas
+              };
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+              console.log("Datos actualizados desde el servidor:", {
+                servicioActualId: enfermeroActual.servicioActualId,
+                habitacionesAsignadas: enfermeroActual.habitacionesAsignadas
+              });
+              
+              setEnfermeroData({
+                servicioActualId: enfermeroActual.servicioActualId || null,
+                habitacionAsignada: enfermeroActual.habitacionAsignada || null,
+                habitacionesAsignadas: enfermeroActual.habitacionesAsignadas || null,
+              });
+              return;
+            }
+          } catch (err) {
+            console.error("Error al obtener datos actualizados:", err);
+          }
+        }
+
+        // Usar datos del localStorage
         const enfData = {
           servicioActualId: user.servicioActualId || null,
           habitacionAsignada: user.habitacionAsignada || null,
           habitacionesAsignadas: user.habitacionesAsignadas || null,
         };
-        console.log("Datos del enfermero:", enfData);
+        
+        console.log("Datos del enfermero desde localStorage:", enfData);
+        
+        if (!enfData.servicioActualId) {
+          console.warn("⚠️ No tienes un servicio asignado");
+        }
+        if (!enfData.habitacionesAsignadas && !enfData.habitacionAsignada) {
+          console.warn("⚠️ No tienes habitaciones asignadas");
+        }
+        
         setEnfermeroData(enfData);
       } catch (err) {
+        console.error("Error al procesar datos del usuario:", err);
         setError("Error al obtener datos del usuario");
       }
-    }
+    };
+
+    fetchEnfermeroData();
   }, []);
 
   useEffect(() => {
@@ -250,11 +304,40 @@ function MisPacientes() {
               <h3 className="text-xl font-semibold text-auto-primary mb-2">
                 No tienes pacientes asignados
               </h3>
-              <p className="text-auto-secondary">
+              <p className="text-auto-secondary mb-4">
                 {searchTerm
                   ? "No se encontraron pacientes con ese criterio de búsqueda"
                   : "Actualmente no tienes pacientes asignados en tu servicio y habitación"}
               </p>
+              {!searchTerm && enfermeroData && (
+                <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg text-left max-w-md mx-auto">
+                  <p className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                    📋 Información de tu asignación:
+                  </p>
+                  <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                    <p>
+                      • Servicio:{" "}
+                      <span className="font-semibold">
+                        {enfermeroData.servicioActualId || "No asignado"}
+                      </span>
+                    </p>
+                    <p>
+                      • Habitación(es):{" "}
+                      <span className="font-semibold">
+                        {enfermeroData.habitacionesAsignadas || 
+                         enfermeroData.habitacionAsignada || 
+                         "No asignada"}
+                      </span>
+                    </p>
+                    <p className="mt-2 text-xs italic">
+                      {!enfermeroData.servicioActualId || 
+                       (!enfermeroData.habitacionesAsignadas && !enfermeroData.habitacionAsignada)
+                        ? "⚠️ Contacta al coordinador para que te asigne un servicio y habitación"
+                        : `Total de pacientes en el sistema: ${pacientes.length}`}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

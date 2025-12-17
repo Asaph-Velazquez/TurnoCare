@@ -37,6 +37,7 @@ const login = async (req, resp) => {
                     turnoAsignadoId: enfermero.turnoAsignadoId,
                     servicioActualId: enfermero.servicioActualId,
                     habitacionAsignada: enfermero.habitacionAsignada,
+                    habitacionesAsignadas: enfermero.habitacionesAsignadas,
                     servicio: enfermero.servicio,
                     turno: enfermero.turno
                 }
@@ -128,7 +129,8 @@ const createEnfermero = async (req, resp) => {
                 especialidad: especialidad || null,
                 esCoordinador: esCoordinador === true || esCoordinador === 'true',
                 servicioActualId: servicioActualId || null,
-                habitacionAsignada: habitacionesAsignadas || null,
+                habitacionAsignada: null,
+                habitacionesAsignadas: habitacionesAsignadas || null,
                 turnoAsignadoId: turnoId
             }
         });
@@ -183,7 +185,7 @@ const updateEnfermero = async (req, resp) => {
                 data.servicio = { connect: { servicioId: servicioActualId } };
             }
         }
-        if (habitacionesAsignadas !== undefined) data.habitacionAsignada = habitacionesAsignadas;
+        if (habitacionesAsignadas !== undefined) data.habitacionesAsignadas = habitacionesAsignadas;
         
         // Manejo del turno - acepta tanto ID como nombre
         if (turno !== undefined || turnoAsignadoId !== undefined) {
