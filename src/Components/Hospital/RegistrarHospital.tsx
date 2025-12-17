@@ -66,3 +66,4 @@ function RegistrarHospital() {
 }
 
 export default RegistrarHospital;
+

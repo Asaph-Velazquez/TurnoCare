@@ -155,3 +155,4 @@ function Insumos() {
 }
 
 export default Insumos;
+

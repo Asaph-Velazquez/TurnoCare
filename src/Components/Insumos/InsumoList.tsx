@@ -118,3 +118,4 @@ function InsumoList({ refreshTrigger = 0, onInsumoSelect }: InsumoListProps) {
 }
 
 export default InsumoList;
+

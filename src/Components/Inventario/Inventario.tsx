@@ -131,3 +131,4 @@ function Inventario() {
 }
 
 export default Inventario;
+

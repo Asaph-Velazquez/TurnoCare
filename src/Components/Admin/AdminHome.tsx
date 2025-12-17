@@ -184,7 +184,6 @@ function AdminHome() {
         setTimeRemaining(timeUntilStart);
       }
     } catch (err) {
-      console.error('Error al detectar turno activo:', err);
       setActiveTurno(null);
       setTimeRemaining("");
     }
@@ -678,3 +677,4 @@ function AdminHome() {
 }
 
 export default AdminHome;
+

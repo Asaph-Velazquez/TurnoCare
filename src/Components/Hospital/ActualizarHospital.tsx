@@ -208,3 +208,4 @@ function ActualizarHospital() {
 }
 
 export default ActualizarHospital;
+

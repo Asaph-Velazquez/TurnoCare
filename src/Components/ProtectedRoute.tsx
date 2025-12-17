@@ -66,3 +66,4 @@ function ProtectedRoute({ children, requireCoordinator = false }: ProtectedRoute
 }
 
 export default ProtectedRoute;
+

@@ -88,11 +88,9 @@ function Login() {
       setTimeout(() => {
         try {
           const isCoord = userData.user && !!userData.user.esCoordinador;
-          console.log('Es coordinador?', isCoord);
           window.dispatchEvent(new Event('authChanged'));
           if (isCoord) {
             // Mostrar modal de selección de panel para coordinadores
-            console.log('Mostrando modal de selección');
             setShowPanelModal(true);
           } else {
             navigate("/NoCoordinador/home");
@@ -254,3 +252,4 @@ function Login() {
 }
 
 export default Login;
+

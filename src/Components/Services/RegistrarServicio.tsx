@@ -178,3 +178,4 @@ function RegistrarServicio({ onBack }: { onBack?: () => void }) {
 }
 
 export default RegistrarServicio;
+

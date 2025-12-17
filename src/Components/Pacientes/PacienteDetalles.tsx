@@ -120,7 +120,6 @@ function PacienteDetalles() {
             }
             setObservaciones(obs);
           } catch (err) {
-            console.log('No se pudieron cargar las observaciones');
             setObservaciones([]);
           }
         }
@@ -430,3 +429,4 @@ function PacienteDetalles() {
 }
 
 export default PacienteDetalles;
+

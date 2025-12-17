@@ -579,3 +579,4 @@ function AsignarMedicamentosInsumos({ onPacienteSelect }: AsignarMedicamentosIns
 }
 
 export default AsignarMedicamentosInsumos;
+

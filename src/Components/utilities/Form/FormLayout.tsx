@@ -15,3 +15,4 @@ export default function FormLayout({ title, children, onSubmit, widthClass = "ma
     </div>
   );
 }
+

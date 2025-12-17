@@ -217,3 +217,4 @@ function RegistrarInsumo() {
 }
 
 export default RegistrarInsumo;
+

@@ -306,3 +306,4 @@ function InventarioPorServicio() {
 }
 
 export default InventarioPorServicio;
+

@@ -45,7 +45,6 @@ function MisTurnos() {
       const data = response.data.success ? response.data.data : response.data;
       setTurno(data);
     } catch (err: any) {
-      console.error("Error cargando turno:", err);
       if (err.response?.status === 404) {
         setError("No tienes un turno asignado");
       } else {
@@ -151,3 +150,4 @@ function MisTurnos() {
 }
 
 export default MisTurnos;
+

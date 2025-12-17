@@ -546,3 +546,4 @@ function EliminarAsignaciones({ onPacienteSelect }: EliminarAsignacionesProps) {
 }
 
 export default EliminarAsignaciones;
+

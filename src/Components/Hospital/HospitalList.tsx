@@ -70,3 +70,4 @@ function HospitalList({ refreshTrigger = 0 }: HospitalListProps) {
 }
 
 export default HospitalList;
+

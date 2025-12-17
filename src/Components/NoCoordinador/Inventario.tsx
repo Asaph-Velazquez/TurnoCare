@@ -50,7 +50,6 @@ function Inventario() {
           break;
       }
     } catch (error) {
-      console.error("Error al cargar datos:", error);
     } finally {
       setLoading(false);
     }
@@ -61,7 +60,6 @@ function Inventario() {
       const resInsumos = await axios.get("http://localhost:5000/api/insumos/");
       setInsumos(Array.isArray(resInsumos.data?.data) ? resInsumos.data.data : []);
     } catch (error) {
-      console.error("Error al cargar insumos:", error);
     }
   };
 
@@ -255,3 +253,4 @@ function Inventario() {
 }
 
 export default Inventario;
+

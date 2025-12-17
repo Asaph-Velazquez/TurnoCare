@@ -271,3 +271,4 @@ function EliminarEnfermero() {
 }
 
 export default EliminarEnfermero;
+

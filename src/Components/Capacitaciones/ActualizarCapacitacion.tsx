@@ -33,7 +33,6 @@ function ActualizarCapacitacion() {
       const response = await axios.get("http://localhost:5000/api/capacitaciones");
       setCapacitaciones(response.data);
     } catch (error) {
-      console.error("Error al cargar capacitaciones:", error);
     }
   };
 
@@ -192,3 +191,4 @@ function ActualizarCapacitacion() {
 }
 
 export default ActualizarCapacitacion;
+

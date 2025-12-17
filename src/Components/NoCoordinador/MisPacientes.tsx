@@ -45,7 +45,6 @@ function MisPacientes() {
 
         // Si no tiene habitacionesAsignadas en localStorage, obtener datos actualizados del servidor
         if (!user.habitacionesAsignadas && userId) {
-          console.log("Obteniendo datos actualizados del servidor...");
           try {
             const response = await axios.get(`http://localhost:5000/api/enfermeros`);
             const enfermeros = response.data.data || response.data || [];
@@ -60,10 +59,6 @@ function MisPacientes() {
                 habitacionesAsignadas: enfermeroActual.habitacionesAsignadas
               };
               localStorage.setItem("user", JSON.stringify(updatedUser));
-              console.log("Datos actualizados desde el servidor:", {
-                servicioActualId: enfermeroActual.servicioActualId,
-                habitacionesAsignadas: enfermeroActual.habitacionesAsignadas
-              });
               
               setEnfermeroData({
                 servicioActualId: enfermeroActual.servicioActualId || null,
@@ -73,7 +68,6 @@ function MisPacientes() {
               return;
             }
           } catch (err) {
-            console.error("Error al obtener datos actualizados:", err);
           }
         }
 
@@ -84,18 +78,14 @@ function MisPacientes() {
           habitacionesAsignadas: user.habitacionesAsignadas || null,
         };
         
-        console.log("Datos del enfermero desde localStorage:", enfData);
         
         if (!enfData.servicioActualId) {
-          console.warn("⚠️ No tienes un servicio asignado");
         }
         if (!enfData.habitacionesAsignadas && !enfData.habitacionAsignada) {
-          console.warn("⚠️ No tienes habitaciones asignadas");
         }
         
         setEnfermeroData(enfData);
       } catch (err) {
-        console.error("Error al procesar datos del usuario:", err);
         setError("Error al obtener datos del usuario");
       }
     };
@@ -127,8 +117,6 @@ function MisPacientes() {
       return;
     }
 
-    console.log("Enfermero data:", enfermeroData);
-    console.log("Total pacientes:", pacientes.length);
 
     let filtrados = pacientes.filter((paciente) => {
       if (!enfermeroData.servicioActualId) {
@@ -145,18 +133,10 @@ function MisPacientes() {
       const habitacionesArr = habitaciones.split(",").map((h: string) => h.trim()).filter(Boolean);
       const matchHabitacion = habitacionesArr.includes(paciente.numeroHabitacion);
 
-      console.log(`Paciente ${paciente.nombre}:`, {
-        servicioId: paciente.servicioId,
-        numeroHabitacion: paciente.numeroHabitacion,
-        matchServicio,
-        matchHabitacion,
-        habitacionesEnfermero: habitacionesArr
-      });
 
       return matchServicio && matchHabitacion;
     });
 
-    console.log("Pacientes filtrados:", filtrados.length);
 
     if (searchTerm.trim()) {
       filtrados = filtrados.filter(
@@ -489,3 +469,4 @@ function MisPacientes() {
 }
 
 export default MisPacientes;
+

@@ -170,7 +170,6 @@ function Enfermero() {
             <EnfermeroList
               refreshTrigger={refreshTrigger}
               onEnfermeroSelect={(enfermero) => {
-                console.log('Enfermero seleccionado:', enfermero);
               }}
             />
           </div>
@@ -181,3 +180,4 @@ function Enfermero() {
 }
 
 export default Enfermero;
+

@@ -29,7 +29,6 @@ function ListarCapacitaciones() {
       setCapacitaciones(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error al cargar capacitaciones:", error);
       setLoading(false);
     }
   };
@@ -51,7 +50,6 @@ function ListarCapacitaciones() {
       // Recargar capacitaciones
       await cargarCapacitaciones();
     } catch (error: any) {
-      console.error("Error al actualizar asistencia:", error);
       alert(error.response?.data?.error || "Error al actualizar asistencia");
     } finally {
       setUpdatingAsistencia(prev => ({ ...prev, [key]: false }));
@@ -262,3 +260,4 @@ function ListarCapacitaciones() {
 }
 
 export default ListarCapacitaciones;
+

@@ -159,3 +159,4 @@ function Capacitaciones() {
 }
 
 export default Capacitaciones;
+

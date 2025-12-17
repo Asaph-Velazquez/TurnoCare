@@ -94,7 +94,6 @@ function NotaMedicaForm() {
         setNombreEnfermeroAlta(`${user.nombre || ""} ${user.apellidoPaterno || ""}`.trim());
         setNombreEnfermeroAsignado(`${user.nombre || ""} ${user.apellidoPaterno || ""}`.trim());
       } catch (err) {
-        console.error("Error parsing user data:", err);
       }
     }
   }, []);
@@ -133,7 +132,6 @@ function NotaMedicaForm() {
             }
           }
         } catch (error) {
-          console.log("No se pudieron cargar servicios/hospitales, continuando sin ellos");
         }
 
         // Cargar observaciones anteriores del paciente
@@ -159,10 +157,8 @@ function NotaMedicaForm() {
             setObservacionesAnteriores(historial);
           }
         } catch (error) {
-          console.log("No se pudieron cargar observaciones anteriores");
         }
       } catch (error) {
-        console.error("Error cargando paciente:", error);
         setFeedback({ type: "error", message: "Error al cargar datos del paciente" });
       } finally {
         setLoadingPaciente(false);
@@ -180,7 +176,6 @@ function NotaMedicaForm() {
         const data = response.data.success ? response.data.data : response.data;
         setMedicamentosDisponibles(data || []);
       } catch (error) {
-        console.error("Error cargando medicamentos:", error);
       } finally {
         setLoadingMedicamentos(false);
       }
@@ -196,7 +191,6 @@ function NotaMedicaForm() {
         const data = response.data.success ? response.data.data : response.data;
         setInsumosDisponibles(data || []);
       } catch (error) {
-        console.error("Error cargando insumos:", error);
       } finally {
         setLoadingInsumos(false);
       }
@@ -352,7 +346,6 @@ function NotaMedicaForm() {
         navigate("/NoCoordinador/mis-pacientes");
       }, 2000);
     } catch (error) {
-      console.error('Error al exportar PDF:', error);
       setFeedback({
         type: "error",
         message: "Error al exportar el PDF. Por favor intenta de nuevo.",
@@ -937,3 +930,4 @@ function NotaMedicaForm() {
 }
 
 export default NotaMedicaForm;
+

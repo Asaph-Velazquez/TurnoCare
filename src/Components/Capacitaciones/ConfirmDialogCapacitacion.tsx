@@ -52,3 +52,4 @@ function ConfirmDialogCapacitacion({
 }
 
 export default ConfirmDialogCapacitacion;
+

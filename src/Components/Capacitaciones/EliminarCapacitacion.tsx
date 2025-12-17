@@ -28,24 +28,20 @@ function EliminarCapacitacion() {
       const response = await axios.get("http://localhost:5000/api/capacitaciones");
       setCapacitaciones(response.data);
     } catch (error) {
-      console.error("Error al cargar capacitaciones:", error);
     }
   };
 
   const handleDeleteClick = (capacitacion: Capacitacion) => {
-    console.log('Abriendo diálogo para:', capacitacion);
     setSelectedCapacitacion(capacitacion);
     setShowConfirm(true);
   };
 
   const handleCancelDelete = () => {
-    console.log('Cancelando eliminación');
     setShowConfirm(false);
     setSelectedCapacitacion(null);
   };
 
   const handleConfirmDelete = async () => {
-    console.log('Confirmando eliminación');
     if (!selectedCapacitacion) return;
 
     try {
@@ -65,8 +61,6 @@ function EliminarCapacitacion() {
     }
   };
 
-  console.log('Estado showConfirm:', showConfirm);
-  console.log('Capacitación seleccionada:', selectedCapacitacion);
 
   return (
     <div className="min-h-screen bg-auto-primary p-8 pt-28">
@@ -139,3 +133,4 @@ function EliminarCapacitacion() {
 }
 
 export default EliminarCapacitacion;
+

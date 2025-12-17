@@ -36,7 +36,6 @@ function MisCapacitaciones() {
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
-        console.log('Usuario desde localStorage:', user);
         return user.enfermeroId || user.userid;
       } catch (e) {
         return localStorage.getItem("userID");
@@ -48,7 +47,6 @@ function MisCapacitaciones() {
   const enfermeroId = getUserData();
 
   useEffect(() => {
-    console.log('EnfermeroId obtenido:', enfermeroId);
     if (!enfermeroId) {
       setAlert({ 
         type: "danger", 
@@ -64,11 +62,9 @@ function MisCapacitaciones() {
   const cargarCapacitaciones = async () => {
     try {
       const response = await axios.get("http://localhost:5000/api/capacitaciones");
-      console.log('Capacitaciones cargadas:', response.data);
       setCapacitacionesDisponibles(response.data);
       setLoading(false);
     } catch (error) {
-      console.error("Error al cargar capacitaciones:", error);
       setAlert({ type: "danger", message: "Error al cargar capacitaciones disponibles" });
       setLoading(false);
     }
@@ -77,10 +73,8 @@ function MisCapacitaciones() {
   const cargarMisCapacitaciones = async () => {
     try {
       const response = await axios.get(`http://localhost:5000/api/capacitaciones/enfermero/${enfermeroId}`);
-      console.log('Mis capacitaciones:', response.data);
       setMisCapacitaciones(response.data);
     } catch (error) {
-      console.error("Error al cargar mis capacitaciones:", error);
     }
   };
 
@@ -91,7 +85,6 @@ function MisCapacitaciones() {
     }
 
     try {
-      console.log('Intentando inscribir:', { enfermeroId: parseInt(enfermeroId), capacitacionId });
       
       await axios.post("http://localhost:5000/api/capacitaciones/inscribir", {
         enfermeroId: parseInt(enfermeroId),
@@ -102,7 +95,6 @@ function MisCapacitaciones() {
       await cargarMisCapacitaciones();
       setTimeout(() => setAlert(null), 3000);
     } catch (error: any) {
-      console.error("Error completo:", error.response || error);
       setAlert({
         type: "danger",
         message: error.response?.data?.error || "Error al inscribirse en la capacitación"
@@ -127,7 +119,6 @@ function MisCapacitaciones() {
       await cargarMisCapacitaciones();
       setTimeout(() => setAlert(null), 3000);
     } catch (error: any) {
-      console.error("Error al cancelar:", error);
       setAlert({ 
         type: "danger", 
         message: error.response?.data?.error || "Error al cancelar inscripción" 
@@ -147,7 +138,6 @@ function MisCapacitaciones() {
       await cargarMisCapacitaciones();
       setTimeout(() => setAlert(null), 3000);
     } catch (error: any) {
-      console.error("Error al cancelar:", error);
       setAlert({ 
         type: "danger", 
         message: error.response?.data?.error || "Error al cancelar inscripción" 
@@ -634,3 +624,4 @@ function MisCapacitaciones() {
 }
 
 export default MisCapacitaciones;
+

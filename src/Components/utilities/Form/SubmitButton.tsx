@@ -16,3 +16,4 @@ export default function SubmitButton({ label = "Guardar", disabled = false }: Pr
     </button>
   );
 }
+

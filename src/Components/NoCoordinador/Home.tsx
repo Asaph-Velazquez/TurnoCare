@@ -173,18 +173,11 @@ function Home() {
           let inicioSeconds = inicio.getUTCHours() * 3600 + inicio.getUTCMinutes() * 60 + inicio.getUTCSeconds();
           let finSeconds = fin.getUTCHours() * 3600 + fin.getUTCMinutes() * 60 + fin.getUTCSeconds();
           
-          console.log('=== DEBUG TURNO ===');
-          console.log('Hora actual:', now.toLocaleTimeString('es-MX'));
-          console.log('Segundos actuales:', currentTimeOnly);
-          console.log('Turno:', turno.nombre);
-          console.log('Inicio UTC:', inicio.toISOString(), '- Segundos:', inicioSeconds);
-          console.log('Fin UTC:', fin.toISOString(), '- Segundos:', finSeconds);
           
           let isInTurno = false;
           let remainingSeconds = 0;
           
           if (finSeconds < inicioSeconds) {
-            console.log('Turno cruza medianoche');
             if (currentTimeOnly >= inicioSeconds || currentTimeOnly < finSeconds) {
               isInTurno = true;
               if (currentTimeOnly >= inicioSeconds) {
@@ -217,7 +210,6 @@ function Home() {
             }
           }
           
-          console.log('¿Está en turno?', isInTurno);
           
           if (isInTurno) {
             foundActiveTurno = turno;
@@ -238,7 +230,6 @@ function Home() {
         setTimeRemaining(timeUntilStart);
       }
     } catch (err) {
-      console.error('Error al detectar turno activo:', err);
       setActiveTurno(null);
       setTimeRemaining("");
     }
@@ -560,3 +551,4 @@ function Home() {
 }
 
 export default Home;
+

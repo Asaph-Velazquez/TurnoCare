@@ -277,3 +277,4 @@ function EliminarPacientes() {
 }
 
 export default EliminarPacientes;
+

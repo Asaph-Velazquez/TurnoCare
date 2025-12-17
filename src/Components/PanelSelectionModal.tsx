@@ -7,10 +7,8 @@ interface PanelSelectionModalProps {
 function PanelSelectionModal({ isOpen, onClose, onSelectPanel }: PanelSelectionModalProps) {
   if (!isOpen) return null;
 
-  console.log('Modal renderizado - isOpen:', isOpen);
 
   const handlePanelSelect = (panel: 'admin' | 'enfermero') => {
-    console.log('Panel seleccionado:', panel);
     onSelectPanel(panel);
     onClose();
   };
@@ -171,3 +169,4 @@ function PanelSelectionModal({ isOpen, onClose, onSelectPanel }: PanelSelectionM
 }
 
 export default PanelSelectionModal;
+

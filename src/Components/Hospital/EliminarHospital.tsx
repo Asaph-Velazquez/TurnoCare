@@ -224,3 +224,4 @@ function EliminarHospital() {
 }
 
 export default EliminarHospital;
+

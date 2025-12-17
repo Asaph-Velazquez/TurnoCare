@@ -40,7 +40,6 @@ function GestionAsignaciones() {
         
         setObservacionesAnteriores(obs);
       } catch (error) {
-        console.log("No se pudieron cargar observaciones anteriores");
         setObservacionesAnteriores([]);
       }
     };
@@ -181,3 +180,4 @@ function GestionAsignaciones() {
 }
 
 export default GestionAsignaciones;
+

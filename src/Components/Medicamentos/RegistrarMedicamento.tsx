@@ -221,3 +221,4 @@ function RegistrarMedicamento() {
 }
 
 export default RegistrarMedicamento;
+

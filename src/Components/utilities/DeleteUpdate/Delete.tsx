@@ -92,3 +92,4 @@ function DeleteCard<T extends { [key: string]: any }>({
 }
 
 export default DeleteCard;
+

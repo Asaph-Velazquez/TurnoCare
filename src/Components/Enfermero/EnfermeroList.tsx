@@ -41,7 +41,6 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
       setLoading(true);
       const response = await axios.get("http://localhost:5000/api/enfermeros/");
       
-      console.log('Respuesta completa:', response.data);
       
       // Manejar diferentes formatos de respuesta
       let data = [];
@@ -51,10 +50,8 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
         data = response.data;
       }
       
-      console.log('Enfermeros parseados:', data);
       setEnfermeros(data);
     } catch (error) {
-      console.error('Error al cargar enfermeros:', error);
       setEnfermeros([]);
     } finally {
       setLoading(false);
@@ -220,3 +217,4 @@ function EnfermeroList({ refreshTrigger = 0, onEnfermeroSelect }: EnfermeroListP
 }
 
 export default EnfermeroList;
+

@@ -213,3 +213,4 @@ function RegistrarCapacitacion() {
 }
 
 export default RegistrarCapacitacion;
+
