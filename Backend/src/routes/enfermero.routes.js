@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 const router = Router();
 
@@ -48,7 +48,6 @@ router.post("/login", async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error en login:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error en el servidor: ' + error.message
@@ -84,7 +83,6 @@ router.get("/", async (req, res) => {
       data: enfermeros
     });
   } catch (error) {
-    console.error('Error al listar enfermeros:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error al listar enfermeros: ' + error.message 
@@ -145,7 +143,6 @@ router.post("/", async (req, res) => {
       data: nuevoEnfermero
     });
   } catch (error) {
-    console.error('Error al crear enfermero:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error al crear enfermero: ' + error.message 
@@ -218,7 +215,6 @@ router.put("/:id", async (req, res) => {
       data: enfermeroActualizado
     });
   } catch (error) {
-    console.error('Error al actualizar enfermero:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error al actualizar enfermero: ' + error.message 
@@ -238,7 +234,6 @@ router.delete("/:id", async (req, res) => {
       message: 'Enfermero eliminado exitosamente' 
     });
   } catch (error) {
-    console.error('Error al eliminar enfermero:', error);
     res.status(500).json({ 
       success: false,
       error: 'Error al eliminar enfermero: ' + error.message 
@@ -247,3 +242,4 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+

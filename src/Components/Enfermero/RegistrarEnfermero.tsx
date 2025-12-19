@@ -106,7 +106,7 @@ function RegistrarEnfermero() {
         turno: form.turno,
       };
 
-      const response = await axios.post("http://localhost:5000/api/enfermeros/", dataToSend);
+      await axios.post("http://localhost:5000/api/enfermeros/", dataToSend);
       
       setAlert({
         type: "success",

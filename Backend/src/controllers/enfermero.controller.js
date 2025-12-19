@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 // Autenticación
 const login = async (req, resp) => {
@@ -275,3 +275,4 @@ module.exports = {
     deleteEnfermero,
     updateEnfermero
 };
+

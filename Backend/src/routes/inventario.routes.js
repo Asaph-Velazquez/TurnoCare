@@ -20,3 +20,5 @@ router.put("/:id", updateInventario);
 router.delete("/:id", deleteInventario);
 
 module.exports = router;
+
+

@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 const parseOptionalInt = (value) => {
   if (value === undefined || value === null || value === "") {
@@ -137,3 +137,5 @@ module.exports = {
   updateInventario,
   deleteInventario,
 };
+
+

@@ -45,14 +45,7 @@ function ProtectedRoute({ children, requireCoordinator = false }: ProtectedRoute
     "/turnos/listar"
   ];
 
-  const nurseRoutes = [
-    "/NoCoordinador/home",
-    "/NoCoordinador/mis-pacientes",
-    "/NoCoordinador/NotaMedicaForm"
-  ];
-
   const isAdminRoute = adminRoutes.some(route => location.pathname.startsWith(route));
-  const isNurseRoute = nurseRoutes.some(route => location.pathname.startsWith(route));
 
   if (isAdminRoute && !esCoordinador) {
     return <Navigate to="/NoCoordinador/home" replace />;

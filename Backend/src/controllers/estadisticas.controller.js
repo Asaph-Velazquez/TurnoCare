@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 // Obtener estadísticas de medicamentos por servicio
 const getMedicamentosPorServicio = async (req, resp) => {
@@ -195,3 +195,5 @@ module.exports = {
   getInsumosPorServicio,
   getResumenInventarioPorServicio
 };
+
+

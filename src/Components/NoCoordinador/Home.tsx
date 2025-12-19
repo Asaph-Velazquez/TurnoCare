@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -7,7 +7,7 @@ function Home() {
   const [pacientesCount, setPacientesCount] = useState<number | null>(null);
   const [turnosData, setTurnosData] = useState<any[]>([]);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  const [nextTurno, setNextTurno] = useState<Date | null>(null);
+  const [_nextTurno, setNextTurno] = useState<Date | null>(null);
   const [activeTurno, setActiveTurno] = useState<any | null>(null);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
   const navigate = useNavigate();

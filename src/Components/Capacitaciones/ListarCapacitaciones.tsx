@@ -56,10 +56,6 @@ function ListarCapacitaciones() {
     }
   };
 
-  const yasPasado = (fecha: string) => {
-    return new Date(fecha) < new Date();
-  };
-
   const capacitacionesFiltradas = capacitaciones
     .filter(cap => 
       cap.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -114,7 +110,6 @@ function ListarCapacitaciones() {
         {/* Lista de capacitaciones */}
         <div className="space-y-6">
           {capacitacionesFiltradas.map((capacitacion) => {
-            const pasada = yasPasado(capacitacion.fechaImparticion);
             const totalInscritos = capacitacion.enfermeros?.length || 0;
             return (
               <div key={capacitacion.capacitacionId} className="bg-auto-secondary p-6 rounded-lg shadow-lg">

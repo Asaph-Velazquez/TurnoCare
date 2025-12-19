@@ -3,16 +3,16 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 // Hospital
 model Hospital {
   hospitalId Int       @id @default(autoincrement())
-  nombre     String    @db.VarChar(100)
-  direccion  String?   @db.VarChar(150)
-  telefono   String?   @db.VarChar(20)
+  nombre     String    
+  direccion  String?   
+  telefono   String?   
   servicios  Servicio[]
   @@map("hospital")
 }
@@ -20,7 +20,7 @@ model Hospital {
 // Servicio
 model Servicio {
   servicioId       Int        @id @default(autoincrement())
-  nombre           String     @db.VarChar(100)
+  nombre           String     
   descripcion      String?
   capacidadMaxima  Int?
   personalAsignado Int        @default(0)
@@ -35,7 +35,7 @@ model Servicio {
 // Urgencias
 model Urgencias {
   urgenciaId           Int      @id @default(autoincrement())
-  nivelTriaje          String?  @db.VarChar(50)
+  nivelTriaje          String?  
   tiempoEsperaPromedio Int?
   servicioId           Int      @unique
   servicio             Servicio @relation(fields: [servicioId], references: [servicioId], onDelete: Cascade)
@@ -45,9 +45,9 @@ model Urgencias {
 // Turno
 model Turno {
   turnoId    Int       @id @default(autoincrement())
-  nombre     String    @db.VarChar(50)
-  horaInicio DateTime  @db.Time
-  horaFin    DateTime  @db.Time
+  nombre     String    
+  horaInicio DateTime  
+  horaFin    DateTime  
   enfermeros Enfermero[]
   @@map("turno")
 }
@@ -55,14 +55,14 @@ model Turno {
 // Enfermero
 model Enfermero {
   enfermeroId         Int       @id @default(autoincrement())
-  nombre              String    @db.VarChar(50)
-  apellidoPaterno     String    @db.VarChar(100)
-  apellidoMaterno     String    @db.VarChar(100)
-  numeroEmpleado      String    @unique @db.VarChar(20)
-  especialidad        String?   @db.VarChar(100)
+  nombre              String    
+  apellidoPaterno     String    
+  apellidoMaterno     String    
+  numeroEmpleado      String    @unique 
+  especialidad        String?   
   esCoordinador       Boolean   @default(false)
-  habitacionAsignada  String?   @db.VarChar(100)
-  habitacionesAsignadas String? @db.VarChar(255)
+  habitacionAsignada  String?   
+  habitacionesAsignadas String? 
   turnoAsignadoId     Int?
   servicioActualId    Int?
   turno               Turno?    @relation(fields: [turnoAsignadoId], references: [turnoId], onDelete: SetNull)
@@ -77,13 +77,13 @@ model Enfermero {
 // Paciente
 model Paciente {
   pacienteId       Int      @id @default(autoincrement())
-  apellidop        String   @db.VarChar(50)
-  apellidom        String   @db.VarChar(100)
-  nombre           String   @db.VarChar(100)
-  numeroExpediente String   @unique @db.VarChar(20)
+  apellidop        String   
+  apellidom        String   
+  nombre           String   
+  numeroExpediente String   @unique 
   edad             Int?
-  numeroCama       String?  @db.VarChar(10)
-  numeroHabitacion String?  @db.VarChar(10)
+  numeroCama       String?  
+  numeroHabitacion String?  
   fechaIngreso     DateTime @default(now())
   motivoConsulta   String?
   servicioId       Int?
@@ -111,12 +111,12 @@ model RegistroMedico {
 // Medicamento
 model Medicamento {
   medicamentoId    Int              @id @default(autoincrement())
-  nombre           String           @db.VarChar(100)
-  descripcion      String?          @db.VarChar(255)
+  nombre           String           
+  descripcion      String?          
   cantidadStock    Int              @default(0)
-  lote             String?          @db.VarChar(50)
+  lote             String?          
   fechaCaducidad   DateTime?
-  ubicacion        String?          @db.VarChar(100)
+  ubicacion        String?          
   actualizadoEn    DateTime         @default(now())
   registroMedicoId Int?
   registroMedico   RegistroMedico?  @relation(fields: [registroMedicoId], references: [registroId])
@@ -166,12 +166,12 @@ model InventarioMedicamentos {
 // Insumo
 model Insumo {
   insumoId           Int      @id @default(autoincrement())
-  nombre             String   @db.VarChar(100)
-  descripcion        String?  @db.VarChar(255)
-  categoria          String?  @db.VarChar(100)
+  nombre             String   
+  descripcion        String?  
+  categoria          String?  
   cantidadDisponible Int      @default(0)
-  unidadMedida       String?  @db.VarChar(50)
-  ubicacion          String?  @db.VarChar(120)
+  unidadMedida       String?  
+  ubicacion          String?  
   responsableId      Int?
   actualizadoEn      DateTime @default(now())
   responsable        Enfermero? @relation(fields: [responsableId], references: [enfermeroId], onDelete: SetNull)
@@ -182,11 +182,11 @@ model Insumo {
 // Capacitacion
 model Capacitacion {
   capacitacionId   Int                     @id @default(autoincrement())
-  titulo           String                  @db.VarChar(100)
+  titulo           String                  
   descripcion      String?
   fechaImparticion DateTime?
   duracion         Int?
-  instructor       String?                 @db.VarChar(100)
+  instructor       String?                 
   enfermeros       EnfermeroCapacitacion[]
   @@map("capacitacion")
 }

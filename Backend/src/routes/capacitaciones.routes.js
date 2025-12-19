@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 const router = Router();
 
@@ -26,10 +26,8 @@ router.get("/", async (req, res) => {
       orderBy: { fechaImparticion: 'desc' }
     });
     
-    console.log('Capacitaciones con enfermeros:', JSON.stringify(capacitaciones, null, 2));
     res.json(capacitaciones);
   } catch (error) {
-    console.error('Error al listar capacitaciones:', error);
     res.status(500).json({ error: 'Error al listar capacitaciones' });
   }
 });
@@ -46,7 +44,6 @@ router.get("/enfermero/:enfermeroId", async (req, res) => {
     });
     res.json(capacitaciones);
   } catch (error) {
-    console.error('Error al obtener capacitaciones del enfermero:', error);
     res.status(500).json({ error: 'Error al obtener capacitaciones' });
   }
 });
@@ -68,7 +65,6 @@ router.post("/", async (req, res) => {
     
     res.status(201).json(nuevaCapacitacion);
   } catch (error) {
-    console.error('Error al crear capacitación:', error);
     res.status(500).json({ error: 'Error al crear capacitación' });
   }
 });
@@ -102,7 +98,6 @@ router.post("/inscribir", async (req, res) => {
     
     res.status(201).json(inscripcion);
   } catch (error) {
-    console.error('Error al inscribir enfermero:', error);
     res.status(500).json({ error: 'Error al inscribir en la capacitación' });
   }
 });
@@ -170,7 +165,6 @@ router.put("/asistencia/:capacitacionId/:enfermeroId", async (req, res) => {
       data: updated
     });
   } catch (error) {
-    console.error("Error al actualizar asistencia:", error);
     res.status(500).json({
       success: false,
       error: "Error al actualizar asistencia: " + error.message
@@ -197,7 +191,6 @@ router.put("/:id", async (req, res) => {
     
     res.json(capacitacionActualizada);
   } catch (error) {
-    console.error('Error al actualizar capacitación:', error);
     res.status(500).json({ error: 'Error al actualizar capacitación' });
   }
 });
@@ -211,7 +204,6 @@ router.delete("/:id", async (req, res) => {
     });
     res.json({ message: 'Capacitación eliminada exitosamente' });
   } catch (error) {
-    console.error('Error al eliminar capacitación:', error);
     res.status(500).json({ error: 'Error al eliminar capacitación' });
   }
 });
@@ -232,9 +224,10 @@ router.delete("/inscripcion/:enfermeroId/:capacitacionId", async (req, res) => {
     
     res.json({ message: 'Inscripción cancelada exitosamente' });
   } catch (error) {
-    console.error('Error al cancelar inscripción:', error);
     res.status(500).json({ error: 'Error al cancelar inscripción' });
   }
 });
 
 module.exports = router;
+
+

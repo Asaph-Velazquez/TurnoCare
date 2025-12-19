@@ -25,3 +25,5 @@ router.put("/:id", updateMedicamento);
 router.delete("/:id", deleteMedicamento);
 
 module.exports = router;
+
+

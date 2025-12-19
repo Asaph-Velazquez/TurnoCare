@@ -7,7 +7,6 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
         doc.on("data", dataCallback);
         doc.on("end", endCallback);
         doc.on("error", (err) => {
-            console.error("Error en PDFDocument:", err);
         });
 
     // ==============================
@@ -141,9 +140,9 @@ function buildMedicalNotePDF(notaData, dataCallback, endCallback) {
 
     doc.end();
     } catch (err) {
-        console.error("Error generando PDF:", err);
         throw err;
     }
 }
 
 module.exports = { buildMedicalNotePDF };
+

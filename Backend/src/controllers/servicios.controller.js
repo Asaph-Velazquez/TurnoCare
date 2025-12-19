@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 // CRUD - Leer todos
 const listServices = async (req, resp) => {
@@ -115,3 +115,4 @@ module.exports = {
     updateService,
     listServices
 };
+

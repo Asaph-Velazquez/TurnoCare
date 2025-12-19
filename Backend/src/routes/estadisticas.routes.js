@@ -18,3 +18,5 @@ router.get("/insumos-por-servicio", getInsumosPorServicio);
 router.get("/resumen-inventario", getResumenInventarioPorServicio);
 
 module.exports = router;
+
+

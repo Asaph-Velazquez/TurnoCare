@@ -38,10 +38,11 @@ function RegistrarInsumo() {
         responsableId: form.responsableId ? Number(form.responsableId) : null,
       };
 
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/insumos/",
         payload
-      );setAlert({ type: "success", message: "Insumo registrado exitosamente" });
+      );
+      setAlert({ type: "success", message: "Insumo registrado exitosamente" });
       setForm({
         nombre: "",
         descripcion: "",

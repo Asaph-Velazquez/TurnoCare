@@ -12,3 +12,4 @@ const connectionDB = async () => {
 
 module.exports = { connectionDB, prisma };
 
+

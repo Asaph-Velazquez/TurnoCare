@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 // CRUD - Leer todos
 const listPacientes = async (req, resp) => {
@@ -138,4 +138,6 @@ module.exports = {
     updatePaciente,
     getPacienteById
 };
+
+
 

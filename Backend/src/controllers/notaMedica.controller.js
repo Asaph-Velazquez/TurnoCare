@@ -1,11 +1,9 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 const { buildMedicalNotePDF } = require("../libs/pdfKit");
 
 //generacion de notamedica
 const generateMedicalNote = async (req, resp) => {
-    console.log('=== Datos recibidos en nota médica ===');
-    console.log('Body completo:', JSON.stringify(req.body, null, 2));
     
     const {
         pacienteId,
@@ -25,7 +23,6 @@ const generateMedicalNote = async (req, resp) => {
 
     // Validar campos requeridos - signosVitales es opcional
     if (!pacienteId || !enfermeroId || !observaciones) {
-        console.error('Campos faltantes:', { pacienteId, enfermeroId, observaciones: !!observaciones });
         return resp.status(400).json({ 
             success: false, 
             error: 'Faltan campos requeridos (pacienteId, enfermeroId, observaciones)',
@@ -42,7 +39,6 @@ const generateMedicalNote = async (req, resp) => {
     const enfermeroIdNum = parseInt(enfermeroId);
 
     if (isNaN(pacienteIdNum) || isNaN(enfermeroIdNum)) {
-        console.error('IDs inválidos:', { pacienteId, enfermeroId, pacienteIdNum, enfermeroIdNum });
         return resp.status(400).json({ 
             success: false, 
             error: 'IDs inválidos',
@@ -60,12 +56,10 @@ const generateMedicalNote = async (req, resp) => {
             where: { pacienteId: pacienteIdNum }
         });
     } catch (err) {
-        console.error('Error buscando paciente:', err);
         return resp.status(500).json({ success: false, error: 'Error del servidor al buscar paciente' });
     }
 
     if (!paciente) {
-        console.error('Paciente no encontrado con ID:', pacienteIdNum);
         return resp.status(404).json({ success: false, error: `Paciente con ID ${pacienteIdNum} no encontrado` });
     }
 
@@ -76,18 +70,15 @@ const generateMedicalNote = async (req, resp) => {
             where: { enfermeroId: enfermeroIdNum }
         });
     } catch (err) {
-        console.error('Error buscando enfermero:', err);
         return resp.status(500).json({ success: false, error: 'Error del servidor al buscar enfermero' });
     }
 
     if (!enfermero) {
-        console.error('Enfermero no encontrado con ID:', enfermeroIdNum);
         return resp.status(404).json({ success: false, error: `Enfermero con ID ${enfermeroIdNum} no encontrado` });
     }
 
     try {
         // Crear el registro médico
-        console.log('Creando registro médico con:', { pacienteIdNum, enfermeroIdNum, observaciones });
         const registroMedico = await prisma.registroMedico.create({
             data: {
                 pacienteId: pacienteIdNum,
@@ -98,13 +89,10 @@ const generateMedicalNote = async (req, resp) => {
             }
         });
 
-        console.log('Registro médico creado:', registroMedico.registroId);
 
         // Si se enviaron medicamentos, asignarlos al paciente
         if (medicamentos && Array.isArray(medicamentos) && medicamentos.length > 0) {
-            console.log(`\n=== Asignando ${medicamentos.length} medicamentos al paciente ===`);
             for (const med of medicamentos) {
-                console.log(`Buscando medicamento: ${med.nombre}`);
                 
                 // Buscar el medicamento existente en el inventario
                 const medicamentoExistente = await prisma.medicamento.findFirst({
@@ -112,8 +100,6 @@ const generateMedicalNote = async (req, resp) => {
                 });
 
                 if (medicamentoExistente) {
-                    console.log(`✓ Medicamento encontrado en inventario: ${medicamentoExistente.nombre} (ID: ${medicamentoExistente.medicamentoId})`);
-                    console.log(`  Asignando al paciente ${pacienteIdNum} - Cantidad: ${med.cantidad}, Dosis: ${med.dosis}, Frecuencia: ${med.frecuencia}`);
                     
                     // Crear o actualizar la asignación en PacienteMedicamento
                     const asignacion = await prisma.pacienteMedicamento.upsert({
@@ -137,18 +123,14 @@ const generateMedicalNote = async (req, resp) => {
                             frecuencia: med.frecuencia || null
                         }
                     });
-                    console.log(`✓ Asignación creada en tabla paciente_medicamento (ID: ${asignacion.pacienteMedicamentoId})`);
                 } else {
-                    console.warn(`✗ ADVERTENCIA: Medicamento "${med.nombre}" NO encontrado en inventario - NO se asignó`);
                 }
             }
         }
 
         // Si se enviaron insumos, asignarlos al paciente
         if (insumos && Array.isArray(insumos) && insumos.length > 0) {
-            console.log(`\n=== Asignando ${insumos.length} insumos al paciente ===`);
             for (const ins of insumos) {
-                console.log(`Buscando insumo: ${ins.nombre}`);
                 
                 // Buscar el insumo existente en el inventario
                 const insumoExistente = await prisma.insumo.findFirst({
@@ -156,8 +138,6 @@ const generateMedicalNote = async (req, resp) => {
                 });
 
                 if (insumoExistente) {
-                    console.log(`✓ Insumo encontrado en inventario: ${insumoExistente.nombre} (ID: ${insumoExistente.insumoId})`);
-                    console.log(`  Asignando al paciente ${pacienteIdNum} - Cantidad: ${ins.cantidad}`);
                     
                     // Crear o actualizar la asignación en PacienteInsumo
                     const asignacion = await prisma.pacienteInsumo.upsert({
@@ -177,14 +157,11 @@ const generateMedicalNote = async (req, resp) => {
                             cantidad: parseInt(ins.cantidad) || 1
                         }
                     });
-                    console.log(`✓ Asignación creada en tabla paciente_insumo (ID: ${asignacion.pacienteInsumoId})`);
                 } else {
-                    console.warn(`✗ ADVERTENCIA: Insumo "${ins.nombre}" NO encontrado en inventario - NO se asignó`);
                 }
             }
         }
 
-        console.log('\n=== Nota médica generada exitosamente ===\n');
         resp.json({ 
             success: true, 
             message: 'Nota médica generada exitosamente',
@@ -197,8 +174,6 @@ const generateMedicalNote = async (req, resp) => {
             }
         });
     } catch (err) {
-        console.error('Error generando nota médica:', err);
-        console.error('Stack:', err.stack);
         return resp.status(500).json({ success: false, error: err.message, detalles: err.stack });
     }
 };
@@ -233,7 +208,6 @@ const getMedicalNotesByPaciente = async (req, resp) => {
 
         resp.json({ success: true, data: notas });
     } catch (err) {
-        console.error('Error obteniendo notas médicas del paciente:', err);
         resp.status(500).json({ success: false, error: err.message });
     }
 };
@@ -242,7 +216,6 @@ const downloadMedicalNotePDF = async (req, resp) => {
     const { registroId } = req.params;
 
     try {
-        console.log(`Generando PDF para registro ID: ${registroId}`);
         
         const nota = await prisma.registroMedico.findUnique({
             where: { registroId: parseInt(registroId) },
@@ -272,15 +245,9 @@ const downloadMedicalNotePDF = async (req, resp) => {
 
 
         if (!nota) {
-            console.error(`Nota médica no encontrada: ${registroId}`);
             return resp.status(404).json({ success: false, error: "Nota médica no encontrada" });
         }
 
-        console.log('Nota encontrada, generando PDF...');
-        console.log('Paciente:', nota.paciente?.nombre);
-        console.log('Enfermero:', nota.enfermero?.nombre);
-        console.log('Medicamentos:', nota.paciente?.medicamentos?.length || 0);
-        console.log('Insumos:', nota.paciente?.insumos?.length || 0);
 
         resp.setHeader("Content-Type", "application/pdf");
         resp.setHeader(
@@ -293,14 +260,11 @@ const downloadMedicalNotePDF = async (req, resp) => {
             nota,
             chunk => resp.write(chunk),
             () => {
-                console.log('PDF generado exitosamente');
                 resp.end();
             }
         );
 
     } catch (err) {
-        console.error("Error generando PDF:", err);
-        console.error("Stack trace:", err.stack);
         resp.status(500).json({ success: false, error: err.message });
     }
 };
@@ -311,3 +275,4 @@ module.exports = {
     getMedicalNotesByPaciente,
     downloadMedicalNotePDF
 };
+

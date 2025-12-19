@@ -31,3 +31,4 @@ app.use("/api/notas-medicas", notasMedicasRoutes);
 app.use("/api/capacitaciones", capacitacionesRoutes);
 
 module.exports = app;
+

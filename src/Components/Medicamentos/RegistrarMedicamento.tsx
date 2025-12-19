@@ -51,10 +51,11 @@ function RegistrarMedicamento() {
         return;
       }
 
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:5000/api/medicamentos/",
         payload
-      );setAlert({
+      );
+      setAlert({
         type: "success",
         message: "Medicamento agregado al inventario exitosamente",
       });

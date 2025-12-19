@@ -25,3 +25,5 @@ router.put("/:id", updateInsumo);
 router.delete("/:id", deleteInsumo);
 
 module.exports = router;
+
+

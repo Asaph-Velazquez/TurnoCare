@@ -1,0 +1,19 @@
+# Ignorar archivos innecesarios en la aplicación Tauri
+# NO ignorar Backend completo ya que lo necesitamos en el bundle
+SQL/
+docker-compose.yml
+Dockerfile
+.git/
+.gitignore
+*.md
+*.log
+limpieza.ps1
+build-tauri.ps1
+
+# Ignorar solo partes del Backend que no necesitamos
+Backend/node_modules/.cache/
+Backend/prisma/migrations/
+Backend/prisma/prisma/
+Backend/*.log
+Backend/verify-db.js
+

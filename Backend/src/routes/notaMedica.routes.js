@@ -12,3 +12,5 @@ router.get("/paciente/:pacienteId", getMedicalNotesByPaciente);
 router.get("/pdf/:registroId", downloadMedicalNotePDF);
 
 module.exports = router;
+
+

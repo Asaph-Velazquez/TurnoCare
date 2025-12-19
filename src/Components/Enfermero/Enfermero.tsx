@@ -4,7 +4,7 @@ import { useState } from "react";
 
 function Enfermero() {
   const navigate = useNavigate();
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [refreshTrigger] = useState(0);
 
   const EnfermeroOptions = [
     {
@@ -110,10 +110,6 @@ function Enfermero() {
     }
   };
 
-  // Función para refrescar la lista
-  const handleRefreshList = () => {
-    setRefreshTrigger(prev => prev + 1);
-  };
 
   return (
     <div className="min-h-screen bg-auto-primary pt-20">
@@ -169,7 +165,7 @@ function Enfermero() {
           <div className="mt-8">
             <EnfermeroList
               refreshTrigger={refreshTrigger}
-              onEnfermeroSelect={(enfermero) => {
+              onEnfermeroSelect={() => {
               }}
             />
           </div>

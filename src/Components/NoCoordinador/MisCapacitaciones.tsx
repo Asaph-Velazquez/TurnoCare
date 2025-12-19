@@ -88,7 +88,7 @@ function MisCapacitaciones() {
       
       await axios.post("http://localhost:5000/api/capacitaciones/inscribir", {
         enfermeroId: parseInt(enfermeroId),
-        capacitacionId: parseInt(capacitacionId)
+        capacitacionId: capacitacionId
       });
       
       setAlert({ type: "success", message: "¡Inscripción exitosa!" });
@@ -129,35 +129,8 @@ function MisCapacitaciones() {
     }
   };
 
-  const cancelarInscripcion = async (capacitacionId: number) => {
-    if (!confirm("¿Estás seguro de cancelar tu inscripción?")) return;
-    
-    try {
-      await axios.delete(`http://localhost:5000/api/capacitaciones/inscripcion/${enfermeroId}/${capacitacionId}`);
-      setAlert({ type: "success", message: "Inscripción cancelada exitosamente" });
-      await cargarMisCapacitaciones();
-      setTimeout(() => setAlert(null), 3000);
-    } catch (error: any) {
-      setAlert({ 
-        type: "danger", 
-        message: error.response?.data?.error || "Error al cancelar inscripción" 
-      });
-      setTimeout(() => setAlert(null), 5000);
-    }
-  };
-
   const estaInscrito = (capacitacionId: number) => {
     return misCapacitaciones.some(c => c.capacitacion.capacitacionId === capacitacionId);
-  };
-
-  const formatearFecha = (fecha: string) => {
-    return new Date(fecha).toLocaleString('es-MX', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
   };
 
   // Función para verificar si una capacitación ya pasó

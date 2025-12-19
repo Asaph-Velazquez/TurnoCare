@@ -1,4 +1,4 @@
-const { prisma } = require("../dbPostgres");
+const { prisma } = require("../db");
 
 // CRUD - Leer todos
 const listTurnos = async (req, resp) => {
@@ -191,7 +191,6 @@ const getTurnoByEnfermeroId = async (req, resp) => {
 
         resp.json({ success: true, data: enfermero.turno });
     } catch (err) {
-        console.error(err);
         resp.status(500).json({ success: false, error: 'Error del servidor.' });
     }
 };
@@ -204,3 +203,4 @@ module.exports = {
     deleteTurno,
     getTurnoByEnfermeroId
 };
+

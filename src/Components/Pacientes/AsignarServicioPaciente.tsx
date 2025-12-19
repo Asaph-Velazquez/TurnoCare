@@ -37,7 +37,6 @@ function AsignarServicioPaciente() {
   const [enfermeros, setEnfermeros] = useState<Enfermero[]>([]);
   const [loadingPacientes, setLoadingPacientes] = useState(false);
   const [loadingServicios, setLoadingServicios] = useState(false);
-  const [loadingEnfermeros, setLoadingEnfermeros] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState<{type: string, message: string} | null>(null);
   
@@ -76,14 +75,11 @@ function AsignarServicioPaciente() {
         setLoadingServicios(false);
       }
 
-      setLoadingEnfermeros(true);
       try {
         const response = await axios.get("http://localhost:5000/api/enfermeros");
         const data = response.data.success ? response.data.data : response.data;
         setEnfermeros(data || []);
       } catch (error) {
-      } finally {
-        setLoadingEnfermeros(false);
       }
     };
     fetchData();

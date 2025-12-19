@@ -222,6 +222,68 @@ function EliminarAsignaciones({ onPacienteSelect }: EliminarAsignacionesProps) {
     }
   };
 
+  // Eliminar medicamentos seleccionados
+  const handleDeleteSelectedMedicamentos = async () => {
+    if (selectedMedicamentos.size === 0) return;
+    
+    setLoading(true);
+    try {
+      const deletePromises = Array.from(selectedMedicamentos).map(medicamentoId =>
+        axios.delete(`http://localhost:5000/api/medicamentos/desasignar/${selectedPacienteId}/${medicamentoId}`)
+      );
+      
+      await Promise.all(deletePromises);
+      
+      setMedicamentosAsignados(
+        medicamentosAsignados.filter(m => !selectedMedicamentos.has(m.medicamentoId))
+      );
+      setSelectedMedicamentos(new Set());
+      
+      setAlert({
+        type: "success",
+        message: `${selectedMedicamentos.size} medicamento(s) eliminado(s) exitosamente`
+      });
+    } catch (error: any) {
+      setAlert({
+        type: "danger",
+        message: error.response?.data?.error || "Error al eliminar medicamentos"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Eliminar insumos seleccionados
+  const handleDeleteSelectedInsumos = async () => {
+    if (selectedInsumos.size === 0) return;
+    
+    setLoading(true);
+    try {
+      const deletePromises = Array.from(selectedInsumos).map(insumoId =>
+        axios.delete(`http://localhost:5000/api/insumos/desasignar/${selectedPacienteId}/${insumoId}`)
+      );
+      
+      await Promise.all(deletePromises);
+      
+      setInsumosAsignados(
+        insumosAsignados.filter(i => !selectedInsumos.has(i.insumoId))
+      );
+      setSelectedInsumos(new Set());
+      
+      setAlert({
+        type: "success",
+        message: `${selectedInsumos.size} insumo(s) eliminado(s) exitosamente`
+      });
+    } catch (error: any) {
+      setAlert({
+        type: "danger",
+        message: error.response?.data?.error || "Error al eliminar insumos"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const selectedPaciente = pacientes.find(p => p.pacienteId.toString() === selectedPacienteId);
 
   return (

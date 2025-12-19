@@ -1,11 +1,11 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 function AdminHome() {
   const [enfermerosCount, setEnfermerosCount] = useState<number | null>(null);
   const [serviciosCount, setServiciosCount] = useState<number | null>(null);
-  const [turnosCount, setTurnosCount] = useState<number | null>(null);
+  const [_turnosCount, setTurnosCount] = useState<number | null>(null);
   const [pacientesCount, setPacientesCount] = useState<number | null>(null);
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [turnosData, setTurnosData] = useState<any[]>([]);

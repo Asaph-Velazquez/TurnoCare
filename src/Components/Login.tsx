@@ -5,7 +5,6 @@ import PanelSelectionModal from "./PanelSelectionModal";
 
 function Login() {
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showPanelModal, setShowPanelModal] = useState(false);
 
   const nombreInfo = useRef<HTMLInputElement>(null);
@@ -63,7 +62,6 @@ function Login() {
     const userData = await LoginRequest();
     
     if (userData && userData.success) {
-      setIsLoggedIn(true);
       try {
         if (userData.user && typeof userData.user === 'object') {
           localStorage.setItem("isLoggedIn", "true");
