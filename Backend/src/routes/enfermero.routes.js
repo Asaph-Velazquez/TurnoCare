@@ -192,12 +192,15 @@ router.put("/:id", async (req, res) => {
     // Actualizar turno
     const turnoId = turnoAsignadoId || turno;
     if (turnoId !== undefined) {
-      if (turnoId === null) {
+      if (turnoId === null || turnoId === '' || turnoId === 'null') {
         dataToUpdate.turno = { disconnect: true };
       } else {
-        dataToUpdate.turno = {
-          connect: { turnoId: parseInt(turnoId) }
-        };
+        const parsedTurnoId = parseInt(turnoId);
+        if (!isNaN(parsedTurnoId)) {
+          dataToUpdate.turno = {
+            connect: { turnoId: parsedTurnoId }
+          };
+        }
       }
     }
 
