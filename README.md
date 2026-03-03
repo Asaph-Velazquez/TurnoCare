@@ -194,4 +194,4 @@ npm install
 
 **¡Listo para usar! 🎉**
 
-Si tienes problemas, revisa la sección de solución de problemas o contacta al equipo de desarrollo.
+Si tienes problemas, contacta al equipo de desarrollo.
